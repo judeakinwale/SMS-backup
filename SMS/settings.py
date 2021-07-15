@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'User',
     'rest_framework',
     'information.apps.InformationConfig',
+    'academics.apps.AcademicsConfig',
 ]
 
 MIDDLEWARE = [
@@ -180,4 +181,4 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
