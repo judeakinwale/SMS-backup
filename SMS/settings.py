@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'User',
     'rest_framework',
     'information.apps.InformationConfig',
+    'assessment.apps.AssessmentConfig',
     'academics.apps.AcademicsConfig',
 ]
 
