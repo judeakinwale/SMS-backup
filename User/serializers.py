@@ -12,24 +12,43 @@ class AcademicDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = AcademicData
         fields = [
-            'faculty', 'department', 'programme', 'level'
+            'id',
+            'faculty',
+            'department',
+            'programme',
+            'level',
         ]
-
 
 
 class FamilyDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = FamilyData
         fields = [
-            'next_of_kin', 'next_of_kin_phone1', 'next_of_kin_address', 'guardian', 'guardian_phone1', 'guardian_address'
+            'id',
+            'next_of_kin',
+            'next_of_kin_phone1',
+            'next_of_kin_address',
+            'guardian',
+            'guardian_phone1',
+            'guardian_address',
         ]
-
 
 
 class HealthDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthData
-        fields = '__all__'
+        fields = [
+            'id',
+            'user',
+            'blood_group',
+            'genotype',
+            'allergies',
+            'diabetes',
+            'STIs',
+            'heart_disease',
+            'disabilities',
+            'respiratory_problems',
+        ]
 
     # def create(self, data):
     #     health_data = HealthData.objects.create(**data)
@@ -40,20 +59,20 @@ class BiodataSerializer(serializers.ModelSerializer):
     class Meta:
         model = BioData
         fields = [
-            "birthday",
-            "first_name",
-            "last_name",
-            "middle_name",
-            "marital_status",
-            "gender",
-            "nationality",
-            "religion",
-            "state_of_origin",
-            "local_govt",
-            "permanent_address",
-            "phone1",
-            "phone2",
-            "profile_picture"
+            'birthday',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'marital_status',
+            'gender',
+            'nationality',
+            'religion',
+            'state_of_origin',
+            'local_govt',
+            'permanent_address',
+            'phone1',
+            'phone2',
+            'profile_picture'
         ]
 
 
@@ -61,21 +80,26 @@ class BiodataSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
-        required=True,
+        # required=True,
         label="Password",
         style={'input_type': 'password'}
     )
 
     password2 = serializers.CharField(
-        required=True,
+        # required=True,
         label="Confirm Password",
         style={'input_type': 'password'}
     )
 
-
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'password', 'password2']
+        fields = [
+            'email', 
+            'first_name', 
+            'last_name', 
+            'password', 
+            'password2'
+        ]
 
 
     def create(self, valid_data):
