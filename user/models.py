@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db.models.fields.related import OneToOneField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from user import managers
+from academics import models as acmodels
 
 # Create your models here.
 
@@ -44,10 +44,14 @@ class Staff(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True},
     )
-    employee_id = models.CharField(max_length=250)
+    employee_id = models.CharField(max_length=250, null=True)
+    programme = models.ForeignKey(acmodels.Programme, on_delete=models.DO_NOTHING, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     is_lecturer = models.BooleanField(default=False)
     is_bursar = models.BooleanField(default=False)
+    is_IT = models.BooleanField(default=False)
     is_head_of_department = models.BooleanField(default=False)
+    is_dean_of_faculty = models.BooleanField(default=False)
 
     class Meta:
         """Meta definition for Staff."""
@@ -69,6 +73,7 @@ class Student(models.Model):
     )
     matric_no = models.CharField(max_length=250, null=True, blank=True)
     student_id = models.CharField(max_length=250, null=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         """Meta definition for Student."""
@@ -84,43 +89,46 @@ class Student(models.Model):
 class Biodata(models.Model):
     """Model definition for Biodata."""
 
-    # Model choices
-    marriage_choices = (
-        ('Single', 'Single'),
-        ('Married', 'Married'),
-        ('Divorced', 'Divorced'),
-        ('Other', 'Other'),
-    )
-    gender_choices = (
-        ('Male', 'Male'),
-        ('Female', 'Female'),
-        ('Other', 'Other'),
-    )
-    religion_choices = (
-        ('Christianity', 'Christianity'),
-        ('Islam', 'Islam'),
-        ('Other', 'Other'),
-    )
 
-    user = models.ForeignKey(
+    # Definitions for model choices
+    class MarriageChoices(models.TextChoices):
+        SINGLE = 'Single', _('Single')
+        MARRIED = 'Married', _('Married')
+        DIVORCED = 'Divorced', _('Divorced')
+        OTHER = 'Other', _('Other')
+
+
+    class GenderChoices(models.TextChoices):
+        MALE = 'Male', _('Male')
+        FEMALE = 'Female', _('Female')
+        OTHER = 'Other', _('Other')
+
+
+    class ReligionChoices(models.TextChoices):
+        CHRISTIANITY = 'Christianity', _('Christianity')
+        ISLAM = 'Islam', _('Islam')
+        OTHER = 'Other', _('Other')
+
+
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='biodata'
+        related_name='biodata',
     )
     marital_status = models.CharField(
         max_length=250,
-        choices=marriage_choices,
-        default=marriage_choices[-1][-1]
+        choices=MarriageChoices.choices,
+        default=MarriageChoices.OTHER,
     )
     gender = models.CharField(
         max_length=250,
-        choices=gender_choices,
-        default=gender_choices[-1][-1]
+        choices=GenderChoices.choices,
+        default=GenderChoices.OTHER,
     )
     religion = models.CharField(
         max_length=250,
-        choices=religion_choices,
-        default=religion_choices[-1][-1]
+        choices=ReligionChoices.choices,
+        default=ReligionChoices.OTHER,
     )
     birthday = models.DateField(auto_now=False, auto_now_add=False, null=True)
     nationality = models.CharField(max_length=250, null=True, blank=True)
@@ -149,15 +157,52 @@ class Biodata(models.Model):
 class AcademicData(models.Model):
     """Model definition for AcademicData."""
 
+
+    # Definitions for model choices
+    class QualificationChoices(models.TextChoices):
+        OTHER = 'Other', _('Other') 
+
+
     student = models.OneToOneField(
         Student,
         on_delete=models.CASCADE,
         related_name='academic_data'
     )
-    programme = models.CharField(max_length=250, null=True)
+    # programme = models.CharField(max_length=250, null=True)
+    programme = models.ForeignKey(acmodels.Programme, on_delete=models.CASCADE)
     started = models.DateTimeField(null=True)
     ended = models.DateTimeField(null=True, blank=True)
-    qualification = models.CharField(max_length=250, null=True, blank=True)
+    qualification = models.CharField(
+        max_length=250,
+        choices=QualificationChoices.choices,
+        null=True,
+        default=QualificationChoices.OTHER,
+    )
+
+
+class CourseRegistration(models.Model):
+    """Model definition for CourseRegistration."""
+
+    course = models.ForeignKey(acmodels.Course, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    session = models.CharField(max_length=250, null=True, blank=True)
+    semester = models.CharField(max_length=250, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_completed = models.BooleanField(default=False)
+    is_passed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    class Meta:
+        """Meta definition for CourseRegistration."""
+
+        verbose_name = _('CourseRegistration')
+        verbose_name_plural = _('CourseRegistrations')
+
+    def __str__(self):
+        """String representation of CourseRegistration."""
+        return f"{self.course.name} - registration"
+
+
 
     class Meta:
         """Meta definition for AcademicData."""
@@ -176,7 +221,9 @@ class AcademicData(models.Model):
 class AcademicHistory(models.Model):
     """Model definition for AcademicHistory."""
 
-     # TODO: Add choices for qualification_earned
+    # Definitions for model choices
+    class QualificationChoices(models.TextChoices):
+        OTHER = 'Other', _('Other') 
 
     biodata = models.ForeignKey(
         Biodata,
@@ -186,7 +233,12 @@ class AcademicHistory(models.Model):
     institution = models.CharField(max_length=250, null=True)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
-    qualification_earned = models.CharField(max_length=250, null=True)
+    qualification_earned = models.CharField(
+        max_length=250,
+        choices=QualificationChoices.choices,
+        null=True,
+        default=QualificationChoices.OTHER,
+    )
 
     class Meta:
         """Meta definition for AcademicHistory."""
