@@ -303,6 +303,3 @@ class FamilyData(models.Model):
     def __str__(self):
         """String representation of FamilyData."""
         return self.biodata
-
-
-Fix level model str representation, make max_level nullable in programme model
