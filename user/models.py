@@ -61,7 +61,7 @@ class Staff(models.Model):
 
     def __str__(self):
         """String representation of Staff."""
-        return self.employee_id
+        return f"{self.employee_id}"
 
 
 class Student(models.Model):
@@ -83,7 +83,7 @@ class Student(models.Model):
 
     def __str__(self):
         """String representation of Student."""
-        return self.matric_no if self.matric_no else self.student_id
+        return f"{self.matric_no if self.matric_no else self.student_id}"
 
     
 class Biodata(models.Model):
@@ -179,9 +179,22 @@ class AcademicData(models.Model):
         default=QualificationChoices.OTHER,
     )
 
+    class Meta:
+        """Meta definition for AcademicData."""
+
+        verbose_name = _("AcademicData")
+        verbose_name_plural = _("AcademicData")
+
+    def __str__(self):
+        """String representation of AcademicData."""
+        return f"{self.student.matric_no if self.student.matric_no else self.student.student_id}"
+
 
 class CourseRegistration(models.Model):
     """Model definition for CourseRegistration."""
+
+    # TODO:
+    # convert session and semester to foreignkeys or datetime choices
 
     course = models.ForeignKey(acmodels.Course, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -201,21 +214,6 @@ class CourseRegistration(models.Model):
     def __str__(self):
         """String representation of CourseRegistration."""
         return f"{self.course.name} - registration"
-
-
-
-    class Meta:
-        """Meta definition for AcademicData."""
-
-        verbose_name = _("AcademicData")
-        verbose_name_plural = _("AcademicData")
-
-    def __str__(self):
-        """String representation of AcademicData."""
-        if self.student.matric_no:
-            return self.student.matric_no 
-        else:
-            return self.student.student_id
 
 
 class AcademicHistory(models.Model):
@@ -259,8 +257,8 @@ class HealthData(models.Model):
         on_delete=models.CASCADE,
         related_name='health_data',
     )
-    blood_group = models.CharField(max_length=300, default='')
-    genotype = models.CharField(max_length=300, default='')
+    blood_group = models.CharField(max_length=300, null=True, blank=True)
+    genotype = models.CharField(max_length=300, null=True, blank=True)
     allergies = models.TextField(null=True, blank=True)
     diabetes = models.BooleanField(default=False)
     STIs = models.TextField(null=True, blank=False)
@@ -307,3 +305,4 @@ class FamilyData(models.Model):
         return self.biodata
 
 
+Fix level model str representation, make max_level nullable in programme model
