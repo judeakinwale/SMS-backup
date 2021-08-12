@@ -65,7 +65,7 @@ class Programme(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=250, unique=True)
     code = models.CharField(max_length=250, null=True, blank=True, unique=True)
-    max_level = models.ForeignKey("Level", on_delete=models.DO_NOTHING)
+    max_level = models.ForeignKey("Level", on_delete=models.DO_NOTHING, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -134,4 +134,4 @@ class Level(models.Model):
 
     def __str__(self):
         """String representation of Level"""
-        return f'{self.code}'
+        return f"{self.code}"
