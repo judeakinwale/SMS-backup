@@ -1,10 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-# from user import models as umodels
 
 # Create your models here.
-
 
 class Faculty(models.Model):
     """Model definition for Faculty."""
@@ -69,7 +67,6 @@ class Programme(models.Model):
     code = models.CharField(max_length=250, null=True, blank=True, unique=True)
     max_level = models.ForeignKey("Level", on_delete=models.DO_NOTHING)
     description = models.TextField(null=True, blank=True)
-    # lecturers =  models.ManyToManyField(umodels.Staff)
     is_active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
@@ -98,7 +95,6 @@ class Course(models.Model):
         null=True,
         blank=True
     )
-    # lecturers = models.ManyToManyField(umodels.Staff, limit_choices_to={'is_lecturer': True})
     is_active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
@@ -116,7 +112,19 @@ class Course(models.Model):
 class Level(models.Model):
     """Model definition for Level."""
 
-    code = models.IntegerField(unique=True)
+    class LevelChoices(models.IntegerChoices):
+        ONE = 100
+        TWO = 200
+        THREE = 300
+        FOUR = 400
+        FIVE = 500
+
+
+    code = models.IntegerField(
+        choices=LevelChoices.choices,
+        null=True,
+        default=LevelChoices.ONE, 
+    )
 
     class Meta:
         """Meta definition for Level."""
