@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets, authentication, permissions
 from rest_framework.serializers import Serializer
-from information import models, serializers, pagination
+from information import models, serializers
 
 # Create your views here.
 
@@ -10,7 +10,6 @@ class InformationViewSet(viewsets.ModelViewSet):
     queryset = models.Information.objects.all()
     serializer_class = serializers.InformationSerializer
     permission_classes = [permissions.IsAuthenticated | permissions.IsAdminUser]
-    pagination_class = pagination.PostPageNumberPagination
     
 
     def perform_create(self, serializer):
