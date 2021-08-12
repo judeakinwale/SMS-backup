@@ -24,4 +24,5 @@ urlpatterns = [
     path("assessment/", include('assessment.urls', namespace='assessment')),
     path("academics/", include('academics.urls', namespace='academics')),
     path("user/", include('user.urls', namespace='user')),
+    path("core/", include('core.urls', namespace='core')),
 ]
