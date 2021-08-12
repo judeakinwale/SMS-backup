@@ -32,8 +32,7 @@ def sample_quiz_taker(student, quiz, **kwargs):
     """create and return a sample quiz_taker"""
     defaults = {}
     defaults.update(kwargs)
-    quiz_taker = models.QuizTaker.objects.create(student=student, **defaults)
-    quiz_taker.quiz.add(quiz)
+    quiz_taker = models.QuizTaker.objects.create(student=student, quiz=quiz, **defaults)
     return quiz_taker
 
 
@@ -131,7 +130,7 @@ class PrivateQuizTakerApiTest(TestCase):
         quiz_serializer = serializers.QuizSerializer(self.quiz, context=serializer_context)
         payload = {
             'student': self.user.id,
-            'quiz': [quiz_serializer.data['url'],],
+            'quiz': quiz_serializer.data['url'],
         }
 
         res = self.client.post(QUIZTAKER_URL, payload)
@@ -165,7 +164,7 @@ class PrivateQuizTakerApiTest(TestCase):
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
             'student': self.user.id,
-            'quiz': [quiz_serializer.data['url'],]
+            'quiz': quiz_serializer.data['url'],
         }
 
         url = quiz_taker_detail_url(quiz_taker.id)
