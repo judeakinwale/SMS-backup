@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # 'User',
 
     'django_extensions',
+    'drf_yasg',
 
     'rest_framework',
     'rest_framework.authtoken',
