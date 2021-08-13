@@ -1,1 +1,1 @@
-web: gunicorn blob_api.wsgi --log-file -
+web: gunicorn SMS.wsgi --log-file -
