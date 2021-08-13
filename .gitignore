@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,python
 
+srs.md
+requirements_original.txt
+
 ### Django ###
 *.log
 *.pot
