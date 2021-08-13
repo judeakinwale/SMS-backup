@@ -9,6 +9,8 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
     question = serializers.HyperlinkedRelatedField(
         queryset=models.Question.objects.all(),
         view_name='assessment:question-detail',
+        allow_null=True,
+        required=False,
     )
 
     class Meta:
@@ -31,6 +33,8 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     quiz = serializers.HyperlinkedRelatedField(
         queryset=models.Quiz.objects.all(),
         view_name='assessment:quiz-detail',
+        allow_null=True,
+        required=False,
     )
     answer_set = AnswerSerializer(many=True, allow_null=True, required=False)
 
@@ -47,6 +51,19 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assessment:question-detail'}
         }
+
+    def create(self, validated_data):
+        """create a question and create attached quesions, if specified in answer_set"""
+        if 'answer_set' not in validated_data:
+            question = super().create(validated_data)
+        else:
+            answer_set_data = validated_data.pop('answer_set')
+            question = super().create(validated_data)
+            for data in answer_set_data:
+                data['question'] = question
+                answer = models.Answer.objects.create(**data)
+        
+        return question
 
 
 class QuizSerializer(serializers.HyperlinkedModelSerializer):
@@ -72,6 +89,31 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assessment:quiz-detail'}
         }
+
+    def create(self, validated_data):
+        """create a quiz and create attached quesions, if specified in question_set"""
+        if 'question_set' not in validated_data:
+            quiz = super().create(validated_data)
+        else:
+            question_set_data = validated_data.pop('question_set')
+            quiz = super().create(validated_data)
+            for question_data in question_set_data:
+                question_data['quiz'] = quiz
+
+                if 'answer_set' not in question_data:
+                    question = models.Question.objects.create(**question_data)
+                else:
+                    answer_set_data = question_data.pop('answer_set')
+                    # print(f"\n question_data : {question_data} \n")
+                    question = models.Question.objects.create(**question_data)
+                    # print(f"\n answer_set_data : {answer_set_data} \n")
+                    for answer_data in answer_set_data:
+                        # print(f"\n answer_data : {answer_data} \n")
+                        answer_data['question'] = question
+                        answer = models.Answer.objects.create(**answer_data)
+                        # print(f"\n answer : {answer} \n")
+        
+        return quiz
 
 
 class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):

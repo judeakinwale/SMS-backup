@@ -178,3 +178,25 @@ class PrivateQuestionApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, question, question_serializer)
+
+    def test_create_question_with_answers(self):
+        """test creating a question with answers attached"""
+        quiz = sample_quiz(supervisor=self.user)
+        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
+        payload = {
+            'quiz': quiz_serializer.data['url'],
+            'label': 'Test label 3',
+            'answer_set': [
+                {'text': 'Question 1',},
+                {'text': 'Question 2',},
+                {'text': 'Question 3',},
+            ],
+        }
+
+        res = self.client.post(QUESTION_URL, payload, format='json')
+
+        question = models.Question.objects.get(id=res.data['id'])
+        question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(res.data['answer_set'], [])

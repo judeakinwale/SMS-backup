@@ -164,3 +164,51 @@ class PrivateQuizApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, quiz, quiz_serializer)
+
+    def test_create_quiz_with_questions(self):
+        """test creating a quiz with questions attached"""
+        payload = {
+            'supervisor': self.user.id,
+            'name': 'Test quiz 4',
+            'question_set': [
+                {'label': 'Test label 2',},
+                {'label': 'Test label 3',},
+            ],
+        }
+
+        res = self.client.post(QUIZ_URL, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(res.data['question_set'], [])
+
+    def test_create_quiz_with_questions_and_answers(self):
+        """test creating a quiz with questions attached and answers attached to the questions"""
+        payload = {
+            'supervisor': self.user.id,
+            'name': 'Test quiz 4',
+            'question_set': [
+                {
+                    'label': 'Test label 2',
+                    'answer_set': [
+                        {'text': 'Question 1',},
+                        {'text': 'Question 2',},
+                        {'text': 'Question 3',},
+                    ],
+                },
+                {
+                    'label': 'Test label 3',
+                    'answer_set': [
+                        {'text': 'Question 1',},
+                        {'text': 'Question 2',},
+                        {'text': 'Question 3',},
+                    ],
+                },
+            ],
+        }
+
+        res = self.client.post(QUIZ_URL, payload, format='json')
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(res.data['question_set'], [])
+        self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])
+
