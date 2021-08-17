@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from academics.models import Course
+from user.models import Student
 
 # Create your models here.
 
@@ -9,7 +10,11 @@ from academics.models import Course
 class Quiz(models.Model):
     """Model definition for Quiz."""
 
-    supervisor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    supervisor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        limit_choices_to={'is_staff': True}
+    )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=250)
     description = models.TextField(null=True, blank=True)

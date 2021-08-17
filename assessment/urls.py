@@ -8,7 +8,7 @@ router = DefaultRouter()
 router.register('quiz', views.QuizViewSet)
 router.register('question', views.QuestionViewSet)
 router.register('answer', views.AnswerViewSet)
-router.register('quizTaker', views.QuizTakerViewSet)
+router.register('quiztaker', views.QuizTakerViewSet)
 router.register('response', views.ResponseViewSet)
 router.register('grade', views.GradeViewSet)
 

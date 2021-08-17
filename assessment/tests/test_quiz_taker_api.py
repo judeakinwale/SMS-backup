@@ -73,7 +73,7 @@ class PrivateQuizTakerApiTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
+        self.user = get_user_model().objects.create_superuser(
             email='test@email.com',
             password='testpass'
         )

@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from assessment import models, serializers
+from user import models as umodels
+import user
 
 
 GRADE_URL = reverse('assessment:grade-list')
@@ -54,7 +56,13 @@ class PrivateGradeApiTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
+        # self.user = get_user_model().objects.create_staff(
+        #     email='test@email.com',
+        #     password='testpass'
+        # )
+        # self.staff = umodels.Staff.objects.create(user=self.user ,is_IT=True)
+        # self.user.staff_set.add(self.staff)
+        self.user = get_user_model().objects.create_superuser(
             email='test@email.com',
             password='testpass'
         )

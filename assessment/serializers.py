@@ -154,7 +154,7 @@ class ResponseSerializer(serializers.HyperlinkedModelSerializer):
 
     quiz_taker = serializers.HyperlinkedRelatedField(
         queryset=models.QuizTaker.objects.all(),
-        view_name='assessment:quiz_taker-detail',
+        view_name='assessment:quiztaker-detail',
     )
     question = serializers.HyperlinkedRelatedField(
         queryset=models.Question.objects.all(),
@@ -200,5 +200,5 @@ class GradeSerializer(serializers.HyperlinkedModelSerializer):
             'timestamp',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'assessment:quiztaker-detail'}
+            'url': {'view_name': 'assessment:grade-detail'}
         }
