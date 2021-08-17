@@ -16,6 +16,7 @@ def user_detail_url(user_id):
 
 class PublicUserApiTests(TestCase):
     """test the user api (public)"""
+    
     def setUp(self):
         self.client = APIClient()
         self.payload_full = {
@@ -28,39 +29,6 @@ class PublicUserApiTests(TestCase):
             'email': 'testuser@gmail.com',
             'password': 'testpass123',
         }
-
-    # def test_create_Valid_user_sucess(self):
-    #     """test creating a user with a valid payload is successful"""
-    #     res = self.client.post(CREATE_USER_URL, self.payload_full)
-    #     print(res.data)
-    #     # user = get_user_model().objects.get(**res.data)
-    #     # user = get_user_model().objects.filter(**res.data)
-    #     user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
-    #     print(user)
-
-    #     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-    #     self.assertTrue(user.check_password(self.payload_full['password']))
-    #     self.assertNotIn('password', res.data)
-
-    def test_create_existing_user_fails(self):
-        """test creating a user that already exists fails"""
-        get_user_model().objects.create_user(**self.payload_full)
-        res = self.client.post(CREATE_USER_URL, self.payload_full)
-
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_password_too_short(self):
-        """test creating new user fails if password is not more than 5 characters"""
-        payload = self.payload_full
-        payload['password'] = 'pw'
-
-        res = self.client.post(CREATE_USER_URL, payload)
-        user_exists = get_user_model().objects.filter(
-            email=payload['email']
-        ).exists()
-
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(user_exists)
 
     def test_create_token_for_users(self):
         """test that a token is created for the user"""
@@ -103,15 +71,43 @@ class PublicUserApiTests(TestCase):
 
 class PrivateUserApiTests(TestCase):
     """test the user api requests that require authentication"""
+    
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
+        self.user = get_user_model().objects.create_superuser(
             email='testuser@gmail.com',
             password='testuserpass',
             first_name='test',
             last_name='user 2',
         )
+        self.payload_full = {
+            'email': 'test@gmail.com',
+            'first_name': 'test',
+            'last_name': 'user',
+            'password': 'testpass',
+        }
+        self.payload = {
+            'email': 'testuser@gmail.com',
+            'password': 'testpass123',
+        }
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
+
+    def test_create_Valid_user_sucess(self):
+        """test creating a user with a valid payload is successful"""
+        payload = {
+            'email': 'test@gmail.com',
+            'first_name': 'test',
+            'last_name': 'user',
+            'password': 'testpass',
+        }
+
+        res = self.client.post(CREATE_USER_URL, payload)
+        
+        user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(user.check_password(payload['password']))
+        self.assertNotIn('password', res.data)
 
     def test_retrieve_profile_successful(self):
         """test retrieving the account page for an authenticated user"""
@@ -122,6 +118,26 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(res.data['last_name'], self.user.last_name)
         self.assertEqual(res.data['email'], self.user.email)
 
+    def test_create_existing_user_fails(self):
+        """test creating a user that already exists fails"""
+        get_user_model().objects.create_user(**self.payload_full)
+        res = self.client.post(CREATE_USER_URL, self.payload_full)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_too_short(self):
+        """test creating new user fails if password is not more than 5 characters"""
+        payload = self.payload_full
+        payload['password'] = 'pw'
+
+        res = self.client.post(CREATE_USER_URL, payload)
+
+        user_exists = get_user_model().objects.filter(
+            email=payload['email']
+        ).exists()
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(user_exists)
 
     def test_post_account_not_allowed(self):
         """test that POST is not allowed on the account url"""

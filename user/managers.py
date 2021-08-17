@@ -6,6 +6,7 @@ from django.contrib.auth.models import  BaseUserManager
 
 class UserManager(BaseUserManager):
     """user manager for the custom user model"""
+    
     def create_user(self, email, password=None, **kwargs):
         """create and save a new user"""
         if not email:
@@ -15,9 +16,16 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password):
+    def create_staff(self, email, password, **kwargs):
+        """create and save a new staff"""
+        user = self.create_user(email, password, **kwargs)
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **kwargs):
         """create and save a new superuser"""
-        user = self.create_user(email, password)
+        user = self.create_user(email, password, **kwargs)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)

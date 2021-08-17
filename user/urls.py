@@ -18,8 +18,6 @@ router.register('family_data', views.FamilyDataViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    # path('user/', views.CreateUserApiView.as_view(), name="create"),
-    # path('create/', views.CreateUserApiView.as_view(), name="create"),
     path('account/', views.ManageUserApiView.as_view(), name="account"),
     path("token/", JWTViews.TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/verify", JWTViews.TokenVerifyView.as_view(), name="token_verify"),

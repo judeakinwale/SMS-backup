@@ -61,7 +61,7 @@ class Staff(models.Model):
 
     def __str__(self):
         """String representation of Staff."""
-        return f"{self.employee_id}"
+        return f"{self.employee_id or self.user.email}"
 
 
 class Student(models.Model):
@@ -83,7 +83,8 @@ class Student(models.Model):
 
     def __str__(self):
         """String representation of Student."""
-        return f"{self.matric_no if self.matric_no else self.student_id}"
+        # return f"{self.matric_no if self.matric_no else self.student_id}"
+        return f"{self.matric_no or self.student_id or self.user.email}"
 
     
 class Biodata(models.Model):
@@ -168,10 +169,9 @@ class AcademicData(models.Model):
         on_delete=models.CASCADE,
         related_name='academic_data'
     )
-    # programme = models.CharField(max_length=250, null=True)
-    programme = models.ForeignKey(acmodels.Programme, on_delete=models.CASCADE)
-    started = models.DateTimeField(null=True)
-    ended = models.DateTimeField(null=True, blank=True)
+    programme = models.ForeignKey(acmodels.Programme, on_delete=models.CASCADE, null=True, blank=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True, blank=True)
     qualification = models.CharField(
         max_length=250,
         choices=QualificationChoices.choices,
@@ -229,8 +229,8 @@ class AcademicHistory(models.Model):
         related_name='academic_history',
     )
     institution = models.CharField(max_length=250, null=True)
-    start_date = models.DateTimeField(null=True)
-    end_date = models.DateTimeField(null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
     qualification_earned = models.CharField(
         max_length=250,
         choices=QualificationChoices.choices,
