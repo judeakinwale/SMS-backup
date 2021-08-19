@@ -141,7 +141,7 @@ class ModelTest(TestCase):
         academic_data = umodels.AcademicData.objects.create(
             student=student,
             programme=programme,
-            started=timezone.now(),
+            start_date=timezone.now(),
         )
         self.assertEqual(str(academic_data), f"{academic_data.student.matric_no or academic_data.student.student_id}")
 
