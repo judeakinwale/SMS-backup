@@ -4,6 +4,9 @@ from rest_framework import permissions
 class IsOwner(permissions.BasePermission):
     """Allows full access to owner / creator"""
 
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated)
+
     def has_object_permission(self, request, view, obj):
         # # Read and write permissions are only allowed to the owner of the snippet.
         # return obj.owner == request.user
