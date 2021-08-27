@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # 'User',
 
     'django_extensions',
+    'django_filters',
     'drf_yasg',
 
     'rest_framework',

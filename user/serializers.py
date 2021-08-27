@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from user import models
+from academics import models as amodels
 
 
 class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the AcademicData model"""
 
-    student = serializers.HyperlinkedRelatedField(read_only=True, view_name='user:student-detail')
+    student = serializers.HyperlinkedRelatedField(queryset=models.Student.objects.all(), view_name='user:student-detail')
 
     class Meta:
         model = models.AcademicData
@@ -20,7 +21,7 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             'qualification',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'user:academic_data-detail'},
+            'url': {'view_name': 'user:academicdata-detail'},
         }
 
 
@@ -41,7 +42,7 @@ class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
             'qualification_earned',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'user:academic_history-detail'},
+            'url': {'view_name': 'user:academichistory-detail'},
         }
 
 
@@ -66,7 +67,7 @@ class HealthDataSerializer(serializers.HyperlinkedModelSerializer):
             'respiratory_problems',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'user:health_data-detail'},
+            'url': {'view_name': 'user:healthdata-detail'},
         }
 
 
@@ -91,14 +92,14 @@ class FamilyDataSerializer(serializers.HyperlinkedModelSerializer):
             'guardian_address',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'user:family_data-detail'},
+            'url': {'view_name': 'user:familydata-detail'},
         }
 
 
 class BiodataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Biodata model"""
 
-    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user:user-detail')
+    user = serializers.HyperlinkedRelatedField(queryset=get_user_model().objects.all(), view_name='user:user-detail')
     academic_history = AcademicHistorySerializer(many=True, allow_null=True, required=False)
     health_data = HealthDataSerializer(allow_null=True, required=False)
     family_data = FamilyDataSerializer(allow_null=True, required=False)
@@ -130,22 +131,40 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         }
 
     def create(self, validated_data):
-        academic_history_data = validated_data.pop('academic_history')
+        if 'academic_history' in validated_data:
+            academic_history_data = validated_data.pop('academic_history')
         # if validated_data['academic_history'] == "" or []:
         #     academic_history = models.AcademicHistory.objects.create(biodata=biodata)
-        health_data_data = validated_data.pop('health_data')
+        if 'health_data' in validated_data:
+            health_data_data = validated_data.pop('health_data')
         # if validated_data['health_data'] == "" or []:
         #     health_data= models.HealthData.objects.create(biodata=biodata)
-        family_data_data = validated_data.pop('family_data')
+        if 'family_data' in validated_data:
+            family_data_data = validated_data.pop('family_data')
         # if validated_data['family_data'] == "" or []:
         #     family_data = models.FamilyData.objects.create(biodata=biodata)
         
         biodata = super().create(validated_data)
         # academic_history = biodata.academic_history.add(**academic_history_data)
-        academic_history = models.AcademicHistory.objects.create(biodata=biodata, **academic_history_data)
-        health_data= models.HealthData.objects.create(biodata=biodata, **health_data_data)
-        family_data = models.FamilyData.objects.create(biodata=biodata, **family_data_data)
-        print(validated_data)
+        # if academic_history_data:
+
+        try:
+            academic_history = models.AcademicHistory.objects.create(biodata=biodata, **academic_history_data)
+        except:
+            pass
+        # if health_data_data:
+
+        try:
+            health_data= models.HealthData.objects.create(biodata=biodata, **health_data_data)
+        except:
+            pass
+        # if family_data_data:
+
+        try:
+            family_data = models.FamilyData.objects.create(biodata=biodata, **family_data_data)
+        except:
+            pass
+        # print(validated_data)
         return biodata
 
 
@@ -249,4 +268,30 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:student-detail'},
+        }
+
+
+class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the CourseRegistration model"""
+
+    course = serializers.HyperlinkedRelatedField(queryset=amodels.Course.objects.all(), view_name='academics:course-detail')
+    student = serializers.HyperlinkedRelatedField(queryset=models.Student.objects.all(), view_name='user:student-detail')
+    # academic_data = AcademicDataSerializer(allow_null=True, required=False)
+
+    class Meta:
+        model = models.CourseRegistration
+        fields = [
+            'id',
+            'url',
+            'course',
+            'student',
+            'session',
+            'semester',
+            'is_active',
+            'is_completed',
+            'is_passed',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:courseregistration-detail'},
         }

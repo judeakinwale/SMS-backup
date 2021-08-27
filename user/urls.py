@@ -15,6 +15,7 @@ router.register('academic_data', views.AcademicDataViewSet)
 router.register('academic_history', views.AcademicHistoryViewSet)
 router.register('health_data', views.HealthDataViewSet)
 router.register('family_data', views.FamilyDataViewSet)
+router.register('course_registration', views.CourseRegistrationViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
