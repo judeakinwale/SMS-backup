@@ -18,9 +18,11 @@ class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=250)
     description = models.TextField(null=True, blank=True)
+    score = models.IntegerField(null=True, blank=True)
     max_score = models.IntegerField(default=10)
     grade = models.ForeignKey('Grade', on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True)
+    is_completed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
@@ -34,6 +36,13 @@ class Quiz(models.Model):
     def __str__(self):
         """String representation of Quiz."""
         return self.name
+
+    # def score(self):
+    #     quiz_taker = QuizTaker.objects.filter(quiz=)
+    #     try:
+    #         for question in self.question_set.all():
+    #             for answer in question.answer_set.all():
+    #                 pass
 
 
 class Question(models.Model):

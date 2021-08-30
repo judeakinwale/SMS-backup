@@ -1,6 +1,30 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from assessment import models
+from academics import models as amodels
+
+
+class GradeSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Grade model"""
+
+    # quiz = serializers.HyperlinkedRelatedField(
+    #     queryset=models.Quiz.objects.all(),
+    #     view_name='assessment:quiz-detail',
+    # )
+
+    class Meta:
+        model = models.Grade
+        fields = [
+            'id',
+            'url',
+            # 'quiz',
+            'score',
+            'max_score',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'assessment:grade-detail'}
+        }
 
 
 class AnswerSerializer(serializers.HyperlinkedModelSerializer):
@@ -71,6 +95,9 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
 
     supervisor = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
     question_set = QuestionSerializer(many=True, allow_null=True, required=False)
+    course = serializers.HyperlinkedRelatedField(queryset=amodels.Course.objects.all(), view_name='academics:course-detail', allow_null=True, required=False)
+    # grade = GradeSerializer(allow_null=True, required=False)
+    grade = serializers.HyperlinkedRelatedField(queryset=models.Grade.objects.all(), view_name='assessment:grade-detail',  allow_null=True, required=False)
 
     class Meta:
         model = models.Quiz
@@ -80,10 +107,13 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             'supervisor',
             'course',
             'name',
+            'score',
             'max_score',
+            'grade',
             'question_set',
             'description',
             'is_active',
+            'is_completed',
             'timestamp',
         ]
         extra_kwargs = {
@@ -92,6 +122,11 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         """create a quiz and create attached quesions, if specified in question_set"""
+        try:
+            grade_data = validated_data.pop('grade')
+        except:
+            pass
+
         if 'question_set' not in validated_data:
             quiz = super().create(validated_data)
         else:
@@ -112,7 +147,14 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                         answer_data['question'] = question
                         answer = models.Answer.objects.create(**answer_data)
                         # print(f"\n answer : {answer} \n")
-        
+
+        try:
+            grade = models.Grade.objects.create(grade_data)
+            quiz.grade = grade   
+            quiz.save()
+        except:
+            pass
+
         return quiz
 
 
@@ -181,24 +223,3 @@ class ResponseSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class GradeSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the Grade model"""
-
-    # quiz = serializers.HyperlinkedRelatedField(
-    #     queryset=models.Quiz.objects.all(),
-    #     view_name='assessment:quiz-detail',
-    # )
-
-    class Meta:
-        model = models.Grade
-        fields = [
-            'id',
-            'url',
-            # 'quiz',
-            'score',
-            'max_score',
-            'timestamp',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'assessment:grade-detail'}
-        }
