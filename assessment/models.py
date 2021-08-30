@@ -101,6 +101,27 @@ class QuizTaker(models.Model):
         """String representation of QuizTaker."""
         return f"{self.student}"
 
+    def get_score(self):
+        if self.grade:
+            self.grade.max_score = self.quiz.max_score
+            self.grade.save()
+        else:
+            self.grade = Grade.objects.create(max_score=self.quiz.max_score)
+        
+        score = 0
+        if self.response_set.all():
+            for response in self.response_set.all():
+                if response.answer and (response.answer.is_correct is True):
+                    score += 1
+
+        if self.grade.score and self.grade.score == score:
+            return self.grade.score
+        else:
+            self.grade.score = score
+            self.grade.save()
+            return self.grade.score
+        return None
+
 
 class Response(models.Model):
     """Model definition for Response."""
