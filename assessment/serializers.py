@@ -97,7 +97,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
     question_set = QuestionSerializer(many=True, allow_null=True, required=False)
     course = serializers.HyperlinkedRelatedField(queryset=amodels.Course.objects.all(), view_name='academics:course-detail', allow_null=True, required=False)
     # grade = GradeSerializer(allow_null=True, required=False)
-    grade = serializers.HyperlinkedRelatedField(queryset=models.Grade.objects.all(), view_name='assessment:grade-detail',  allow_null=True, required=False)
+    # grade = serializers.HyperlinkedRelatedField(queryset=models.Grade.objects.all(), view_name='assessment:grade-detail',  allow_null=True, required=False)
 
     class Meta:
         model = models.Quiz
@@ -107,9 +107,9 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             'supervisor',
             'course',
             'name',
-            'score',
+            # 'score',
             'max_score',
-            'grade',
+            # 'grade',
             'question_set',
             'description',
             'is_active',

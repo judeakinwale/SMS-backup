@@ -120,7 +120,7 @@ class QuizTaker(models.Model):
             self.grade.score = score
             self.grade.save()
             return self.grade.score
-        return None
+        return score
 
 
 class Response(models.Model):
