@@ -101,7 +101,7 @@ class QuizTaker(models.Model):
         """String representation of QuizTaker."""
         return f"{self.student}"
 
-    def get_score(self):
+    def score(self):
         if self.grade:
             self.grade.max_score = self.quiz.max_score
             self.grade.save()

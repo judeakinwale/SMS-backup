@@ -174,7 +174,8 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
-    score = serializers.SerializerMethodField()
+    # score = serializers.SerializerMethodField()
+    score = serializers.ReadOnlyField()
 
     class Meta:
         model = models.QuizTaker
@@ -192,8 +193,8 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
             'url': {'view_name': 'assessment:quiztaker-detail'}
         }
 
-    def get_score(self, obj):
-        return obj.get_score()
+    # def get_score(self, obj):
+    #     return obj.get_score()
 
 
 class ResponseSerializer(serializers.HyperlinkedModelSerializer):
