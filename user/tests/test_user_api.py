@@ -159,3 +159,86 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(self.user.last_name, payload['last_name'])
         self.assertTrue(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_create_user_with_attached_biodata(self):
+        """test creating a user with a biodata attached"""
+        payload = {
+            'email': 'test@gmail.com',
+            'first_name': 'name 3',
+            'last_name': 'user',
+            'password': 'testpass',
+            'biodata': {
+                'phone_no_1': '01234765',
+            },
+        }
+
+        res = self.client.post(CREATE_USER_URL, payload, format='json')
+        # print(res.data)
+        
+        user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(user.check_password(payload['password']))
+        self.assertNotIn('password', res.data)
+        self.assertNotEqual(res.data['biodata'], [])
+
+    def test_partial_update_user_with_attached_biodata(self):
+        """test updating a user with a biodata attached using patch"""
+        user = get_user_model().objects.create_user(**self.payload_full)
+        payload = {
+            'first_name': 'test',
+            'last_name': 'user',
+            'password': 'testpass',
+            'biodata': {
+                'phone_no_1': '01234765',
+            },
+        }
+
+        url = user_detail_url(user.id)
+        # print(user.id)
+        res = self.client.patch(url, payload, format='json')
+        # print(res)
+        # print(res.data)
+        
+        # user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
+
+        user.refresh_from_db()
+        self.assertEqual(user.first_name, payload['first_name'])
+        self.assertEqual(user.last_name, payload['last_name'])
+        self.assertTrue(user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        # self.assertTrue(user.check_password(payload['password']))
+        self.assertNotIn('password', res.data)
+        self.assertNotEqual(res.data['biodata'], [])
+
+    def test_full_update_user_with_attached_biodata(self):
+        """test updating a user with a biodata attached using put"""
+        user = get_user_model().objects.create_user(**self.payload_full)
+        payload = {
+            'email': 'test@gmail.com',
+            'first_name': 'test',
+            'last_name': 'user',
+            'password': 'testpass',
+            'biodata': {
+                'phone_no_1': '01234765',
+            },
+        }
+
+        url = user_detail_url(user.id)
+        # print(user.id)
+        res = self.client.put(url, payload, format='json')
+        # print(res)
+        # print(res.data)
+        
+        # user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
+
+        user.refresh_from_db()
+        self.assertEqual(user.first_name, payload['first_name'])
+        self.assertEqual(user.last_name, payload['last_name'])
+        self.assertTrue(user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        # self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        # self.assertTrue(user.check_password(payload['password']))
+        self.assertNotIn('password', res.data)
+        self.assertNotEqual(res.data['biodata'], [])
