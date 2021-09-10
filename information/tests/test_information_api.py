@@ -184,3 +184,98 @@ class PrivateInformationApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, info, info_serializer)
+
+    def test_create_information_with_images(self):
+        """test creating an information with attached images"""
+        scope_serializer = serializers.ScopeSerializer(sample_scope(), context=serializer_context)
+        payload = {
+            'source': self.user.id,
+            'scope': scope_serializer.data['url'],
+            'title': 'Test title 2',
+            'body': 'body for test title 2',
+            'images': [
+                {
+                    # 'information': '',
+                    'description': 'Image Description',
+                },
+            ]
+        }
+
+        res = self.client.post(INFO_URL, payload, format='json')
+        # print(res.data)
+
+        info = models.Information.objects.get(id=res.data['id'])
+        info_serializer = serializers.InformationSerializer(info, context=serializer_context)
+        # print(f'{res.data} \n {payload} \n {info_serializer.data}')
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(res.data['images'], [])
+        # test_all_model_attributes(self, payload, info, info_serializer)
+
+    def test_partial_update_information_with_images(self):
+        """test updating an information with attached images using patch"""
+        info = sample_information(source=self.user)
+        scope = sample_scope(description='Private', is_general=False)
+        scope_serializer = serializers.ScopeSerializer(sample_scope(), context=serializer_context)
+        payload = {
+            # 'source': self.user.id,
+            'scope': scope_serializer.data['url'],
+            # 'title': 'Test title 2',
+            'body': 'body for test title 2',
+            'images': [
+                {
+                    # 'information': '',
+                    'description': 'Image Description',
+                },
+            ]
+        }
+
+        url = info_detail_url(info.id)
+        res = self.client.patch(url, payload, format='json')
+        # print(res.data)
+
+        info.refresh_from_db()
+        info_serializer = serializers.InformationSerializer(info, context=serializer_context)
+
+
+        # info = models.Information.objects.get(id=res.data['id'])
+        # info_serializer = serializers.InformationSerializer(info, context=serializer_context)
+        # print(f'{res.data} \n {payload} \n {info_serializer.data}')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['images'], [])
+        # test_all_model_attributes(self, payload, info, info_serializer)
+
+    def test_full_update_information_with_images(self):
+        """test updating an information with attached images using put"""
+        info = sample_information(source=self.user)
+        scope = sample_scope(description='Private', is_general=False)
+        scope_serializer = serializers.ScopeSerializer(sample_scope(), context=serializer_context)
+        payload = {
+            'source': self.user.id,
+            'scope': scope_serializer.data['url'],
+            'title': 'Test title 3',
+            'body': 'body for test title 3',
+            'images': [
+                {
+                    # 'information': '',
+                    'description': 'Image Description',
+                },
+            ]
+        }
+
+        url = info_detail_url(info.id)
+        res = self.client.put(url, payload, format='json')
+        # print(res.data)
+
+        info.refresh_from_db()
+        info_serializer = serializers.InformationSerializer(info, context=serializer_context)
+
+
+        # info = models.Information.objects.get(id=res.data['id'])
+        # info_serializer = serializers.InformationSerializer(info, context=serializer_context)
+        # print(f'{res.data} \n {payload} \n {info_serializer.data}')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['images'], [])
+        # test_all_model_attributes(self, payload, info, info_serializer)
