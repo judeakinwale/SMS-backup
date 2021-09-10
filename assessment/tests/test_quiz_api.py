@@ -188,19 +188,19 @@ class PrivateQuizApiTest(TestCase):
             'name': 'Test quiz 4',
             'question_set': [
                 {
-                    'label': 'Test label 2',
+                    'label': 'Test Question 2',
                     'answer_set': [
-                        {'text': 'Question 1',},
-                        {'text': 'Question 2',},
-                        {'text': 'Question 3',},
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
                     ],
                 },
                 {
-                    'label': 'Test label 3',
+                    'label': 'Test Question 3',
                     'answer_set': [
-                        {'text': 'Question 1',},
-                        {'text': 'Question 2',},
-                        {'text': 'Question 3',},
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
                     ],
                 },
             ],
@@ -212,3 +212,74 @@ class PrivateQuizApiTest(TestCase):
         self.assertNotEqual(res.data['question_set'], [])
         self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])
 
+    def test_partial_update_quiz_with_questions_and_answers(self):
+        """test updating a quiz with questions attached and answers attached to the questions using patch"""
+        quiz = sample_quiz(supervisor=self.user)
+        payload = {
+            'supervisor': self.user.id,
+            'name': 'Test quiz 4',
+            'question_set': [
+                {
+                    'label': 'Test Question 2',
+                    'answer_set': [
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
+                    ],
+                },
+                {
+                    'label': 'Test Question 3',
+                    'answer_set': [
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
+                    ],
+                },
+            ],
+        }
+
+        url = quiz_detail_url(quiz.id)
+        res = self.client.patch(url, payload, format='json')
+
+        quiz.refresh_from_db()
+        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['question_set'], [])
+        self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])
+
+    def test_full_update_quiz_with_questions_and_answers(self):
+        """test updating a quiz with questions attached and answers attached to the questions using put"""
+        quiz = sample_quiz(supervisor=self.user)
+        payload = {
+            'supervisor': self.user.id,
+            'name': 'Test quiz 4',
+            'question_set': [
+                {
+                    'label': 'Test Question 2',
+                    'answer_set': [
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
+                    ],
+                },
+                {
+                    'label': 'Test Question 3',
+                    'answer_set': [
+                        {'text': 'Answer 1',},
+                        {'text': 'Answer 2',},
+                        {'text': 'Answer 3',},
+                    ],
+                },
+            ],
+        }
+
+        url = quiz_detail_url(quiz.id)
+        res = self.client.put(url, payload, format='json')
+
+        quiz.refresh_from_db()
+        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['question_set'], [])
+        self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])

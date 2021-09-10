@@ -200,3 +200,49 @@ class PrivateQuestionApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertNotEqual(res.data['answer_set'], [])
+
+    def test_partial_update_question_with_questions_and_answers(self):
+        """test updating a question with questions attached and answers attached to the questions using patch"""
+        question = sample_question(quiz=self.quiz)
+        payload = {
+            'label': 'Test Question 2',
+            'answer_set': [
+                {'text': 'Answer 1',},
+                {'text': 'Answer 2',},
+                {'text': 'Answer 3',},
+            ],
+}
+
+        url = question_detail_url(question.id)
+        res = self.client.patch(url, payload, format='json')
+
+        question.refresh_from_db()
+        # question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['answer_set'], [])
+        # self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])
+
+    def test_full_update_question_with_questions_and_answers(self):
+        """test updating a question with questions attached and answers attached to the questions using put"""
+        question = sample_question(quiz=self.quiz, label='label2')
+        quiz = sample_quiz(supervisor=self.user)
+        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
+        payload = {
+            'quiz': quiz_serializer.data['url'],
+            'label': 'Test Question 3',
+            'answer_set': [
+                {'text': 'Answer 1',},
+                {'text': 'Answer 2',},
+                {'text': 'Answer 3',},
+            ],
+        }
+
+        url = question_detail_url(question.id)
+        res = self.client.put(url, payload, format='json')
+
+        question.refresh_from_db()
+        # question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data['answer_set'], [])
