@@ -32,7 +32,11 @@ class InformationImageSerializer(serializers.HyperlinkedModelSerializer):
 class InformationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Information model"""
 
-    source = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(), allow_null=True, required=False)
+    source = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.all(),
+        allow_null=True,
+        required=False
+    )
     scope = serializers.HyperlinkedRelatedField(
         queryset=models.Scope.objects.all(),
         view_name='information:scope-detail',
@@ -57,53 +61,23 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
         }
 
     def create(self, validated_data):
-        # try:
-        #     images_data = validated_data.pop('images')
-        # except:
-        #     pass
-        
+        """extend the default create serializer method"""
+
         if ('images' not in validated_data) or validated_data['images'] == []:
             information = super().create(validated_data)
-            # print("1")
         else:
-            # print("2")
             images_data = validated_data.pop('images')
             information = super().create(validated_data)
-            # print(images_data)
             for data in images_data:
                 data['information'] = information
-                image = models.InformationImage.objects.create(**data)
-                # print(data)
+                models.InformationImage.objects.create(**data)
 
-        # if "title" in validated_data:
-        #     print(validated_data["title"])
-
-        # if "images" in validated_data:
-        #     print(validated_data["images"])
-
-        # if 'images' in validated_data:
-        #     print("1")
-        #     images_data = validated_data.pop('images')
-        #     information = super().create(validated_data)
-        #     print(images_data)
-        #     for data in images_data:
-        #         print("3")
-        #         data['information'] = information
-        #         image = models.InformationImage.objects.create(**data)
-        #         print(data)
-        # else:
-        #     print("4")
-        #     information = super().create(validated_data)
-        
         return information
 
     def update(self, instance, validated_data):
+        """extend the default update serializer method"""
+
         if ('images' not in validated_data) or validated_data['images'] == []:
-            # instance.title = validated_data.get('title', instance.title) 
-            # instance.body = validated_data.get('body', instance.title) 
-            # instance.images = validated_data.get('images', instance.title) 
-            # instance.source = validated_data.get('source', instance.title) 
-            # instance.scope = validated_data.get('scope', instance.title) 
             information = super().update(instance, validated_data)
         else:
             images = (instance.images).all()
@@ -111,32 +85,34 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
             images_data = validated_data.pop('images')
             information = super().update(instance, validated_data)
 
-            # print(list_images)
-
             if list_images == []:
                 for data in images_data:
                     data['information'] = information
                     models.InformationImage.objects.create(**data)
             else:
                 n = 0
-                # print(images)
                 for data in images_data:
-                    # data['information'] = information
-                    # image = images.pop(0)
-                    image = images[n]
-                    n += 1
-                    image.image = data.get('image', image.image)
-                    image.description = data.get('description', image.description)
-                    image.save()
-                    # image = models.InformationImage.objects.create(**data)
-        
+                    try:
+                        image = images[n]
+                        n += 1
+                        image.image = data.get('image', image.image)
+                        image.description = data.get('description', image.description)
+                        image.save()
+                    except:
+                        data['information'] = information
+                        models.InformationImage.objects.create(**data)
+
         return information
-        # return super().update(instance, validated_data)
+
 
 class NoticeSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Notice model"""
 
-    source = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(), allow_null=True, required=False)
+    source = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.all(),
+        allow_null=True,
+        required=False
+    )
     scope = serializers.HyperlinkedRelatedField(
         queryset=models.Scope.objects.all(),
         view_name='information:scope-detail',
