@@ -105,14 +105,18 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
             else:
                 n = 0
                 for data in answer_set_data:
-                    # data['question'] = question
-                    # answer = models.Answer.objects.create(**data)
-                    # answer = answers.pop(0)
-                    answer = answers[n]
-                    answer.question = data.get('question', answer.question) 
-                    answer.text = data.get('text', answer.text) 
-                    answer.is_correct = data.get('is_correct', answer.is_correct)
-                    answer.save()
+                    try:
+                        # data['question'] = question
+                        # answer = models.Answer.objects.create(**data)
+                        # answer = answers.pop(0)
+                        answer = answers[n]
+                        answer.question = data.get('question', answer.question) 
+                        answer.text = data.get('text', answer.text) 
+                        answer.is_correct = data.get('is_correct', answer.is_correct)
+                        answer.save()
+                    except:
+                        data['question'] = question
+                        models.Answer.objects.create(**data)
         
         return question
         # return super().update(instance, validated_data)
@@ -287,64 +291,89 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                 n = 0
 
                 for question_data in question_set_data:
-                    # print(questions)
-                    # question_data['quiz'] = quiz
-                    
-                    # if len(questions) > 1:
-                    #     # question = questions
-                    #     question = questions.pop(0)
-                    # else:
-                    #     question = questions
+                    try:
+                        # print(questions)
+                        # question_data['quiz'] = quiz
+                        
+                        # if len(questions) > 1:
+                        #     # question = questions
+                        #     question = questions.pop(0)
+                        # else:
+                        #     question = questions
 
-                    question = questions[n]
-                    n += 1
+                        question = questions[n]
+                        n += 1
 
-                    # print(question)
-                    # print(question.label)
-                    answers = question.answer_set.all()
-
-
-                    # question.label = question_data.get('question', question.label) 
-                    # # question.answer_set = question_data.get('text', question.answer_set) 
-                    # question.order = question_data.get('is_correct', question.order)
-                    # question.save()
+                        # print(question)
+                        # print(question.label)
+                        answers = question.answer_set.all()
 
 
-                    if ('answer_set' not in question_data) or validated_data['answer_set'] == []:
-                        question.label = question_data.get('question', question.label) 
-                        # question.answer_set = question_data.get('text', question.answer_set) 
-                        question.order = question_data.get('is_correct', question.order)
-                        question.save()
-                        # question = models.Question.objects.create(**question_data)
-                    else:
-                        answer_set_data = question_data.pop('answer_set')
-                        list_answer = list(answer_set_data)
-                        # print(f"\n question_data : {question_data} \n")
-                        question.label = question_data.get('question', question.label) 
-                        # question.answer_set = question_data.get('text', question.answer_set) 
-                        question.order = question_data.get('is_correct', question.order)
-                        question.save()
-                        # question = models.Question.objects.create(**question_data)
-                        # print(f"\n answer_set_data : {answer_set_data} \n")
+                        # question.label = question_data.get('question', question.label) 
+                        # # question.answer_set = question_data.get('text', question.answer_set) 
+                        # question.order = question_data.get('is_correct', question.order)
+                        # question.save()
 
-                        if list_answer == []:
-                            for answer_data in answer_set_data:
-                                answer_data['question'] = question
-                                models.Answer.objects.create(**answer_data)
+
+                        if ('answer_set' not in question_data) or validated_data['answer_set'] == []:
+                            question.label = question_data.get('question', question.label) 
+                            # question.answer_set = question_data.get('text', question.answer_set) 
+                            question.order = question_data.get('is_correct', question.order)
+                            question.save()
+                            # question = models.Question.objects.create(**question_data)
                         else:
-                            n = 0
+                            answer_set_data = question_data.pop('answer_set')
+                            list_answer = list(answer_set_data)
+                            # print(f"\n question_data : {question_data} \n")
+                            question.label = question_data.get('question', question.label) 
+                            # question.answer_set = question_data.get('text', question.answer_set) 
+                            question.order = question_data.get('is_correct', question.order)
+                            question.save()
+                            # question = models.Question.objects.create(**question_data)
+                            # print(f"\n answer_set_data : {answer_set_data} \n")
+
+                            if list_answer == []:
+                                for answer_data in answer_set_data:
+                                    answer_data['question'] = question
+                                    models.Answer.objects.create(**answer_data)
+                            else:
+                                n = 0
+
+                                for answer_data in answer_set_data:
+                                    try:
+                                        # answer = answers.pop(0)
+                                        answer = answers[n]
+                                        # print(f"\n answer_data : {answer_data} \n")
+                                        # answer_data['question'] = question
+                                        # answer = models.Answer.objects.create(**answer_data)
+                                        answer.question = answer_data.get('question', answer.question) 
+                                        answer.text = answer_data.get('text', answer.text) 
+                                        answer.is_correct = answer_data.get('is_correct', answer.is_correct)
+                                        answer.save()
+                                        # print(f"\n answer : {answer} \n")
+                                    except:
+                                        answer_data['question'] = question
+                                        models.Answer.objects.create(**answer_data)
+                    except:
+                        question_data['quiz'] = quiz
+                        # print(f"{question_data}")
+
+                        if ('answer_set' not in question_data) or question_data['answer_set'] == []:
+                            question = models.Question.objects.create(**question_data)
+                            print(question)
+                        # elif question_data['answer_set'] == []:
+                        #     answers = question_data.pop('answer_set')
+                        #     question = models.Question.objects.create(**question_data)
+                        #     print(question)
+                        else:
+                            answer_set_data = question_data.pop('answer_set')
+                            list_answer = list(answer_set_data)
+                            question = models.Question.objects.create(**question_data)
 
                             for answer_data in answer_set_data:
-                                # answer = answers.pop(0)
-                                answer = answers[n]
-                                # print(f"\n answer_data : {answer_data} \n")
-                                # answer_data['question'] = question
-                                # answer = models.Answer.objects.create(**answer_data)
-                                answer.question = answer_data.get('question', answer.question) 
-                                answer.text = answer_data.get('text', answer.text) 
-                                answer.is_correct = answer_data.get('is_correct', answer.is_correct)
-                                answer.save()
-                                # print(f"\n answer : {answer} \n")
+                                    answer_data['question'] = question
+                                    models.Answer.objects.create(**answer_data)
+
 
         # try:
         #     grade = models.Grade.objects.create(grade_data)
