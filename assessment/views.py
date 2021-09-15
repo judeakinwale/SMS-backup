@@ -11,9 +11,8 @@ class QuizViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuizSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser | 
+            cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner | 
             cpermissions.IsHead
         )
     ]
@@ -27,9 +26,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuestionSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser | 
+            cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner | 
             cpermissions.IsHead
         )
     ]
@@ -40,12 +38,12 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AnswerSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser | 
+            cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner |
             cpermissions.IsHead
         )
     ]
+
 
 class QuizTakerViewSet(viewsets.ModelViewSet):
     queryset = models.QuizTaker.objects.all()
@@ -54,7 +52,6 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner |
             cpermissions.IsHead |
             cpermissions.IsStudent
         )
@@ -71,7 +68,6 @@ class ResponseViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner |
             cpermissions.IsHead |
             cpermissions.IsStudent
         )
@@ -85,7 +81,6 @@ class GradeViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
-            # cpermissions.IsOwner |
             cpermissions.IsHead |
             cpermissions.IsStudent |
             cpermissions.IsLecturer

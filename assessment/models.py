@@ -37,13 +37,6 @@ class Quiz(models.Model):
         """String representation of Quiz."""
         return self.name
 
-    # def score(self):
-    #     quiz_taker = QuizTaker.objects.filter(quiz=)
-    #     try:
-    #         for question in self.question_set.all():
-    #             for answer in question.answer_set.all():
-    #                 pass
-
 
 class Question(models.Model):
     """Model definition for Question."""
@@ -107,7 +100,7 @@ class QuizTaker(models.Model):
             self.grade.save()
         else:
             self.grade = Grade.objects.create(max_score=self.quiz.max_score)
-        
+
         score = 0
         if self.response_set.all():
             for response in self.response_set.all():
@@ -132,7 +125,7 @@ class Response(models.Model):
 
     class Meta:
         """Meta definition for Response."""
-        
+
         verbose_name = _("Response")
         verbose_name_plural = _("Responses")
 
@@ -144,7 +137,6 @@ class Response(models.Model):
 class Grade(models.Model):
     """Model definition for Grade."""
 
-    # quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True)
     score = models.IntegerField(null=True, blank=True)
     max_score = models.IntegerField(default=10)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -160,8 +152,7 @@ class Grade(models.Model):
         return f"{self.score} of {self.max_score}"
 
     def get_value(self):
-        if self.score/self.max_score >= 0.5:
+        if self.score / self.max_score >= 0.5:
             return 'Pass'
         else:
             return 'Fail'
-

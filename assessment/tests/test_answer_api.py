@@ -42,16 +42,6 @@ def sample_answer(question, **kwargs):
     return models.Answer.objects.create(question=question, **defaults)
 
 
-# def sample_answer_image(answer, **kwargs):
-#     """create and return a sample answer image"""
-#     defaults = {
-#         'description': 'sample answer image'
-#     }
-#     defaults.update(kwargs)
-#     return models.AnswerImage.create(answer=answer, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -106,31 +96,7 @@ class PrivateAnswerApiTest(TestCase):
     # # TODO:
     # def test_answers_limited_to_question(self):
     #     """test that answers from a specified questions is returned"""
-    #     sample_answer(question=self.question)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     quiz = sample_quiz(supervisor=user2, name='Test Quiz 3')
-    #     question = sample_question(quiz=quiz)
-    #     answer = sample_answer(question=question)
-
-    #     specified_question = models.Question.objects.get(answer=answer)
-    #     specified_quiz = models.Quiz.objects.get(question=question)
-
-    #     print(f"{question}, {specified_question}")
-    #     print(f"{quiz}, {specified_quiz}")
-    #     print(quiz.question_set.get(id=question.id).answer_set.all())
-
-    #     answers = models.Answer.objects.filter(question=question)
-    #     serializer = serializers.AnswerSerializer(answers, many=True, context=serializer_context)
-
-    #     res = self.client.get(ANSWER_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(question, specified_question)
-    #     self.assertEqual(len(res.data), 1)
+    #     pass
 
     def test_retrieve_answer_detail(self):
         """test retrieving an answer's detail"""

@@ -55,16 +55,6 @@ def sample_quiz_taker(student, quiz, **kwargs):
     return quiz_taker
 
 
-# def sample_response_image(response, **kwargs):
-#     """create and return a sample response image"""
-#     defaults = {
-#         'description': 'sample response image'
-#     }
-#     defaults.update(kwargs)
-#     return models.ResponseImage.create(response=response, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -86,7 +76,6 @@ class PublicResponseApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(RESPONSE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateResponseApiTest(TestCase):
@@ -121,31 +110,7 @@ class PrivateResponseApiTest(TestCase):
     # # TODO:
     # def test_responses_limited_to_answer(self):
     #     """test that responses from a specified answers is returned"""
-    #     sample_response(answer=self.answer)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     question = sample_question(supervisor=user2, name='Test Quiz 3')
-    #     answer = sample_answer(question=question)
-    #     response = sample_response(answer=answer)
-
-    #     specified_answer = models.Question.objects.get(response=response)
-    #     specified_question = models.Quiz.objects.get(answer=answer)
-
-    #     print(f"{answer}, {specified_answer}")
-    #     print(f"{question}, {specified_question}")
-    #     print(question.answer_set.get(id=answer.id).response_set.all())
-
-    #     responses = models.Response.objects.filter(answer=answer)
-    #     serializer = serializers.ResponseSerializer(responses, many=True, context=serializer_context)
-
-    #     res = self.client.get(RESPONSE_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(answer, specified_answer)
-    #     self.assertEqual(len(res.data), 1)
+    #     pass
 
     def test_retrieve_response_detail(self):
         """test retrieving a response's detail"""
@@ -206,7 +171,7 @@ class PrivateResponseApiTest(TestCase):
     def test_full_update_response(self):
         """test updating a response's detail using put"""
         response = sample_response(quiz_taker=self.quiz_taker, question=self.question)
-        
+
         quiz_taker = self.quiz_taker
         quiz_taker_serializer = serializers.QuizTakerSerializer(quiz_taker, context=serializer_context)
 
@@ -215,7 +180,7 @@ class PrivateResponseApiTest(TestCase):
 
         answer = self.answer
         answer_serializer = serializers.AnswerSerializer(answer, context=serializer_context)
-        
+
         payload = {
             'quiz_taker': quiz_taker_serializer.data['url'],
             'question': question_serializer.data['url'],

@@ -28,13 +28,6 @@ def sample_quiz(supervisor, **kwargs):
     return models.Quiz.objects.create(supervisor=supervisor, **defaults)
 
 
-# def sample_quiz_image(quiz, **kwargs):
-#     """create and return a sample quiz image"""
-#     defaults = {}
-#     defaults.update(kwargs)
-#     return models.QuizImage.create(quiz=quiz, **defaults)
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -56,7 +49,6 @@ class PublicQuizApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(QUIZ_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateQuizApiTest(TestCase):
@@ -88,32 +80,7 @@ class PrivateQuizApiTest(TestCase):
     # # TODO:
     # def test_quiz_limited_to_supervisor(self):
     #     """test that quiz from a specified supervisor is returned"""
-    #     sample_quiz(supervisor=self.user)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     quiz = sample_quiz(supervisor=user2, name='Test Quiz 3')
-
-    #     quizzes = models.Quiz.objects.filter(supervisor=self.user)
-    #     serializer = serializers.QuizSerializer(quizzes, many=True, context=serializer_context)
-        
-    #     res = self.client.get(QUIZ_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 1)
-
-    # def test_retrieve_quiz_detail(self):
-    #     """test retrieving a quiz's detail"""
-    #     quiz = sample_quiz(supervisor=self.user)
-    #     serializer = serializers.QuizSerializer(quiz, context=serializer_context)
-        
-    #     url = quiz_detail_url(quiz_id=quiz.id)
-    #     res = self.client.get(url)
-
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+    #     pass
 
     def test_create_quiz(self):
         """test creating a quiz"""
@@ -171,8 +138,8 @@ class PrivateQuizApiTest(TestCase):
             'supervisor': self.user.id,
             'name': 'Test quiz 4',
             'question_set': [
-                {'label': 'Test label 2',},
-                {'label': 'Test label 3',},
+                {'label': 'Test label 2', },
+                {'label': 'Test label 3', },
             ],
         }
 
@@ -190,17 +157,17 @@ class PrivateQuizApiTest(TestCase):
                 {
                     'label': 'Test Question 2',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
                 {
                     'label': 'Test Question 3',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
             ],
@@ -222,17 +189,17 @@ class PrivateQuizApiTest(TestCase):
                 {
                     'label': 'Test Question 2',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
                 {
                     'label': 'Test Question 3',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
             ],
@@ -242,7 +209,6 @@ class PrivateQuizApiTest(TestCase):
         res = self.client.patch(url, payload, format='json')
 
         quiz.refresh_from_db()
-        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(res.data['question_set'], [])
@@ -258,17 +224,17 @@ class PrivateQuizApiTest(TestCase):
                 {
                     'label': 'Test Question 2',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
                 {
                     'label': 'Test Question 3',
                     'answer_set': [
-                        {'text': 'Answer 1',},
-                        {'text': 'Answer 2',},
-                        {'text': 'Answer 3',},
+                        {'text': 'Answer 1', },
+                        {'text': 'Answer 2', },
+                        {'text': 'Answer 3', },
                     ],
                 },
             ],
@@ -278,7 +244,6 @@ class PrivateQuizApiTest(TestCase):
         res = self.client.put(url, payload, format='json')
 
         quiz.refresh_from_db()
-        quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(res.data['question_set'], [])

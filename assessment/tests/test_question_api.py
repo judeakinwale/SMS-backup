@@ -35,14 +35,6 @@ def sample_question(quiz, **kwargs):
     return models.Question.objects.create(quiz=quiz, **defaults)
 
 
-# def sample_question_image(question, **kwargs):
-#     """create and return a sample question image"""
-#     defaults = {}
-#     defaults.update(kwargs)
-#     return models.QuestionImage.create(question=question, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -64,7 +56,6 @@ class PublicQuestionApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(QUESTION_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateQuestionApiTest(TestCase):
@@ -96,28 +87,13 @@ class PrivateQuestionApiTest(TestCase):
     # # TODO:
     # def test_question_limited_to_quiz(self):
     #     """test that question from a specified quiz is returned"""
-    #     sample_question(quiz=self.quiz)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     quiz = sample_quiz(supervisor=user2, name='Test Quiz 3')
-    #     question = sample_question(quiz=quiz)
-
-    #     questions = models.Question.objects.filter(quiz=quiz)
-    #     serializer = serializers.QuestionSerializer(questions, many=True, context=serializer_context)
-        
-    #     res = self.client.get(QUESTION_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 1)
+    #     pass
 
     def test_retrieve_question_detail(self):
         """test retrieving a question's detail"""
         question = sample_question(quiz=self.quiz)
         serializer = serializers.QuestionSerializer(question, context=serializer_context)
-        
+
         url = question_detail_url(question_id=question.id)
         res = self.client.get(url)
 
@@ -187,44 +163,42 @@ class PrivateQuestionApiTest(TestCase):
             'quiz': quiz_serializer.data['url'],
             'label': 'Test label 3',
             'answer_set': [
-                {'text': 'Question 1',},
-                {'text': 'Question 2',},
-                {'text': 'Question 3',},
+                {'text': 'Question 1', },
+                {'text': 'Question 2', },
+                {'text': 'Question 3', },
             ],
         }
 
         res = self.client.post(QUESTION_URL, payload, format='json')
 
-        question = models.Question.objects.get(id=res.data['id'])
-        question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
+        models.Question.objects.get(id=res.data['id'])
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertNotEqual(res.data['answer_set'], [])
 
     def test_partial_update_question_with_questions_and_answers(self):
-        """test updating a question with questions attached and answers attached to the questions using patch"""
+        """test updating a question with answers attached using patch"""
         question = sample_question(quiz=self.quiz)
         payload = {
             'label': 'Test Question 2',
             'answer_set': [
-                {'text': 'Answer 1',},
-                {'text': 'Answer 2',},
-                {'text': 'Answer 3',},
+                {'text': 'Answer 1', },
+                {'text': 'Answer 2', },
+                {'text': 'Answer 3', },
             ],
-}
+        }
 
         url = question_detail_url(question.id)
         res = self.client.patch(url, payload, format='json')
 
         question.refresh_from_db()
-        # question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(res.data['answer_set'], [])
         # self.assertNotEqual(res.data['question_set'][0]['answer_set'], [])
 
     def test_full_update_question_with_questions_and_answers(self):
-        """test updating a question with questions attached and answers attached to the questions using put"""
+        """test updating a question with answers attached using put"""
         question = sample_question(quiz=self.quiz, label='label2')
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
@@ -232,9 +206,9 @@ class PrivateQuestionApiTest(TestCase):
             'quiz': quiz_serializer.data['url'],
             'label': 'Test Question 3',
             'answer_set': [
-                {'text': 'Answer 1',},
-                {'text': 'Answer 2',},
-                {'text': 'Answer 3',},
+                {'text': 'Answer 1', },
+                {'text': 'Answer 2', },
+                {'text': 'Answer 3', },
             ],
         }
 
@@ -242,7 +216,6 @@ class PrivateQuestionApiTest(TestCase):
         res = self.client.put(url, payload, format='json')
 
         question.refresh_from_db()
-        # question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertNotEqual(res.data['answer_set'], [])

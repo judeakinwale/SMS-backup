@@ -5,8 +5,6 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from assessment import models, serializers
-from user import models as umodels
-import user
 
 
 GRADE_URL = reverse('assessment:grade-list')
@@ -26,6 +24,7 @@ def grade_detail_url(grade_id):
 def sample_grade(**kwargs):
     """create and return a sample grade"""
     return models.Grade.objects.create(**kwargs)
+
 
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
@@ -48,7 +47,6 @@ class PublicGradeApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(GRADE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateGradeApiTest(TestCase):
@@ -56,12 +54,6 @@ class PrivateGradeApiTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        # self.user = get_user_model().objects.create_staff(
-        #     email='test@email.com',
-        #     password='testpass'
-        # )
-        # self.staff = umodels.Staff.objects.create(user=self.user ,is_IT=True)
-        # self.user.staff_set.add(self.staff)
         self.user = get_user_model().objects.create_superuser(
             email='test@email.com',
             password='testpass'
@@ -86,7 +78,7 @@ class PrivateGradeApiTest(TestCase):
         """test retrieving a grade's detail"""
         grade = sample_grade()
         serializer = serializers.GradeSerializer(grade, context=serializer_context)
-        
+
         url = grade_detail_url(grade_id=grade.id)
         res = self.client.get(url)
 
