@@ -36,7 +36,7 @@ class StaffViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -48,7 +48,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -60,7 +60,8 @@ class BiodataViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDept |
+            cpermissions.IsStudent
         )
     ]
 
@@ -84,7 +85,8 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDept |
+            cpermissions.IsStudent
         )
     ]
 
@@ -96,7 +98,8 @@ class HealthDataViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDept |
+            cpermissions.IsStudent
         )
     ]
 
@@ -108,7 +111,8 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsITDept |
+            cpermissions.IsStudent
         )
     ]
 

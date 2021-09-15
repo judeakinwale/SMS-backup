@@ -13,7 +13,7 @@ class FacultyViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -24,7 +24,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -35,7 +35,7 @@ class ProgrammeViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -46,7 +46,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -57,6 +57,6 @@ class LevelViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]

@@ -13,6 +13,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
+            cpermissions.IsLecturer |
             cpermissions.IsHead
         )
     ]
@@ -28,6 +29,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
+            cpermissions.IsLecturer |
             cpermissions.IsHead
         )
     ]
@@ -40,6 +42,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
+            cpermissions.IsLecturer |
             cpermissions.IsHead
         )
     ]
@@ -53,6 +56,7 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
             cpermissions.IsHead |
+            cpermissions.IsLecturer |
             cpermissions.IsStudent
         )
     ]
@@ -82,7 +86,7 @@ class GradeViewSet(viewsets.ModelViewSet):
             cpermissions.IsSuperUser |
             cpermissions.IsITDept |
             cpermissions.IsHead |
-            cpermissions.IsStudent |
-            cpermissions.IsLecturer
+            # cpermissions.IsStudent |
+            cpermissions.IsLecturerOrReadOnly
         )
     ]

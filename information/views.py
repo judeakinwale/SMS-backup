@@ -14,7 +14,7 @@ class InformationViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
             # cpermissions.IsOwner |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -43,7 +43,7 @@ class InformationImageViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsITDeptOrReadOnly
         )
     ]
 
