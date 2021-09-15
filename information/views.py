@@ -13,11 +13,10 @@ class InformationViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            # cpermissions.IsOwner | 
+            # cpermissions.IsOwner |
             cpermissions.IsITDept
         )
     ]
-    
 
     def perform_create(self, serializer):
         return serializer.save(source=self.request.user)
@@ -29,7 +28,7 @@ class NoticeViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            # cpermissions.IsOwner | 
+            # cpermissions.IsOwner |
             cpermissions.IsITDept
         )
     ]

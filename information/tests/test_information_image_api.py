@@ -104,30 +104,11 @@ class PrivateInformationApiTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    # def test_information_images_limited_to_information(self):
-    #     """test that only information images from linked information is returned"""
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     info2 = sample_information(source=user2)
-    #     sample_information_image(information=self.info)
-    #     sample_information_image(information=info2)
-        
-    #     res = self.client.get(INFO_IMG_URL)
-
-    #     images = models.InformationImage.objects.filter(information=self.info)
-    #     serializer = serializers.InformationImageSerializer(images, many=True, context=serializer_context)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 2)
-
     def test_retrieve_informtion_image_detail(self):
         """test retrieving an information image detail"""
         info_img = sample_information_image(information=self.info)
         serializer = serializers.InformationImageSerializer(info_img, context=serializer_context)
-        
+
         url = info_image_detail_url(info_img_id=info_img.id)
         res = self.client.get(url)
 
@@ -198,7 +179,7 @@ class PrivateInformationApiTest(TestCase):
             img = Image.new('RGB', (10, 10), 'blue')
             img.save(ntf, format='JPEG')
             ntf.seek(0)
-            
+
             payload = {
                 'information': info_serializer.data['url'],
                 'image': ntf,

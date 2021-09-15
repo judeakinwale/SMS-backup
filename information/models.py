@@ -33,7 +33,7 @@ class Information(models.Model):
 class Notice(models.Model):
     """Model definition for Notice."""
 
-    source  = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    source = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     scope = models.ForeignKey("Scope", on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
     message = models.TextField()

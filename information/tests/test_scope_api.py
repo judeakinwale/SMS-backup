@@ -76,27 +76,12 @@ class PrivateInformationApiTest(TestCase):
 
     # # TODO:
     # # test scopes displayed are limited by filters like faculty departmment course programme level
-    # def test_scope_limited_to_source(self):
-    #     """test that scope from all sources is returned"""
-    #     sample_scope(source=self.user)
-    #     # user2 = get_user_model().objects.create_user(
-    #     #     'test2@test.com',
-    #     #     'testpass2'
-    #     # )
-    #     scope = models.Scope.objects.all()
-    #     serializer = serializers.ScopeSerializer(scope, many=True, context=serializer_context)
-        
-    #     res = self.client.get(SCOPE_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     # self.assertEqual(len(res.data), 2)
 
     def test_retrieve_scope_detail(self):
         """test retrieving a scope detail"""
         scope = sample_scope()
         serializer = serializers.ScopeSerializer(scope, context=serializer_context)
-        
+
         url = scope_detail_url(scope_id=scope.id)
         res = self.client.get(url)
 

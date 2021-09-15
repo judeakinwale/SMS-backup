@@ -39,16 +39,6 @@ def sample_notice(source, **kwargs):
     return models.Notice.objects.create(source=source, **defaults)
 
 
-# def sample_notice_image(notice, **kwargs):
-#     """create and return a sample notice image"""
-#     defaults = {
-#         'description': 'sample notice image'
-#     }
-#     defaults.update(kwargs)
-#     return models.NoticeImage.create(notice=notice, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -70,7 +60,6 @@ class PublicNoticeApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(NOTICE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateNoticeApiTest(TestCase):
@@ -109,7 +98,7 @@ class PrivateNoticeApiTest(TestCase):
 
         notice = models.Notice.objects.all()
         serializer = serializers.NoticeSerializer(notice, many=True, context=serializer_context)
-        
+
         res = self.client.get(NOTICE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -120,7 +109,7 @@ class PrivateNoticeApiTest(TestCase):
         """test retrieving a notice's detail"""
         notice = sample_notice(source=self.user)
         serializer = serializers.NoticeSerializer(notice, context=serializer_context)
-        
+
         url = notice_detail_url(notice_id=notice.id)
         res = self.client.get(url)
 
