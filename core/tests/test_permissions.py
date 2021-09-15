@@ -5,7 +5,6 @@ from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from core import permissions
 from user import models as umodels
-import user
 
 
 CREATE_USER_URL = reverse('user:user-list')
@@ -17,10 +16,9 @@ request = factory.get('/')
 serializer_context = {'request': Request(request)}
 
 
-
 class PermissionTest(TestCase):
     """Test custom permissions"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.user_payload = {
@@ -44,11 +42,9 @@ class PermissionTest(TestCase):
         )
         self.client.force_authenticate(self.superuser)
 
+    # TODO: test the IsOwner permissions
     # def test_IsOwnerOrReadOnly(self):
-    
-    #     res = self.client.post(CREATE_USER_URL, self.user_payload)
-
-    #     user = get_user_model().objects.get(id=res.data['id'])
+    #     """test the IsOwnerorReadOnly permission"""
     #     pass
 
     def test_IsSuperUser(self):
@@ -58,13 +54,13 @@ class PermissionTest(TestCase):
 
         self.assertTrue(permission)
 
-    def test_IsStaffOrReadOnly(self):        
+    def test_IsStaffOrReadOnly(self):
         """test the IsStaffOrReadOnly permission"""
         res = self.client.post(CREATE_USER_URL, self.staff_payload)
 
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
-        
+
         permission = permissions.IsStaff().has_permission(request, None)
 
         self.assertTrue(permission)
@@ -76,7 +72,7 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        staff = umodels.Staff.objects.get(user=user)        
+        staff = umodels.Staff.objects.get(user=user)
         staff.is_IT = True
         staff.save()
 
@@ -91,7 +87,7 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        staff = umodels.Staff.objects.get(user=user)        
+        staff = umodels.Staff.objects.get(user=user)
         staff.is_bursar = True
         staff.save()
 
@@ -106,7 +102,7 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        staff = umodels.Staff.objects.get(user=user)        
+        staff = umodels.Staff.objects.get(user=user)
         staff.is_lecturer = True
         staff.save()
 
@@ -121,7 +117,7 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        staff = umodels.Staff.objects.get(user=user)        
+        staff = umodels.Staff.objects.get(user=user)
         staff.is_head_of_department = True
         staff.save()
 
@@ -136,7 +132,7 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        staff = umodels.Staff.objects.get(user=user)        
+        staff = umodels.Staff.objects.get(user=user)
         staff.is_dean_of_faculty = True
         staff.save()
 
@@ -151,9 +147,8 @@ class PermissionTest(TestCase):
         user = get_user_model().objects.get(id=res.data['id'])
         request.user = user
 
-        student = umodels.Student.objects.create(user=user)        
+        umodels.Student.objects.create(user=user)
 
         permission = permissions.IsStudent().has_permission(request, None)
 
         self.assertTrue(permission)
-    

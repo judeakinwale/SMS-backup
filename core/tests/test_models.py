@@ -2,10 +2,8 @@ import tempfile
 from PIL import Image
 from django.contrib.auth import get_user_model
 from django.db import models
-# from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
-from core import models as cmodels
 from user import models as umodels
 from information import models as imodels
 from assessment import models as amodels
@@ -20,45 +18,10 @@ def sample_scope(description='test', **kwargs):
     return imodels.Scope.objects.create(description=description, **kwargs)
 
 
-# def sample_quiz(supervisor=sample_user(), **kwargs):
-#     defaults = {
-#         'name': 'Test quiz',
-#         'description': 'This is a test quiz description',
-#     }
-#     defaults.update(kwargs)
-#     return amodels.Quiz.objects.create(supervisor=supervisor, **defaults)
-
-
-# def sample_question(quiz=sample_quiz(), **kwargs):
-#     defaults = {
-#         'label': 'Test title'
-#     }
-#     defaults.update(kwargs)
-#     return amodels.Question.objects.create(quiz=quiz, **defaults)
-
-
-# def sample_answer(question=sample_question(), **kwargs):
-#     defaults = {
-#         'text': 'some answer text',
-#     }
-#     defaults.update(kwargs)
-#     return amodels.Answer.objects.create(question=question, **defaults)
-
-
-# def sample_quiz_taker(student=sample_user(), quiz=sample_quiz(), **kwargs):
-#     defaults = {}
-#     defaults.update(kwargs)
-#     return amodels.QuizTaker.objects.create(student=student, quiz=quiz, **defaults)
-
-
 class ModelTest(TestCase):
 
     def setUp(self):
         self.user = sample_user()
-    #     self.quiz = sample_quiz()
-    #     self.question = sample_question()
-    #     self.answer = sample_answer()
-    #     self.quiz_taker = sample_quiz_taker()
 
     def test_create_user_with_email_successful(self):
         """test creating a user with email is successful"""
@@ -98,7 +61,7 @@ class ModelTest(TestCase):
         """test the staff str representation"""
         staff = umodels.Staff.objects.create(
             user=self.user,
-            employee_id=1,    
+            employee_id=1,
         )
         self.assertEqual(str(staff), str(staff.employee_id))
 
@@ -107,7 +70,7 @@ class ModelTest(TestCase):
         student = umodels.Student.objects.create(
             user=self.user,
             matric_no=23412322,
-            student_id=1,    
+            student_id=1,
         )
         self.assertEqual(str(student), f"{student.matric_no or student.student_id}")
 
@@ -124,7 +87,7 @@ class ModelTest(TestCase):
         student = umodels.Student.objects.create(
             user=self.user,
             matric_no=23412322,
-            student_id=1,    
+            student_id=1,
         )
         faculty = acmodels.Faculty.objects.create(name="Test Faculty")
         level = acmodels.Level.objects.create(code=500)
@@ -143,7 +106,10 @@ class ModelTest(TestCase):
             programme=programme,
             start_date=timezone.now(),
         )
-        self.assertEqual(str(academic_data), f"{academic_data.student.matric_no or academic_data.student.student_id}")
+        self.assertEqual(
+            str(academic_data),
+            f"{academic_data.student.matric_no or academic_data.student.student_id}"
+        )
 
     def test_academic_history_str(self):
         """test the academic_history str representation"""
@@ -151,9 +117,11 @@ class ModelTest(TestCase):
         academic_history = umodels.AcademicHistory.objects.create(
             biodata=biodata,
         )
-        # self.assertEqual(str(academic_history), academic_history.biodata)
         if academic_history.biodata.user.last_name and academic_history.biodata.first_name:
-            self.assertEqual(str(academic_history.biodata), f"{academic_history.biodata.user.last_name}  {academic_history.biodata.user.first_name}")
+            self.assertEqual(
+                str(academic_history.biodata),
+                f"{academic_history.biodata.user.last_name}  {academic_history.biodata.user.first_name}"
+            )
         else:
             self.assertEqual(str(academic_history.biodata), academic_history.biodata.user.email)
 
@@ -164,7 +132,10 @@ class ModelTest(TestCase):
             biodata=biodata,
         )
         if health_data.biodata.user.last_name and health_data.biodata.first_name:
-            self.assertEqual(str(health_data.biodata), f"{health_data.biodata.user.last_name}  {health_data.biodata.user.first_name}")
+            self.assertEqual(
+                str(health_data.biodata),
+                f"{health_data.biodata.user.last_name}  {health_data.biodata.user.first_name}"
+            )
         else:
             self.assertEqual(str(health_data.biodata), health_data.biodata.user.email)
 
@@ -175,7 +146,10 @@ class ModelTest(TestCase):
             biodata=biodata,
         )
         if family_data.biodata.user.last_name and family_data.biodata.first_name:
-            self.assertEqual(str(family_data.biodata), f"{family_data.biodata.user.last_name}  {family_data.biodata.user.first_name}")
+            self.assertEqual(
+                str(family_data.biodata),
+                f"{family_data.biodata.user.last_name}  {family_data.biodata.user.first_name}"
+            )
         else:
             self.assertEqual(str(family_data.biodata), family_data.biodata.user.email)
 
@@ -184,7 +158,7 @@ class ModelTest(TestCase):
         student = umodels.Student.objects.create(
             user=self.user,
             matric_no=23412322,
-            student_id=1,    
+            student_id=1,
         )
         faculty = acmodels.Faculty.objects.create(name="Test Faculty")
         level = acmodels.Level.objects.create(code=500)
@@ -274,7 +248,7 @@ class ModelTest(TestCase):
             description='This is a test quiz description'
         )
         question = amodels.Question.objects.create(
-            quiz = quiz,
+            quiz=quiz,
             label='Test title',
         )
         self.assertEqual(str(question), question.label)
@@ -287,7 +261,7 @@ class ModelTest(TestCase):
             description='This is a test quiz description'
         )
         question = amodels.Question.objects.create(
-            quiz = quiz,
+            quiz=quiz,
             label='Test title',
         )
         answer = amodels.Answer.objects.create(
@@ -320,7 +294,7 @@ class ModelTest(TestCase):
             student=self.user,
         )
         question = amodels.Question.objects.create(
-            quiz = quiz,
+            quiz=quiz,
             label='Test title',
         )
         answer = amodels.Answer.objects.create(
@@ -348,12 +322,12 @@ class ModelTest(TestCase):
             code=1,
         )
         self.assertEqual(str(faculty), faculty.name)
-    
+
     def test_level_str(self):
         """test the level str representation"""
         level = acmodels.Level.objects.create(code=400)
         self.assertEqual(str(level), str(level.code))
-    
+
     def test_department_str(self):
         """test the department str representation"""
         faculty = acmodels.Faculty.objects.create(name="Test Faculty")
@@ -399,5 +373,3 @@ class ModelTest(TestCase):
             name="Test Course"
         )
         self.assertEqual(str(course), course.name)
-
-    
