@@ -9,6 +9,7 @@ CREATE_USER_URL = reverse('user:user-list')
 TOKEN_URL = reverse('user:token_obtain_pair')
 ACCOUNT_URL = reverse('user:account')
 
+
 def user_detail_url(user_id):
     """url for a user detail view"""
     return reverse('user:user-detail', args=[user_id])
@@ -16,7 +17,7 @@ def user_detail_url(user_id):
 
 class PublicUserApiTests(TestCase):
     """test the user api (public)"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.payload_full = {
@@ -71,7 +72,7 @@ class PublicUserApiTests(TestCase):
 
 class PrivateUserApiTests(TestCase):
     """test the user api requests that require authentication"""
-    
+
     def setUp(self):
         self.user = get_user_model().objects.create_superuser(
             email='testuser@gmail.com',
@@ -102,7 +103,7 @@ class PrivateUserApiTests(TestCase):
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
-        
+
         user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -173,8 +174,7 @@ class PrivateUserApiTests(TestCase):
         }
 
         res = self.client.post(CREATE_USER_URL, payload, format='json')
-        # print(res.data)
-        
+
         user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -195,20 +195,13 @@ class PrivateUserApiTests(TestCase):
         }
 
         url = user_detail_url(user.id)
-        # print(user.id)
         res = self.client.patch(url, payload, format='json')
-        # print(res)
-        # print(res.data)
-        
-        # user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])
         self.assertEqual(user.last_name, payload['last_name'])
         self.assertTrue(user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        # self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        # self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', res.data)
         self.assertNotEqual(res.data['biodata'], [])
 
@@ -226,19 +219,12 @@ class PrivateUserApiTests(TestCase):
         }
 
         url = user_detail_url(user.id)
-        # print(user.id)
         res = self.client.put(url, payload, format='json')
-        # print(res)
-        # print(res.data)
-        
-        # user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])
         self.assertEqual(user.last_name, payload['last_name'])
         self.assertTrue(user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        # self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        # self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', res.data)
         self.assertNotEqual(res.data['biodata'], [])

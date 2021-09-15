@@ -26,16 +26,6 @@ def sample_biodata(user, **kwargs):
     return models.Biodata.objects.create(user=user, **kwargs)
 
 
-# def sample_biodata_image(biodata, **kwargs):
-#     """create and return a sample biodata image"""
-#     defaults = {
-#         'description': 'sample biodata image'
-#     }
-#     defaults.update(kwargs)
-#     return models.BiodataImage.create(biodata=biodata, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -97,7 +87,7 @@ class PrivateBiodataApiTest(TestCase):
 
         biodata = models.Biodata.objects.all()
         serializer = serializers.BiodataSerializer(biodata, many=True, context=serializer_context)
-        
+
         res = self.client.get(BIODATA_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -108,7 +98,7 @@ class PrivateBiodataApiTest(TestCase):
         """test retrieving a biodata's detail"""
         biodata = sample_biodata(user=self.user)
         serializer = serializers.BiodataSerializer(biodata, context=serializer_context)
-        
+
         url = biodata_detail_url(biodata_id=biodata.id)
         res = self.client.get(url)
 
@@ -150,7 +140,7 @@ class PrivateBiodataApiTest(TestCase):
     def test_full_update_biodata(self):
         """test updating a biodata's detail using put"""
         biodata = sample_biodata(user=self.user)
-        
+
         payload = {
             'user': self.serializer.data['url'],
         }

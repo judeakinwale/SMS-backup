@@ -13,7 +13,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -35,7 +35,7 @@ class StaffViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -47,7 +47,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -59,7 +59,7 @@ class BiodataViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -71,7 +71,7 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -83,7 +83,7 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -95,7 +95,7 @@ class HealthDataViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -107,7 +107,7 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsBursar | 
+            cpermissions.IsBursar |
             cpermissions.IsITDept
         )
     ]
@@ -119,8 +119,7 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser |
-            cpermissions.IsStudent | 
+            cpermissions.IsStudent |
             cpermissions.IsITDept
         )
     ]
-    

@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from user import managers
 from academics import models as acmodels
@@ -27,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         """Meta definition for User."""
-        
+
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
@@ -86,10 +85,9 @@ class Student(models.Model):
         # return f"{self.matric_no if self.matric_no else self.student_id}"
         return f"{self.matric_no or self.student_id or self.user.email}"
 
-    
+
 class Biodata(models.Model):
     """Model definition for Biodata."""
-
 
     # Definitions for model choices
     class MarriageChoices(models.TextChoices):
@@ -98,18 +96,15 @@ class Biodata(models.Model):
         DIVORCED = 'Divorced', _('Divorced')
         OTHER = 'Other', _('Other')
 
-
     class GenderChoices(models.TextChoices):
         MALE = 'Male', _('Male')
         FEMALE = 'Female', _('Female')
         OTHER = 'Other', _('Other')
 
-
     class ReligionChoices(models.TextChoices):
         CHRISTIANITY = 'Christianity', _('Christianity')
         ISLAM = 'Islam', _('Islam')
         OTHER = 'Other', _('Other')
-
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -158,11 +153,9 @@ class Biodata(models.Model):
 class AcademicData(models.Model):
     """Model definition for AcademicData."""
 
-
     # Definitions for model choices
     class QualificationChoices(models.TextChoices):
-        OTHER = 'Other', _('Other') 
-
+        OTHER = 'Other', _('Other')
 
     student = models.OneToOneField(
         Student,
@@ -221,7 +214,7 @@ class AcademicHistory(models.Model):
 
     # Definitions for model choices
     class QualificationChoices(models.TextChoices):
-        OTHER = 'Other', _('Other') 
+        OTHER = 'Other', _('Other')
 
     biodata = models.ForeignKey(
         Biodata,

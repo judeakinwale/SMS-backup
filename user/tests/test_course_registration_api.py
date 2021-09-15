@@ -1,4 +1,3 @@
-from user.tests.test_student_api import student_detail_url
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -8,7 +7,6 @@ from rest_framework.test import APIClient, APIRequestFactory
 from user import models, serializers
 from academics import models as amodels
 from academics import serializers as aserializers
-from datetime import datetime
 
 
 COURSE_REGISTRATION_URL = reverse('user:courseregistration-list')
@@ -34,7 +32,7 @@ def sample_faculty(**kwargs):
     """create and return a sample faculty"""
     defaults = {'name': 'Faculty 1'}
     defaults.update(kwargs)
-    return amodels.Faculty.objects.create(**defaults) 
+    return amodels.Faculty.objects.create(**defaults)
 
 
 def sample_department(faculty, **kwargs):
@@ -74,16 +72,6 @@ def sample_course_registration(course, student, **kwargs):
     return models.CourseRegistration.objects.create(course=course, student=student, **kwargs)
 
 
-# def sample_course_registration_image(course_registration, **kwargs):
-#     """create and return a sample course_registration image"""
-#     defaults = {
-#         'description': 'sample course_registration image'
-#     }
-#     defaults.update(kwargs)
-#     return models.CourseRegistrationImage.create(course_registration=course_registration, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -105,7 +93,6 @@ class PublicCourseRegistrationApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(COURSE_REGISTRATION_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateCourseRegistrationApiTest(TestCase):
@@ -135,38 +122,25 @@ class PrivateCourseRegistrationApiTest(TestCase):
         """test retrieving a list of course_registration"""
         sample_course_registration(course=self.course, student=self.student)
         course_registration = models.CourseRegistration.objects.all()
-        serializer = serializers.CourseRegistrationSerializer(course_registration, many=True, context=serializer_context)
+        serializer = serializers.CourseRegistrationSerializer(
+            course_registration,
+            many=True,
+            context=serializer_context
+        )
 
         res = self.client.get(COURSE_REGISTRATION_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    # def test_course_registration_limited_to_student(self):
-    #     """test that course_registration is for a specified or currently logged in student"""
-    #     sample_course_registration(student=self.student)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     student2 = sample_student(user=user2)
-    #     sample_course_registration(student=student2)
-
-    #     course_registration = models.CourseRegistration.objects.filter(student=self.student)
-    #     serializer = serializers.CourseRegistrationSerializer(course_registration, context=serializer_context)
-        
-    #     res = self.client.get(COURSE_REGISTRATION_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 1)
-    #     self.assertEqual(serializer.data['student'], models.Student.objects.get(user=self.user).url)
-
     def test_retrieve_course_registration_detail(self):
         """test retrieving a course_registration's detail"""
         course_registration = sample_course_registration(course=self.course, student=self.student)
-        serializer = serializers.CourseRegistrationSerializer(course_registration, context=serializer_context)
-        
+        serializer = serializers.CourseRegistrationSerializer(
+            course_registration,
+            context=serializer_context
+        )
+
         url = course_registration_detail_url(course_registration_id=course_registration.id)
         res = self.client.get(url)
 
@@ -184,7 +158,10 @@ class PrivateCourseRegistrationApiTest(TestCase):
         res = self.client.post(COURSE_REGISTRATION_URL, payload)
 
         course_registration = models.CourseRegistration.objects.get(id=res.data['id'])
-        course_registration_serializer = serializers.CourseRegistrationSerializer(course_registration, context=serializer_context)
+        course_registration_serializer = serializers.CourseRegistrationSerializer(
+            course_registration,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         test_all_model_attributes(self, payload, course_registration, course_registration_serializer)
@@ -194,7 +171,6 @@ class PrivateCourseRegistrationApiTest(TestCase):
         course_registration = sample_course_registration(course=self.course, student=self.student)
 
         payload = {
-            # 'student': self.serializer.data['url'],
             'is_active': False,
         }
 
@@ -202,7 +178,10 @@ class PrivateCourseRegistrationApiTest(TestCase):
         res = self.client.patch(url, payload)
 
         course_registration.refresh_from_db()
-        course_registration_serializer = serializers.CourseRegistrationSerializer(course_registration, context=serializer_context)
+        course_registration_serializer = serializers.CourseRegistrationSerializer(
+            course_registration,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, course_registration, course_registration_serializer)
@@ -212,7 +191,7 @@ class PrivateCourseRegistrationApiTest(TestCase):
         course_registration = sample_course_registration(course=self.course, student=self.student)
         course = sample_course(programme=self.programme, name='Course 21')
         serializer = aserializers.CourseSerializer(course, context=serializer_context)
-        
+
         payload = {
             'course': serializer.data['url'],
             'student': self.student_serializer.data['url'],
@@ -223,7 +202,10 @@ class PrivateCourseRegistrationApiTest(TestCase):
         res = self.client.put(url, payload)
 
         course_registration.refresh_from_db()
-        course_registration_serializer = serializers.CourseRegistrationSerializer(course_registration, context=serializer_context)
+        course_registration_serializer = serializers.CourseRegistrationSerializer(
+            course_registration,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, course_registration, course_registration_serializer)

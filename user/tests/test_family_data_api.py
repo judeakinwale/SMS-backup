@@ -5,7 +5,6 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from user import models, serializers
-from datetime import datetime
 
 
 FAMILY_DATA_URL = reverse('user:familydata-list')
@@ -32,16 +31,6 @@ def sample_family_data(biodata, **kwargs):
     return models.FamilyData.objects.create(biodata=biodata, **kwargs)
 
 
-# def sample_family_data_image(family_data, **kwargs):
-#     """create and return a sample family_data image"""
-#     defaults = {
-#         'description': 'sample family_data image'
-#     }
-#     defaults.update(kwargs)
-#     return models.FamilyDataImage.create(family_data=family_data, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -63,7 +52,6 @@ class PublicFamilyDataApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(FAMILY_DATA_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateFamilyDataApiTest(TestCase):
@@ -93,30 +81,11 @@ class PrivateFamilyDataApiTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    # def test_family_data_limited_to_user(self):
-    #     """test that academic_histories are for a specified user and biodata """
-    #     sample_family_data(biodata=self.biodata)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     biodata2 = sample_biodata(user=user2)
-    #     sample_family_data(biodata=biodata2)
-
-    #     family_data = models.FamilyData.objects.all()
-    #     serializer = serializers.FamilyDataSerializer(family_data, many=True, context=serializer_context)
-        
-    #     res = self.client.get(FAMILY_DATA_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 2)
-
     def test_retrieve_family_data_detail(self):
         """test retrieving a family_data's detail"""
         family_data = sample_family_data(biodata=self.biodata)
         serializer = serializers.FamilyDataSerializer(family_data, context=serializer_context)
-        
+
         url = family_data_detail_url(family_data_id=family_data.id)
         res = self.client.get(url)
 
@@ -143,7 +112,6 @@ class PrivateFamilyDataApiTest(TestCase):
         family_data = sample_family_data(biodata=self.biodata)
 
         payload = {
-            # 'biodata': self.serializer.data['url'],
             'guardian_full_name': 'Test Guardian',
         }
 
@@ -159,7 +127,7 @@ class PrivateFamilyDataApiTest(TestCase):
     def test_full_update_family_data(self):
         """test updating a family_data's detail using put"""
         family_data = sample_family_data(biodata=self.biodata)
-        
+
         payload = {
             'biodata': self.serializer.data['url'],
             'guardian_full_name': 'Test Guardian',

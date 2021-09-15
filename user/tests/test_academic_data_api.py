@@ -1,4 +1,3 @@
-from user.tests.test_student_api import student_detail_url
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -33,16 +32,6 @@ def sample_academic_data(student, **kwargs):
     return models.AcademicData.objects.create(student=student, **kwargs)
 
 
-# def sample_academic_data_image(academic_data, **kwargs):
-#     """create and return a sample academic_data image"""
-#     defaults = {
-#         'description': 'sample academic_data image'
-#     }
-#     defaults.update(kwargs)
-#     return models.AcademicDataImage.create(academic_data=academic_data, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -64,7 +53,6 @@ class PublicAcademicDataApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(ACADEMIC_DATA_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateAcademicDataApiTest(TestCase):
@@ -94,31 +82,11 @@ class PrivateAcademicDataApiTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    # def test_academic_data_limited_to_student(self):
-    #     """test that academic_data is for a specified or currently logged in student"""
-    #     sample_academic_data(student=self.student)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     student2 = sample_student(user=user2)
-    #     sample_academic_data(student=student2)
-
-    #     academic_data = models.AcademicData.objects.filter(student=self.student)
-    #     serializer = serializers.AcademicDataSerializer(academic_data, context=serializer_context)
-        
-    #     res = self.client.get(ACADEMIC_DATA_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 1)
-    #     self.assertEqual(serializer.data['student'], models.Student.objects.get(user=self.user).url)
-
     def test_retrieve_academic_data_detail(self):
         """test retrieving a academic_data's detail"""
         academic_data = sample_academic_data(student=self.student)
         serializer = serializers.AcademicDataSerializer(academic_data, context=serializer_context)
-        
+
         url = academic_data_detail_url(academic_data_id=academic_data.id)
         res = self.client.get(url)
 
@@ -135,7 +103,10 @@ class PrivateAcademicDataApiTest(TestCase):
         res = self.client.post(ACADEMIC_DATA_URL, payload)
 
         academic_data = models.AcademicData.objects.get(id=res.data['id'])
-        academic_data_serializer = serializers.AcademicDataSerializer(academic_data, context=serializer_context)
+        academic_data_serializer = serializers.AcademicDataSerializer(
+            academic_data,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         test_all_model_attributes(self, payload, academic_data, academic_data_serializer)
@@ -153,7 +124,10 @@ class PrivateAcademicDataApiTest(TestCase):
         res = self.client.patch(url, payload)
 
         academic_data.refresh_from_db()
-        academic_data_serializer = serializers.AcademicDataSerializer(academic_data, context=serializer_context)
+        academic_data_serializer = serializers.AcademicDataSerializer(
+            academic_data,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, academic_data, academic_data_serializer)
@@ -161,7 +135,7 @@ class PrivateAcademicDataApiTest(TestCase):
     def test_full_update_academic_data(self):
         """test updating a academic_data's detail using put"""
         academic_data = sample_academic_data(student=self.student)
-        
+
         payload = {
             'student': self.serializer.data['url'],
             'start_date': datetime.today().strftime('%Y-%m-%d'),
@@ -171,7 +145,10 @@ class PrivateAcademicDataApiTest(TestCase):
         res = self.client.put(url, payload)
 
         academic_data.refresh_from_db()
-        academic_data_serializer = serializers.AcademicDataSerializer(academic_data, context=serializer_context)
+        academic_data_serializer = serializers.AcademicDataSerializer(
+            academic_data,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, academic_data, academic_data_serializer)

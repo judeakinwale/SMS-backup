@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import  BaseUserManager
+from django.contrib.auth.models import BaseUserManager
 
 # Create your managers here.
 
 
 class UserManager(BaseUserManager):
     """user manager for the custom user model"""
-    
+
     def create_user(self, email, password=None, **kwargs):
         """create and save a new user"""
         if not email:

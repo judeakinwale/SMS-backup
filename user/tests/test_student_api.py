@@ -26,16 +26,6 @@ def sample_student(user, **kwargs):
     return models.Student.objects.create(user=user, **kwargs)
 
 
-# def sample_student_image(student, **kwargs):
-#     """create and return a sample student image"""
-#     defaults = {
-#         'description': 'sample student image'
-#     }
-#     defaults.update(kwargs)
-#     return models.StudentImage.create(student=student, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -57,7 +47,6 @@ class PublicStudentApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(STUDENT_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateStudentApiTest(TestCase):
@@ -97,7 +86,7 @@ class PrivateStudentApiTest(TestCase):
 
         student = models.Student.objects.all()
         serializer = serializers.StudentSerializer(student, many=True, context=serializer_context)
-        
+
         res = self.client.get(STUDENT_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -108,7 +97,7 @@ class PrivateStudentApiTest(TestCase):
         """test retrieving a student's detail"""
         student = sample_student(user=self.user)
         serializer = serializers.StudentSerializer(student, context=serializer_context)
-        
+
         url = student_detail_url(student_id=student.id)
         res = self.client.get(url)
 
@@ -135,7 +124,6 @@ class PrivateStudentApiTest(TestCase):
         student = sample_student(user=self.user)
 
         payload = {
-            # 'user': self.serializer.data['url'],
             'student_id': 'S 1034',
         }
 
@@ -151,7 +139,7 @@ class PrivateStudentApiTest(TestCase):
     def test_full_update_student(self):
         """test updating a student's detail using put"""
         student = sample_student(user=self.user)
-        
+
         payload = {
             'user': self.serializer.data['url'],
             'student_id': 'S 1034',

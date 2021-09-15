@@ -26,16 +26,6 @@ def sample_staff(user, **kwargs):
     return models.Staff.objects.create(user=user, **kwargs)
 
 
-# def sample_staff_image(staff, **kwargs):
-#     """create and return a sample staff image"""
-#     defaults = {
-#         'description': 'sample staff image'
-#     }
-#     defaults.update(kwargs)
-#     return models.StaffImage.create(staff=staff, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -97,7 +87,7 @@ class PrivateStaffApiTest(TestCase):
 
         staff = models.Staff.objects.all()
         serializer = serializers.StaffSerializer(staff, many=True, context=serializer_context)
-        
+
         res = self.client.get(STAFF_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -108,7 +98,7 @@ class PrivateStaffApiTest(TestCase):
         """test retrieving a staff's detail"""
         staff = sample_staff(user=self.user)
         serializer = serializers.StaffSerializer(staff, context=serializer_context)
-        
+
         url = staff_detail_url(staff_id=staff.id)
         res = self.client.get(url)
 
@@ -152,7 +142,7 @@ class PrivateStaffApiTest(TestCase):
     def test_full_update_staff(self):
         """test updating a staff's detail using put"""
         staff = sample_staff(user=self.user)
-        
+
         payload = {
             'user': self.serializer.data['url'],
             'employee_id': 'Emp 104',

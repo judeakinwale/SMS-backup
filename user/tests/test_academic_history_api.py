@@ -32,16 +32,6 @@ def sample_academic_history(biodata, **kwargs):
     return models.AcademicHistory.objects.create(biodata=biodata, **kwargs)
 
 
-# def sample_academic_history_image(academic_history, **kwargs):
-#     """create and return a sample academic_history image"""
-#     defaults = {
-#         'description': 'sample academic_history image'
-#     }
-#     defaults.update(kwargs)
-#     return models.AcademicHistoryImage.create(academic_history=academic_history, **defaults)
-
-
-
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
     ignored_keys = ['image']
@@ -63,7 +53,6 @@ class PublicAcademicHistoryApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(ACADEMIC_HISTORY_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateAcademicHistoryApiTest(TestCase):
@@ -86,37 +75,25 @@ class PrivateAcademicHistoryApiTest(TestCase):
         """test retrieving a list of academic_history"""
         sample_academic_history(biodata=self.biodata)
         academic_history = models.AcademicHistory.objects.all()
-        serializer = serializers.AcademicHistorySerializer(academic_history, many=True, context=serializer_context)
+        serializer = serializers.AcademicHistorySerializer(
+            academic_history,
+            many=True,
+            context=serializer_context
+        )
 
         res = self.client.get(ACADEMIC_HISTORY_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    # def test_academic_history_limited_to_user(self):
-    #     """test that academic_histories are for a specified user and biodata """
-    #     sample_academic_history(biodata=self.biodata)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     biodata2 = sample_biodata(user=user2)
-    #     sample_academic_history(biodata=biodata2)
-
-    #     academic_history = models.AcademicHistory.objects.all()
-    #     serializer = serializers.AcademicHistorySerializer(academic_history, many=True, context=serializer_context)
-        
-    #     res = self.client.get(ACADEMIC_HISTORY_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data, serializer.data)
-    #     self.assertEqual(len(res.data), 2)
-
     def test_retrieve_academic_history_detail(self):
         """test retrieving a academic_history's detail"""
         academic_history = sample_academic_history(biodata=self.biodata)
-        serializer = serializers.AcademicHistorySerializer(academic_history, context=serializer_context)
-        
+        serializer = serializers.AcademicHistorySerializer(
+            academic_history,
+            context=serializer_context
+        )
+
         url = academic_history_detail_url(academic_history_id=academic_history.id)
         res = self.client.get(url)
 
@@ -133,7 +110,10 @@ class PrivateAcademicHistoryApiTest(TestCase):
         res = self.client.post(ACADEMIC_HISTORY_URL, payload)
 
         academic_history = models.AcademicHistory.objects.get(id=res.data['id'])
-        academic_history_serializer = serializers.AcademicHistorySerializer(academic_history, context=serializer_context)
+        academic_history_serializer = serializers.AcademicHistorySerializer(
+            academic_history,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         test_all_model_attributes(self, payload, academic_history, academic_history_serializer)
@@ -143,7 +123,6 @@ class PrivateAcademicHistoryApiTest(TestCase):
         academic_history = sample_academic_history(biodata=self.biodata)
 
         payload = {
-            # 'biodata': self.serializer.data['url'],
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 
@@ -151,7 +130,10 @@ class PrivateAcademicHistoryApiTest(TestCase):
         res = self.client.patch(url, payload)
 
         academic_history.refresh_from_db()
-        academic_history_serializer = serializers.AcademicHistorySerializer(academic_history, context=serializer_context)
+        academic_history_serializer = serializers.AcademicHistorySerializer(
+            academic_history,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, academic_history, academic_history_serializer)
@@ -159,7 +141,7 @@ class PrivateAcademicHistoryApiTest(TestCase):
     def test_full_update_academic_history(self):
         """test updating a academic_history's detail using put"""
         academic_history = sample_academic_history(biodata=self.biodata)
-        
+
         payload = {
             'biodata': self.serializer.data['url'],
             'start_date': datetime.today().strftime('%Y-%m-%d'),
@@ -169,7 +151,10 @@ class PrivateAcademicHistoryApiTest(TestCase):
         res = self.client.put(url, payload)
 
         academic_history.refresh_from_db()
-        academic_history_serializer = serializers.AcademicHistorySerializer(academic_history, context=serializer_context)
+        academic_history_serializer = serializers.AcademicHistorySerializer(
+            academic_history,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, academic_history, academic_history_serializer)
