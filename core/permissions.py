@@ -8,8 +8,6 @@ class IsOwner(permissions.BasePermission):
         return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        # # Read and write permissions are only allowed to the owner of the snippet.
-        # return obj.owner == request.user
         if hasattr(object, 'source'):
             return bool(request.user and obj.source == request.user)
 
