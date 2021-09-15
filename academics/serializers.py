@@ -10,8 +10,9 @@ class FacultySerializer(serializers.HyperlinkedModelSerializer):
         queryset=get_user_model().objects.filter(is_staff=True),
         view_name='user:user-detail',
         allow_null=True,
-        required=False
+        required=False,
     )
+
     class Meta:
         model = models.Faculty
         fields = [
@@ -70,7 +71,6 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
         queryset=models.Level.objects.all(),
         view_name='academics:level-detail',
     )
-    # max_level = serializers.StringRelatedField()
 
     class Meta:
         model = models.Programme

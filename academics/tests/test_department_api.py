@@ -25,7 +25,7 @@ def sample_faculty(**kwargs):
     """create and return a sample faculty"""
     defaults = {'name': 'Faculty 1'}
     defaults.update(kwargs)
-    return models.Faculty.objects.create(**defaults) 
+    return models.Faculty.objects.create(**defaults)
 
 
 def sample_department(faculty, **kwargs):
@@ -56,7 +56,6 @@ class PublicDepartmentApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(DEPARTMENT_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateDepartmentApiTest(TestCase):
@@ -69,7 +68,7 @@ class PrivateDepartmentApiTest(TestCase):
             password='testpass'
         )
         self.client.force_authenticate(self.user)
-        self.faculty =sample_faculty()
+        self.faculty = sample_faculty()
 
     def test_retrieve_department(self):
         """test retrieving a list of departments"""
@@ -86,7 +85,7 @@ class PrivateDepartmentApiTest(TestCase):
         """test retrieving a department's detail"""
         department = sample_department(faculty=self.faculty)
         serializer = serializers.DepartmentSerializer(department, context=serializer_context)
-        
+
         url = department_detail_url(department_id=department.id)
         res = self.client.get(url)
 
@@ -113,7 +112,7 @@ class PrivateDepartmentApiTest(TestCase):
 
     def test_partial_update_department(self):
         """test partially updating a department's detail using patch"""
-        department = sample_department(faculty=self.faculty)        
+        department = sample_department(faculty=self.faculty)
         payload = {
             'description': 'some description text',
         }
@@ -131,7 +130,7 @@ class PrivateDepartmentApiTest(TestCase):
         """test updating a department's detail using put"""
         department = sample_department(faculty=self.faculty)
         faculty = sample_faculty(name='Faculty 3')
-        faculty_serializer = serializers.FacultySerializer(faculty, context=serializer_context)        
+        faculty_serializer = serializers.FacultySerializer(faculty, context=serializer_context)
         payload = {
             'faculty': faculty_serializer.data['url'],
             'name': 'Department 3',

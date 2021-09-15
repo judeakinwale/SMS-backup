@@ -25,7 +25,7 @@ def sample_faculty(**kwargs):
     """create and return a sample faculty"""
     defaults = {'name': 'Faculty 1'}
     defaults.update(kwargs)
-    return models.Faculty.objects.create(**defaults) 
+    return models.Faculty.objects.create(**defaults)
 
 
 def sample_department(faculty, **kwargs):
@@ -73,7 +73,6 @@ class PublicProgrammeApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(PROGRAMME_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateProgrammeApiTest(TestCase):
@@ -87,7 +86,7 @@ class PrivateProgrammeApiTest(TestCase):
         )
         self.client.force_authenticate(self.user)
         self.faculty = sample_faculty()
-        self.department =sample_department(faculty=self.faculty)
+        self.department = sample_department(faculty=self.faculty)
         self.level = sample_level()
 
     def test_retrieve_programme(self):
@@ -105,7 +104,7 @@ class PrivateProgrammeApiTest(TestCase):
         """test retrieving a programme's detail"""
         programme = sample_programme(department=self.department, max_level=self.level)
         serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
-        
+
         url = programme_detail_url(programme_id=programme.id)
         res = self.client.get(url)
 
@@ -134,7 +133,7 @@ class PrivateProgrammeApiTest(TestCase):
 
     def test_partial_update_programme(self):
         """test partially updating a programme's detail using patch"""
-        programme = sample_programme(department=self.department, max_level=self.level)        
+        programme = sample_programme(department=self.department, max_level=self.level)
         payload = {
             'description': 'some description text',
         }

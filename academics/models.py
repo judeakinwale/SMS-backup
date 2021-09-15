@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
+
 class Faculty(models.Model):
     """Model definition for Faculty."""
 
@@ -119,11 +120,10 @@ class Level(models.Model):
         FOUR = 400
         FIVE = 500
 
-
     code = models.IntegerField(
         choices=LevelChoices.choices,
         null=True,
-        default=LevelChoices.ONE, 
+        default=LevelChoices.ONE,
     )
 
     class Meta:

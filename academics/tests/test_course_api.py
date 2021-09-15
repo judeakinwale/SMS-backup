@@ -25,7 +25,7 @@ def sample_faculty(**kwargs):
     """create and return a sample faculty"""
     defaults = {'name': 'Faculty 1'}
     defaults.update(kwargs)
-    return models.Faculty.objects.create(**defaults) 
+    return models.Faculty.objects.create(**defaults)
 
 
 def sample_department(faculty, **kwargs):
@@ -95,7 +95,7 @@ class PrivateCourseApiTest(TestCase):
         )
         self.client.force_authenticate(self.user)
         self.faculty = sample_faculty()
-        self.department =sample_department(faculty=self.faculty)
+        self.department = sample_department(faculty=self.faculty)
         self.level = sample_level()
         self.programme = sample_programme(department=self.department, max_level=self.level)
 
@@ -114,7 +114,7 @@ class PrivateCourseApiTest(TestCase):
         """test retrieving a course's detail"""
         course = sample_course(programme=self.programme)
         serializer = serializers.CourseSerializer(course, context=serializer_context)
-        
+
         url = course_detail_url(course_id=course.id)
         res = self.client.get(url)
 
@@ -141,7 +141,7 @@ class PrivateCourseApiTest(TestCase):
 
     def test_partial_update_course(self):
         """test partially updating a course's detail using patch"""
-        course = sample_course(programme=self.programme)        
+        course = sample_course(programme=self.programme)
         payload = {
             'description': 'some description text',
         }

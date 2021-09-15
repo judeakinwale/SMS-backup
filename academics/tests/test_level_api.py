@@ -78,7 +78,7 @@ class PrivateLevelApiTest(TestCase):
         """test retrieving a level's detail"""
         level = sample_level()
         serializer = serializers.LevelSerializer(level, context=serializer_context)
-        
+
         url = level_detail_url(level_id=level.id)
         res = self.client.get(url)
 
@@ -101,7 +101,7 @@ class PrivateLevelApiTest(TestCase):
 
     def test_partial_update_level(self):
         """test partially updating a level's detail using patch"""
-        level = sample_level()        
+        level = sample_level()
         payload = {
             'code': 300,
         }
@@ -117,7 +117,7 @@ class PrivateLevelApiTest(TestCase):
 
     def test_full_update_level(self):
         """test updating a level's detail using put"""
-        level = sample_level()        
+        level = sample_level()
         payload = {
             'code': 200,
         }

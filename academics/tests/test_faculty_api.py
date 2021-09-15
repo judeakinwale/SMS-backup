@@ -49,7 +49,6 @@ class PublicFacultyApiTest(TestCase):
         """test that authentication is required"""
         res = self.client.get(FACULTY_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-        # self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateFacultyApiTest(TestCase):
@@ -78,7 +77,7 @@ class PrivateFacultyApiTest(TestCase):
         """test retrieving a faculty's detail"""
         faculty = sample_faculty()
         serializer = serializers.FacultySerializer(faculty, context=serializer_context)
-        
+
         url = faculty_detail_url(faculty_id=faculty.id)
         res = self.client.get(url)
 
@@ -102,7 +101,7 @@ class PrivateFacultyApiTest(TestCase):
 
     def test_partial_update_faculty(self):
         """test partially updating a faculty's detail using patch"""
-        faculty = sample_faculty()        
+        faculty = sample_faculty()
         payload = {
             'description': 'some description text',
         }
@@ -118,7 +117,7 @@ class PrivateFacultyApiTest(TestCase):
 
     def test_full_update_faculty(self):
         """test updating a faculty's detail using put"""
-        faculty = sample_faculty()        
+        faculty = sample_faculty()
         payload = {
             'name': 'Faculty 3',
             'description': 'some description text',
