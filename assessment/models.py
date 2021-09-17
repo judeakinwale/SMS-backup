@@ -109,10 +109,13 @@ class QuizTaker(models.Model):
 
         if self.grade.score and self.grade.score == score:
             return self.grade.score
+        elif self.grade.score and self.grade.score > 0:
+            return self.grade.score
         else:
             self.grade.score = score
             self.grade.save()
             return self.grade.score
+
         return score
 
 
