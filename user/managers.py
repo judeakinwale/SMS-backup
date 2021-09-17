@@ -1,5 +1,6 @@
-from django.db import models
+# from django.db import models
 from django.contrib.auth.models import BaseUserManager
+from user import models
 
 # Create your managers here.
 
@@ -21,6 +22,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, password, **kwargs)
         user.is_staff = True
         user.save(using=self._db)
+        models.Staff.objects.create(user=user)
         return user
 
     def create_superuser(self, email, password, **kwargs):
@@ -29,4 +31,5 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
+        models.Staff.objects.create(user=user)
         return user

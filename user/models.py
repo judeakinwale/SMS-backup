@@ -34,6 +34,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         """String representation of User."""
         return self.email
 
+    def get_staff(self):
+        if self.is_staff is True:
+            try:
+                staff = Staff.objects.get(user=self)
+            except:
+                staff = Staff.objects.create(user=self)
+            return staff
+        else:
+            return None
+
 
 class Staff(models.Model):
     """Model definition for Staff."""
@@ -84,6 +94,12 @@ class Student(models.Model):
         """String representation of Student."""
         # return f"{self.matric_no if self.matric_no else self.student_id}"
         return f"{self.matric_no or self.student_id or self.user.email}"
+
+    def get_current_course_registrations(self, session, semester):
+        return CourseRegistration.objects.filter(student=self, session=session, semester=semester)
+
+    def get_course_registrations(self):
+        return CourseRegistration.objects.filter(student=self)
 
 
 class Biodata(models.Model):

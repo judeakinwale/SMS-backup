@@ -23,7 +23,11 @@ def staff_detail_url(staff_id):
 
 def sample_staff(user, **kwargs):
     """create and return sample staff"""
-    return models.Staff.objects.create(user=user, **kwargs)
+    try:
+        staff = models.Staff.objects.get(user=user)
+    except:
+        staff = models.Staff.objects.create(user=user, **kwargs)
+    return staff
 
 
 def test_all_model_attributes(insance, payload, model, serializer):

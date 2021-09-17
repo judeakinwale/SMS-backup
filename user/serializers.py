@@ -350,6 +350,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             user.set_password(password)
             user.save()
 
+        if user.is_staff is True:
+            try:
+                models.Staff.objects.get(user=user)
+            except:
+                models.Staff.objects.create(user=user)
+
         return user
 
 
