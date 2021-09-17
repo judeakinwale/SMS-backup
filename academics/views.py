@@ -1,5 +1,3 @@
-from core.permissions import IsSuperUser
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from academics import models, serializers
 from core import permissions as cpermissions
@@ -12,8 +10,8 @@ class FacultyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.FacultySerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -23,8 +21,8 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.DepartmentSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -34,8 +32,8 @@ class ProgrammeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProgrammeSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -45,8 +43,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CourseSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -56,7 +54,7 @@ class LevelViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LevelSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]

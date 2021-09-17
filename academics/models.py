@@ -34,7 +34,7 @@ class Faculty(models.Model):
                 dean.is_dean_of_faculty = True
                 dean.save()
                 print(f"{dean} \n Is dean of faculty: {dean.is_dean_of_faculty}")
-            except:
+            except Exception:
                 self.dean.get_staff()
                 dean = self.dean.staff_set.all().first()
                 dean.is_dean_of_faculty = True
@@ -77,7 +77,7 @@ class Department(models.Model):
                 head.is_head_of_department = True
                 head.save()
                 print(f"{head} \n Is head of department: {head.is_head_of_department}")
-            except:
+            except Exception:
                 self.head.get_staff()
                 head = self.head.staff_set.all().first()
                 head.is_head_of_department = True

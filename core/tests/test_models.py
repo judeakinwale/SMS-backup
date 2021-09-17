@@ -1,7 +1,6 @@
 import tempfile
 from PIL import Image
 from django.contrib.auth import get_user_model
-from django.db import models
 from django.test import TestCase
 from django.utils import timezone
 from user import models as umodels

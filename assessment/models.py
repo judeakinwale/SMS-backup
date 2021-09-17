@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from academics.models import Course
-from user.models import Student
 
 # Create your models here.
 
@@ -43,6 +42,11 @@ class Question(models.Model):
 
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     label = models.CharField(max_length=250)
+    # file = models.FileField(
+    #     verbose_name='answer_file',
+    #     upload_to='files/quiz_answers/',
+    #     blank=True, null=True
+    # )
     order = models.IntegerField(default=0)
 
     class Meta:

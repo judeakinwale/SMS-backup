@@ -1,6 +1,5 @@
-from django.shortcuts import render
-from rest_framework import generics, viewsets, authentication, permissions
-from rest_framework.serializers import Serializer
+# from django.shortcuts import render
+from rest_framework import viewsets, permissions
 from information import models, serializers
 from core import permissions as cpermissions
 
@@ -12,9 +11,8 @@ class InformationViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.InformationSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            # cpermissions.IsOwner |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -27,9 +25,8 @@ class NoticeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.NoticeSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            # cpermissions.IsOwner |
-            cpermissions.IsITDept
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
         )
     ]
 
@@ -42,8 +39,8 @@ class InformationImageViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.InformationImageSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -53,7 +50,7 @@ class ScopeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ScopeSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
         )
     ]

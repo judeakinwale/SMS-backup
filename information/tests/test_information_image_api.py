@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.exceptions import NotFound
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from information import models, serializers
@@ -58,7 +57,7 @@ def test_all_model_attributes(insance, payload, model, serializer):
     for key in relevant_keys:
         try:
             insance.assertEqual(payload[key], getattr(model, key))
-        except:
+        except Exception:
             insance.assertEqual(payload[key], serializer.data[key])
 
 

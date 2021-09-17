@@ -38,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.is_staff is True:
             try:
                 staff = Staff.objects.get(user=self)
-            except:
+            except Exception:
                 staff = Staff.objects.create(user=self)
             return staff
         else:

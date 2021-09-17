@@ -98,7 +98,7 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
                         image.image = data.get('image', image.image)
                         image.description = data.get('description', image.description)
                         image.save()
-                    except:
+                    except Exception:
                         data['information'] = information
                         models.InformationImage.objects.create(**data)
 

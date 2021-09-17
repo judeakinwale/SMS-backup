@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from core import permissions as cpermissions
 from assessment import models, serializers
@@ -11,10 +10,10 @@ class QuizViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuizSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsLecturer |
-            cpermissions.IsHead
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsLecturer
+            | cpermissions.IsHead
         )
     ]
 
@@ -27,10 +26,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuestionSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsLecturer |
-            cpermissions.IsHead
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsLecturer
+            | cpermissions.IsHead
         )
     ]
 
@@ -40,10 +39,10 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AnswerSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsLecturer |
-            cpermissions.IsHead
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsLecturer
+            | cpermissions.IsHead
         )
     ]
 
@@ -53,11 +52,11 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuizTakerSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsHead |
-            cpermissions.IsLecturer |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsHead
+            | cpermissions.IsLecturer
+            | cpermissions.IsStudent
         )
     ]
 
@@ -70,10 +69,10 @@ class ResponseViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ResponseSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsHead |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsHead
+            | cpermissions.IsStudent
         )
     ]
 
@@ -83,10 +82,9 @@ class GradeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GradeSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsITDept |
-            cpermissions.IsHead |
-            # cpermissions.IsStudent |
-            cpermissions.IsLecturerOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDept
+            | cpermissions.IsHead
+            | cpermissions.IsLecturerOrReadOnly
         )
     ]

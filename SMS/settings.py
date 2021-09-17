@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
-    
+
     'information.apps.InformationConfig',
     'assessment.apps.AssessmentConfig',
     'academics.apps.AcademicsConfig',
@@ -173,16 +173,16 @@ SIMPLE_JWT = {
 # drf-yasg authentication settings
 # https://drf-yasg.readthedocs.io/en/stable/security.html
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Basic': {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
             'type': 'basic'
-      },
-      'Bearer': {
+        },
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   }
+        }
+    }
 }
 
 

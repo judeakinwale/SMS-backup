@@ -49,7 +49,7 @@ def test_all_model_attributes(insance, payload, model, serializer):
     for key in relevant_keys:
         try:
             insance.assertEqual(payload[key], getattr(model, key))
-        except:
+        except Exception:
             insance.assertEqual(payload[key], serializer.data[key])
 
 

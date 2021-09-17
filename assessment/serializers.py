@@ -104,7 +104,7 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
                         answer.text = data.get('text', answer.text)
                         answer.is_correct = data.get('is_correct', answer.is_correct)
                         answer.save()
-                    except:
+                    except Exception:
                         data['question'] = question
                         models.Answer.objects.create(**data)
 
@@ -224,10 +224,10 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                                         answer.text = answer_data.get('text', answer.text)
                                         answer.is_correct = answer_data.get('is_correct', answer.is_correct)
                                         answer.save()
-                                    except:
+                                    except Exception:
                                         answer_data['question'] = question
                                         models.Answer.objects.create(**answer_data)
-                    except:
+                    except Exception:
                         question_data['quiz'] = quiz
 
                         if ('answer_set' not in question_data) or question_data['answer_set'] == []:

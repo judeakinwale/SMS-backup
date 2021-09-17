@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
 from rest_framework import generics, viewsets, permissions
 from user import serializers, models
 from core import permissions as cpermissions
@@ -12,9 +11,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
         )
     ]
 
@@ -34,9 +33,9 @@ class StaffViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StaffSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -46,9 +45,9 @@ class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.StudentSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDeptOrReadOnly
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDeptOrReadOnly
         )
     ]
 
@@ -58,10 +57,10 @@ class BiodataViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.BiodataSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
+            | cpermissions.IsStudent
         )
     ]
 
@@ -71,9 +70,9 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AcademicDataSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
         )
     ]
 
@@ -83,10 +82,10 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AcademicHistorySerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
+            | cpermissions.IsStudent
         )
     ]
 
@@ -96,10 +95,10 @@ class HealthDataViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.HealthDataSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
+            | cpermissions.IsStudent
         )
     ]
 
@@ -109,10 +108,10 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.FamilyDataSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsBursar |
-            cpermissions.IsITDept |
-            cpermissions.IsStudent
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
+            | cpermissions.IsStudent
         )
     ]
 
@@ -122,8 +121,8 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CourseRegistrationSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser |
-            cpermissions.IsStudent |
-            cpermissions.IsITDept
+            cpermissions.IsSuperUser
+            | cpermissions.IsStudent
+            | cpermissions.IsITDept
         )
     ]

@@ -174,17 +174,17 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                 biodata=biodata,
                 **academic_history_data
             )
-        except:
+        except Exception:
             pass
 
         try:
             models.HealthData.objects.create(biodata=biodata, **health_data_data)
-        except:
+        except Exception:
             pass
 
         try:
             models.FamilyData.objects.create(biodata=biodata, **family_data_data)
-        except:
+        except Exception:
             pass
 
         return biodata
@@ -207,7 +207,7 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
             academic_history.start_date = academic_history_data.get('start_date', instance.start_date)
             academic_history.end_date = academic_history_data.get('end_date', instance.end_date)
             academic_history.save()
-        except:
+        except Exception:
             pass
 
         try:
@@ -224,7 +224,7 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                 instance.respiratory_problems,
             )
             health_data.save()
-        except:
+        except Exception:
             pass
 
         try:
@@ -262,7 +262,7 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                 instance.guardian_address
             )
             family_data.save()
-        except:
+        except Exception:
             pass
 
         return biodata
@@ -342,7 +342,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
                 biodata.health_data = biodata_data.get('health_data', instance.health_data)
                 biodata.family_data = biodata_data.get('family_data', instance.family_data)
                 biodata.save()
-            except:
+            except Exception:
                 # print("\nBiodata doesn't exist")
                 biodata = models.Biodata.objects.create(user=user, **biodata_data)
 
@@ -353,7 +353,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         if user.is_staff is True:
             try:
                 models.Staff.objects.get(user=user)
-            except:
+            except Exception:
                 models.Staff.objects.create(user=user)
 
         return user
