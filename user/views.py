@@ -40,6 +40,18 @@ class StaffViewSet(viewsets.ModelViewSet):
     ]
 
 
+class CourseAdviserViewSet(viewsets.ModelViewSet):
+    queryset = models.CourseAdviser.objects.all()
+    serializer_class = serializers.CourseAdviserSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDeptOrReadOnly
+        )
+    ]
+
+
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = models.Student.objects.all()
     serializer_class = serializers.StudentSerializer

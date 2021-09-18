@@ -387,6 +387,28 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the CourseAdviser model"""
+
+    staff = serializers.HyperlinkedRelatedField(
+        queryset=models.Staff.objects.filter(is_active=True),
+        view_name='user:staff-detail'
+    )
+
+    class Meta:
+        model = models.CourseAdviser
+        fields = [
+            'id',
+            'url',
+            'staff',
+            'department',
+            'level',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:courseadviser-detail'},
+        }
+
+
 class StudentSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Student model"""
 

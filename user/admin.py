@@ -6,6 +6,7 @@ from user import models
 
 admin.site.register(models.User)
 admin.site.register(models.Staff)
+admin.site.register(models.CourseAdviser)
 admin.site.register(models.Student)
 admin.site.register(models.Biodata)
 admin.site.register(models.AcademicData)

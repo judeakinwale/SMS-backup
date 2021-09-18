@@ -61,6 +61,7 @@ class Staff(models.Model):
     is_IT = models.BooleanField(default=False)
     is_head_of_department = models.BooleanField(default=False)
     is_dean_of_faculty = models.BooleanField(default=False)
+    is_course_adviser = models.BooleanField(default=False)
 
     class Meta:
         """Meta definition for Staff."""
@@ -100,6 +101,24 @@ class Student(models.Model):
 
     def get_course_registrations(self):
         return CourseRegistration.objects.filter(student=self)
+
+
+class CourseAdviser(models.Model):
+    """Model definition for CourseAdviser"""
+
+    staff = models.ForeignKey(Staff, limit_choices_to={'is_active': True}, on_delete=models.CASCADE)
+    department = models.ForeignKey(acmodels.Department, on_delete=models.CASCADE, null=True)
+    level = models.ForeignKey(acmodels.Level, on_delete=models.CASCADE, null=True)
+
+    class META:
+        """Meta definition for CourseAdviser."""
+
+        verbose_name = _("CourseAdviser")
+        verbose_name_plural = _("CourseAdvisers")
+
+    def __str__(self):
+        """String representation of CourseAdviser."""
+        return self.staff
 
 
 class Biodata(models.Model):

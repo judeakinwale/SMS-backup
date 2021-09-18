@@ -9,6 +9,7 @@ app_name = 'user'
 router = DefaultRouter()
 router.register('user', views.UserViewSet)
 router.register('staff', views.StaffViewSet)
+router.register('course_adviser', views.CourseAdviserViewSet)
 router.register('student', views.StudentViewSet)
 router.register('biodata', views.BiodataViewSet)
 router.register('academic_data', views.AcademicDataViewSet)
