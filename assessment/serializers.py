@@ -63,6 +63,7 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'quiz',
             'label',
+            'file',
             'answer_set',
             'order',
         ]

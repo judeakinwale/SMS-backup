@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions
-from academics import models, serializers
+from academics import models, serializers, filters
 from core import permissions as cpermissions
 
 # Create your views here.
@@ -14,6 +14,7 @@ class FacultyViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.FacultyFilter
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):
@@ -25,6 +26,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.DepartmentFilter
 
 
 class ProgrammeViewSet(viewsets.ModelViewSet):
@@ -36,6 +38,7 @@ class ProgrammeViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.ProgrammeFilter
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -47,6 +50,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.CourseFilter
 
 
 class LevelViewSet(viewsets.ModelViewSet):
@@ -58,3 +62,4 @@ class LevelViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.LevelFilter

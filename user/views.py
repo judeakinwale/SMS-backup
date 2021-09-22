@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets, permissions
-from user import serializers, models
+from user import serializers, models, filters
 from core import permissions as cpermissions
 
 # Create your views here.
@@ -16,12 +16,14 @@ class UserViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDept
         )
     ]
+    filterset_class = filters.UserFilter
 
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):
     """manage the authenticated user"""
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = filters.UserFilter
 
     def get_object(self):
         """retrieve and return the authenticated user"""
@@ -38,6 +40,7 @@ class StaffViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.StaffFilter
 
 
 class CourseAdviserViewSet(viewsets.ModelViewSet):
@@ -50,6 +53,7 @@ class CourseAdviserViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.CourseAdviserFilter
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -62,6 +66,7 @@ class StudentViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.StudentFilter
 
 
 class BiodataViewSet(viewsets.ModelViewSet):
@@ -75,6 +80,7 @@ class BiodataViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.BiodataFilter
 
 
 class AcademicDataViewSet(viewsets.ModelViewSet):
@@ -87,6 +93,7 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDept
         )
     ]
+    filterset_class = filters.AcademicDataFilter
 
 
 class AcademicHistoryViewSet(viewsets.ModelViewSet):
@@ -100,6 +107,7 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.AcademicHistoryFilter
 
 
 class HealthDataViewSet(viewsets.ModelViewSet):
@@ -113,6 +121,7 @@ class HealthDataViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.HealthDataFilter
 
 
 class FamilyDataViewSet(viewsets.ModelViewSet):
@@ -126,6 +135,7 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.FamilyDataFilter
 
 
 class CourseRegistrationViewSet(viewsets.ModelViewSet):
@@ -138,3 +148,4 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDept
         )
     ]
+    filterset_class = filters.CourseRegistrationFilter

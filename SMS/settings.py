@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'drf_yasg',
+    'crispy_forms',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -161,6 +162,9 @@ REST_FRAMEWORK = {
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 # djangorestframework_simplejwt configuration
@@ -185,6 +189,9 @@ SWAGGER_SETTINGS = {
     }
 }
 
-
 # Enable Heroku
 django_heroku.settings(locals())
+
+# django crispy forms
+# https://django-crispy-forms.readthedocs.io/en/latest/install.html
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

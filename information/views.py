@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from rest_framework import viewsets, permissions
-from information import models, serializers
+from information import models, serializers, filters
 from core import permissions as cpermissions
 
 # Create your views here.
@@ -15,6 +15,7 @@ class InformationViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.InformationFilter
 
     def perform_create(self, serializer):
         return serializer.save(source=self.request.user)
@@ -29,6 +30,7 @@ class NoticeViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDept
         )
     ]
+    filterset_class = filters.NoticeFilter
 
     def perform_create(self, serializer):
         return serializer.save(source=self.request.user)
@@ -43,6 +45,7 @@ class InformationImageViewSet(viewsets.ModelViewSet):
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
+    filterset_class = filters.InformationImageFilter
 
 
 class ScopeViewSet(viewsets.ModelViewSet):

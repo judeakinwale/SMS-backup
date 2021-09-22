@@ -18,6 +18,13 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
         queryset=models.Student.objects.all(),
         view_name='user:student-detail'
     )
+    programme = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Programme.objects.all(),
+        view_name='academics:programme-detail',
+        allow_null=True,
+        required=False,
+    )
+
 
     class Meta:
         model = models.AcademicData
@@ -366,6 +373,12 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         queryset=get_user_model().objects.filter(is_staff=True),
         view_name='user:user-detail'
     )
+    programme = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Programme.objects.all(),
+        view_name='academics:programme-detail',
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = models.Staff
@@ -393,6 +406,18 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
     staff = serializers.HyperlinkedRelatedField(
         queryset=models.Staff.objects.filter(is_active=True),
         view_name='user:staff-detail'
+    )
+    department = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Department.objects.all(),
+        view_name='academics:department-detail'
+        # allow_null=True,
+        # required=False,
+    )
+    level = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Level.objects.all(),
+        view_name='academics:level-detail'
+        # allow_null=True,
+        # required=False,
     )
 
     class Meta:

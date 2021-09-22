@@ -17,7 +17,7 @@ class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=250)
     description = models.TextField(null=True, blank=True)
-    score = models.IntegerField(null=True, blank=True)
+    # score = models.IntegerField(null=True, blank=True)
     max_score = models.IntegerField(default=10)
     grade = models.ForeignKey('Grade', on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True)
@@ -42,11 +42,11 @@ class Question(models.Model):
 
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     label = models.CharField(max_length=250)
-    # file = models.FileField(
-    #     verbose_name='answer_file',
-    #     upload_to='files/quiz_answers/',
-    #     blank=True, null=True
-    # )
+    file = models.FileField(
+        verbose_name='answer_file',
+        upload_to='files/quiz_answers/',
+        blank=True, null=True
+    )
     order = models.IntegerField(default=0)
 
     class Meta:

@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
 from core import permissions as cpermissions
-from assessment import models, serializers
+from assessment import models, serializers, filters
 
 # Create your views here.
 
@@ -16,6 +16,7 @@ class QuizViewSet(viewsets.ModelViewSet):
             | cpermissions.IsHead
         )
     ]
+    filterset_class = filters.QuizFilter
 
     def perform_create(self, serializer):
         return serializer.save(supervisor=self.request.user)
@@ -32,6 +33,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
             | cpermissions.IsHead
         )
     ]
+    filterset_class = filters.QuestionFilter
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
@@ -45,6 +47,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
             | cpermissions.IsHead
         )
     ]
+    filterset_class = filters.AnswerFilter
 
 
 class QuizTakerViewSet(viewsets.ModelViewSet):
@@ -59,6 +62,7 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.QuizTakerFilter
 
     def perform_create(self, serializer):
         return serializer.save(student=self.request.user)
@@ -75,6 +79,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
             | cpermissions.IsStudent
         )
     ]
+    filterset_class = filters.ResponseFilter
 
 
 class GradeViewSet(viewsets.ModelViewSet):
