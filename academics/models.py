@@ -90,8 +90,8 @@ class Department(models.Model):
         return self.name
 
 
-class Programme(models.Model):
-    """Model definition for Programme."""
+class Specialization(models.Model):
+    """Model definition for Specialization."""
 
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     name = models.CharField(max_length=250, unique=True)
@@ -102,20 +102,20 @@ class Programme(models.Model):
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
-        """Meta definition for Programme."""
+        """Meta definition for Specialization."""
 
-        verbose_name = _('Programme')
-        verbose_name_plural = _('Programmes')
+        verbose_name = _('Specialization')
+        verbose_name_plural = _('Specializations')
 
     def __str__(self):
-        """String representation of Programme."""
+        """String representation of Specialization."""
         return self.name
 
 
 class Course(models.Model):
     """Model definition for Course."""
 
-    programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
+    specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
     name = models.CharField(max_length=250, unique=True)
     code = models.CharField(max_length=250, null=True, blank=True, unique=True)
     description = models.TextField(null=True, blank=True)

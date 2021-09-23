@@ -54,7 +54,12 @@ class Scope(models.Model):
 
     faculty = models.ForeignKey(amodels.Faculty, on_delete=models.CASCADE, null=True, blank=True)
     departmment = models.ForeignKey(amodels.Department, on_delete=models.CASCADE, null=True, blank=True)
-    programme = models.ForeignKey(amodels.Programme, on_delete=models.CASCADE, null=True, blank=True)
+    specialization = models.ForeignKey(
+        amodels.Specialization,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     course = models.ForeignKey(amodels.Course, on_delete=models.CASCADE, null=True, blank=True)
     level = models.ForeignKey(amodels.Level, on_delete=models.CASCADE, null=True, blank=True)
 

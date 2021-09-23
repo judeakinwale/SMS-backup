@@ -29,16 +29,16 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     filterset_class = filters.DepartmentFilter
 
 
-class ProgrammeViewSet(viewsets.ModelViewSet):
-    queryset = models.Programme.objects.all()
-    serializer_class = serializers.ProgrammeSerializer
+class SpecializationViewSet(viewsets.ModelViewSet):
+    queryset = models.Specialization.objects.all()
+    serializer_class = serializers.SpecializationSerializer
     permission_classes = [
         permissions.IsAuthenticated & (
             cpermissions.IsSuperUser
             | cpermissions.IsITDeptOrReadOnly
         )
     ]
-    filterset_class = filters.ProgrammeFilter
+    filterset_class = filters.SpecializationFilter
 
 
 class CourseViewSet(viewsets.ModelViewSet):

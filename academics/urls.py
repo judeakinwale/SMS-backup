@@ -7,7 +7,7 @@ app_name = 'academics'
 router = DefaultRouter()
 router.register('faculty', views.FacultyViewSet)
 router.register('department', views.DepartmentViewSet)
-router.register('programme', views.ProgrammeViewSet)
+router.register('specialization', views.SpecializationViewSet)
 router.register('course', views.CourseViewSet)
 router.register('level', views.LevelViewSet)
 

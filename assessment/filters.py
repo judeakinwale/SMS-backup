@@ -33,7 +33,7 @@ class QuestionFilter(filters.FilterSet):
 
 
 class AnswerFilter(filters.FilterSet):
-    
+
     class Meta:
         model = models.Answer
         fields = {
@@ -41,6 +41,7 @@ class AnswerFilter(filters.FilterSet):
             'text': ['icontains'],
             'is_correct': ['exact'],
         }
+
 
 class QuizTakerFilter(filters.FilterSet):
 

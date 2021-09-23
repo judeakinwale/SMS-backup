@@ -37,7 +37,7 @@ def sample_faculty(**kwargs):
 
 def sample_department(faculty, **kwargs):
     """create and return a sample department"""
-    defaults = {'name': 'Programme 1'}
+    defaults = {'name': 'Specialization 1'}
     defaults.update(kwargs)
     return amodels.Department.objects.create(faculty=faculty, **defaults)
 
@@ -49,22 +49,22 @@ def sample_level(**kwargs):
     return amodels.Level.objects.create(**defaults)
 
 
-def sample_programme(department, max_level, **kwargs):
-    """create and return a sample programme"""
+def sample_specialization(department, max_level, **kwargs):
+    """create and return a sample specialization"""
     defaults = {
-        'name': 'Programme 1',
+        'name': 'Specialization 1',
     }
     defaults.update(kwargs)
-    return amodels.Programme.objects.create(department=department, max_level=max_level, **defaults)
+    return amodels.Specialization.objects.create(department=department, max_level=max_level, **defaults)
 
 
-def sample_course(programme, **kwargs):
+def sample_course(specialization, **kwargs):
     """create and return a sample course"""
     defaults = {
         'name': 'Course 1',
     }
     defaults.update(kwargs)
-    return amodels.Course.objects.create(programme=programme, **defaults)
+    return amodels.Course.objects.create(specialization=specialization, **defaults)
 
 
 def sample_course_registration(course, student, **kwargs):
@@ -104,12 +104,12 @@ class PrivateCourseRegistrationApiTest(TestCase):
             email='test@email.com',
             password='testpass'
         )
-        # Create sample faculty, department, level and programme
+        # Create sample faculty, department, level and specialization
         self.faculty = sample_faculty()
         self.department = sample_department(faculty=self.faculty)
         self.level = sample_level()
-        self.programme = sample_programme(department=self.department, max_level=self.level)
-        self.course = sample_course(programme=self.programme)
+        self.specialization = sample_specialization(department=self.department, max_level=self.level)
+        self.course = sample_course(specialization=self.specialization)
         self.student = sample_student(user=self.user)
         self.course_serializer = aserializers.CourseSerializer(self.course, context=serializer_context)
         self.student_serializer = serializers.StudentSerializer(self.student, context=serializer_context)
@@ -189,7 +189,7 @@ class PrivateCourseRegistrationApiTest(TestCase):
     def test_full_update_course_registration(self):
         """test updating a course_registration's detail using put"""
         course_registration = sample_course_registration(course=self.course, student=self.student)
-        course = sample_course(programme=self.programme, name='Course 21')
+        course = sample_course(specialization=self.specialization, name='Course 21')
         serializer = aserializers.CourseSerializer(course, context=serializer_context)
 
         payload = {

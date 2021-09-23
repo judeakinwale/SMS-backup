@@ -18,13 +18,12 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
         queryset=models.Student.objects.all(),
         view_name='user:student-detail'
     )
-    programme = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Programme.objects.all(),
-        view_name='academics:programme-detail',
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
-
 
     class Meta:
         model = models.AcademicData
@@ -32,7 +31,7 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'student',
-            'programme',
+            'specialization',
             'start_date',
             'end_date',
             'qualification',
@@ -373,9 +372,9 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         queryset=get_user_model().objects.filter(is_staff=True),
         view_name='user:user-detail'
     )
-    programme = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Programme.objects.all(),
-        view_name='academics:programme-detail',
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -387,7 +386,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'user',
             'employee_id',
-            'programme',
+            'specialization',
             'is_active',
             'is_lecturer',
             'is_bursar',

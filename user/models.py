@@ -54,7 +54,12 @@ class Staff(models.Model):
         limit_choices_to={'is_staff': True},
     )
     employee_id = models.CharField(max_length=250, null=True)
-    programme = models.ForeignKey(acmodels.Programme, on_delete=models.DO_NOTHING, null=True, blank=True)
+    specialization = models.ForeignKey(
+        acmodels.Specialization,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
     is_lecturer = models.BooleanField(default=False)
     is_bursar = models.BooleanField(default=False)
@@ -197,7 +202,12 @@ class AcademicData(models.Model):
         on_delete=models.CASCADE,
         related_name='academic_data'
     )
-    programme = models.ForeignKey(acmodels.Programme, on_delete=models.CASCADE, null=True, blank=True)
+    specialization = models.ForeignKey(
+        acmodels.Specialization,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True, blank=True)
     qualification = models.CharField(

@@ -60,8 +60,8 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the Programme model"""
+class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Specialization model"""
 
     department = serializers.HyperlinkedRelatedField(
         queryset=models.Department.objects.all(),
@@ -73,7 +73,7 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     class Meta:
-        model = models.Programme
+        model = models.Specialization
         fields = [
             'id',
             'url',
@@ -85,16 +85,16 @@ class ProgrammeSerializer(serializers.HyperlinkedModelSerializer):
             'is_active',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'academics:programme-detail'}
+            'url': {'view_name': 'academics:specialization-detail'}
         }
 
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Course model"""
 
-    programme = serializers.HyperlinkedRelatedField(
-        queryset=models.Programme.objects.all(),
-        view_name='academics:programme-detail',
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=models.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
     )
     coordinator = serializers.HyperlinkedRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
@@ -108,7 +108,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'id',
             'url',
-            'programme',
+            'specialization',
             'name',
             'code',
             'description',

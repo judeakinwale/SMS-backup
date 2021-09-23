@@ -7,7 +7,7 @@ from rest_framework.test import APIClient, APIRequestFactory
 from academics import models, serializers
 
 
-PROGRAMME_URL = reverse('academics:programme-list')
+SPECIALIZATION_URL = reverse('academics:specialization-list')
 
 # creating a test request
 factory = APIRequestFactory()
@@ -16,9 +16,9 @@ request = factory.get('/')
 serializer_context = {'request': Request(request)}
 
 
-def programme_detail_url(programme_id):
-    """return url for the programme detail"""
-    return reverse('academics:programme-detail', args=[programme_id])
+def specialization_detail_url(specialization_id):
+    """return url for the specialization detail"""
+    return reverse('academics:specialization-detail', args=[specialization_id])
 
 
 def sample_faculty(**kwargs):
@@ -42,14 +42,14 @@ def sample_level(**kwargs):
     return models.Level.objects.create(**defaults)
 
 
-def sample_programme(department, max_level, **kwargs):
-    """create and return a sample programme"""
+def sample_specialization(department, max_level, **kwargs):
+    """create and return a sample specialization"""
     defaults = {
-        'name': 'Programme 1',
+        'name': 'Specialization 1',
         'max_level': max_level,
     }
     defaults.update(kwargs)
-    return models.Programme.objects.create(department=department, **defaults)
+    return models.Specialization.objects.create(department=department, **defaults)
 
 
 def test_all_model_attributes(insance, payload, model, serializer):
@@ -63,20 +63,20 @@ def test_all_model_attributes(insance, payload, model, serializer):
             insance.assertEqual(payload[key], serializer.data[key])
 
 
-class PublicProgrammeApiTest(TestCase):
-    """test public access to the programme api"""
+class PublicSpecializationApiTest(TestCase):
+    """test public access to the specialization api"""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_authentication_required(self):
         """test that authentication is required"""
-        res = self.client.get(PROGRAMME_URL)
+        res = self.client.get(SPECIALIZATION_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivateProgrammeApiTest(TestCase):
-    """test authenticated access to the programme api"""
+class PrivateSpecializationApiTest(TestCase):
+    """test authenticated access to the specialization api"""
 
     def setUp(self):
         self.client = APIClient()
@@ -89,82 +89,95 @@ class PrivateProgrammeApiTest(TestCase):
         self.department = sample_department(faculty=self.faculty)
         self.level = sample_level()
 
-    def test_retrieve_programme(self):
-        """test retrieving a list of programmes"""
-        sample_programme(department=self.department, max_level=self.level)
-        programme = models.Programme.objects.all()
-        serializer = serializers.ProgrammeSerializer(programme, many=True, context=serializer_context)
+    def test_retrieve_specialization(self):
+        """test retrieving a list of specializations"""
+        sample_specialization(department=self.department, max_level=self.level)
+        specialization = models.Specialization.objects.all()
+        serializer = serializers.SpecializationSerializer(
+            specialization,
+            many=True,
+            context=serializer_context
+        )
 
-        res = self.client.get(PROGRAMME_URL)
+        res = self.client.get(SPECIALIZATION_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_retrieve_programme_detail(self):
-        """test retrieving a programme's detail"""
-        programme = sample_programme(department=self.department, max_level=self.level)
-        serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+    def test_retrieve_specialization_detail(self):
+        """test retrieving a specialization's detail"""
+        specialization = sample_specialization(department=self.department, max_level=self.level)
+        serializer = serializers.SpecializationSerializer(specialization, context=serializer_context)
 
-        url = programme_detail_url(programme_id=programme.id)
+        url = specialization_detail_url(specialization_id=specialization.id)
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_create_programme(self):
-        """test creating a programme"""
+    def test_create_specialization(self):
+        """test creating a specialization"""
         department = sample_department(faculty=self.faculty, name='Department 2')
         department_serializer = serializers.DepartmentSerializer(department, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'department': department_serializer.data['url'],
-            'name': 'Programme 2',
+            'name': 'Specialization 2',
             'max_level': level_serializer.data['url'],
             'description': 'some description text',
         }
 
-        res = self.client.post(PROGRAMME_URL, payload)
+        res = self.client.post(SPECIALIZATION_URL, payload)
 
-        programme = models.Programme.objects.get(id=res.data['id'])
-        programme_serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+        specialization = models.Specialization.objects.get(id=res.data['id'])
+        specialization_serializer = serializers.SpecializationSerializer(
+            specialization,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        test_all_model_attributes(self, payload, programme, programme_serializer)
+        test_all_model_attributes(self, payload, specialization, specialization_serializer)
 
-    def test_partial_update_programme(self):
-        """test partially updating a programme's detail using patch"""
-        programme = sample_programme(department=self.department, max_level=self.level)
+    def test_partial_update_specialization(self):
+        """test partially updating a specialization's detail using patch"""
+        specialization = sample_specialization(department=self.department, max_level=self.level)
         payload = {
             'description': 'some description text',
         }
 
-        url = programme_detail_url(programme.id)
+        url = specialization_detail_url(specialization.id)
         res = self.client.patch(url, payload)
 
-        programme.refresh_from_db()
-        programme_serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+        specialization.refresh_from_db()
+        specialization_serializer = serializers.SpecializationSerializer(
+            specialization,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        test_all_model_attributes(self, payload, programme, programme_serializer)
+        test_all_model_attributes(self, payload, specialization, specialization_serializer)
 
-    def test_full_update_programme(self):
-        """test updating a programme's detail using put"""
-        programme = sample_programme(department=self.department, max_level=self.level)
+    def test_full_update_specialization(self):
+        """test updating a specialization's detail using put"""
+        specialization = sample_specialization(department=self.department, max_level=self.level)
         department = sample_department(faculty=self.faculty, name='Department 3')
         department_serializer = serializers.DepartmentSerializer(department, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'department': department_serializer.data['url'],
-            'name': 'Programme 3',
+            'name': 'Specialization 3',
             'max_level': level_serializer.data['url'],
             'description': 'some description text',
         }
 
-        url = programme_detail_url(programme.id)
+        url = specialization_detail_url(specialization.id)
         res = self.client.put(url, payload)
 
-        programme.refresh_from_db()
-        programme_serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+        specialization.refresh_from_db()
+        specialization_serializer = serializers.SpecializationSerializer(
+            specialization,
+            context=serializer_context
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        test_all_model_attributes(self, payload, programme, programme_serializer)
+        test_all_model_attributes(self, payload, specialization, specialization_serializer)

@@ -30,7 +30,7 @@ def sample_faculty(**kwargs):
 
 def sample_department(faculty, **kwargs):
     """create and return a sample department"""
-    defaults = {'name': 'Programme 1'}
+    defaults = {'name': 'Specialization 1'}
     defaults.update(kwargs)
     return models.Department.objects.create(faculty=faculty, **defaults)
 
@@ -42,22 +42,22 @@ def sample_level(**kwargs):
     return models.Level.objects.create(**defaults)
 
 
-def sample_programme(department, max_level, **kwargs):
-    """create and return a sample programme"""
+def sample_specialization(department, max_level, **kwargs):
+    """create and return a sample specialization"""
     defaults = {
-        'name': 'Programme 1',
+        'name': 'Specialization 1',
     }
     defaults.update(kwargs)
-    return models.Programme.objects.create(department=department, max_level=max_level, **defaults)
+    return models.Specialization.objects.create(department=department, max_level=max_level, **defaults)
 
 
-def sample_course(programme, **kwargs):
+def sample_course(specialization, **kwargs):
     """create and return a sample course"""
     defaults = {
         'name': 'Course 1',
     }
     defaults.update(kwargs)
-    return models.Course.objects.create(programme=programme, **defaults)
+    return models.Course.objects.create(specialization=specialization, **defaults)
 
 
 def test_all_model_attributes(insance, payload, model, serializer):
@@ -97,11 +97,11 @@ class PrivateCourseApiTest(TestCase):
         self.faculty = sample_faculty()
         self.department = sample_department(faculty=self.faculty)
         self.level = sample_level()
-        self.programme = sample_programme(department=self.department, max_level=self.level)
+        self.specialization = sample_specialization(department=self.department, max_level=self.level)
 
     def test_retrieve_course(self):
         """test retrieving a list of courses"""
-        sample_course(programme=self.programme)
+        sample_course(specialization=self.specialization)
         course = models.Course.objects.all()
         serializer = serializers.CourseSerializer(course, many=True, context=serializer_context)
 
@@ -112,7 +112,7 @@ class PrivateCourseApiTest(TestCase):
 
     def test_retrieve_course_detail(self):
         """test retrieving a course's detail"""
-        course = sample_course(programme=self.programme)
+        course = sample_course(specialization=self.specialization)
         serializer = serializers.CourseSerializer(course, context=serializer_context)
 
         url = course_detail_url(course_id=course.id)
@@ -123,10 +123,17 @@ class PrivateCourseApiTest(TestCase):
 
     def test_create_course(self):
         """test creating a course"""
-        programme = sample_programme(department=self.department, max_level=self.level, name='Programme 2')
-        programme_serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+        specialization = sample_specialization(
+            department=self.department,
+            max_level=self.level,
+            name='Specialization 2'
+        )
+        specialization_serializer = serializers.SpecializationSerializer(
+            specialization,
+            context=serializer_context
+        )
         payload = {
-            'programme': programme_serializer.data['url'],
+            'specialization': specialization_serializer.data['url'],
             'name': 'Course 2',
             'description': 'some description text',
         }
@@ -141,7 +148,7 @@ class PrivateCourseApiTest(TestCase):
 
     def test_partial_update_course(self):
         """test partially updating a course's detail using patch"""
-        course = sample_course(programme=self.programme)
+        course = sample_course(specialization=self.specialization)
         payload = {
             'description': 'some description text',
         }
@@ -157,11 +164,18 @@ class PrivateCourseApiTest(TestCase):
 
     def test_full_update_course(self):
         """test updating a course's detail using put"""
-        course = sample_course(programme=self.programme)
-        programme = sample_programme(department=self.department, max_level=self.level, name='Programme 3')
-        programme_serializer = serializers.ProgrammeSerializer(programme, context=serializer_context)
+        course = sample_course(specialization=self.specialization)
+        specialization = sample_specialization(
+            department=self.department,
+            max_level=self.level,
+            name='Specialization 3'
+        )
+        specialization_serializer = serializers.SpecializationSerializer(
+            specialization,
+            context=serializer_context
+        )
         payload = {
-            'programme': programme_serializer.data['url'],
+            'specialization': specialization_serializer.data['url'],
             'name': 'Course 3',
             'description': 'some description text',
         }

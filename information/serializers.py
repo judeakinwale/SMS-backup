@@ -141,9 +141,9 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
-    programme = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Programme.objects.all(),
-        view_name='academics:programme-detail',
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -169,7 +169,7 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'faculty',
             'departmment',
-            'programme',
+            'specialization',
             'course',
             'level',
             'description',

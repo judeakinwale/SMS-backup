@@ -94,15 +94,15 @@ class ModelTest(TestCase):
             faculty=faculty,
             name="Test Faculty",
         )
-        programme = acmodels.Programme.objects.create(
+        specialization = acmodels.Specialization.objects.create(
             department=department,
-            name="Test Programme",
+            name="Test Specialization",
             code=1,
             max_level=level,
         )
         academic_data = umodels.AcademicData.objects.create(
             student=student,
-            programme=programme,
+            specialization=specialization,
             start_date=timezone.now(),
         )
         self.assertEqual(
@@ -165,14 +165,14 @@ class ModelTest(TestCase):
             faculty=faculty,
             name="Test Faculty",
         )
-        programme = acmodels.Programme.objects.create(
+        specialization = acmodels.Specialization.objects.create(
             department=department,
-            name="Test Programme",
+            name="Test Specialization",
             code=1,
             max_level=level,
         )
         course = acmodels.Course.objects.create(
-            programme=programme,
+            specialization=specialization,
             name="Test Course"
         )
         course_registration = umodels.CourseRegistration.objects.create(
@@ -337,21 +337,21 @@ class ModelTest(TestCase):
         )
         self.assertEqual(str(department), department.name)
 
-    def test_programme_str(self):
-        """test the programme str representation"""
+    def test_specialization_str(self):
+        """test the specialization str representation"""
         faculty = acmodels.Faculty.objects.create(name="Test Faculty")
         level = acmodels.Level.objects.create(code=500)
         department = acmodels.Department.objects.create(
             faculty=faculty,
             name="Test Faculty",
         )
-        programme = acmodels.Programme.objects.create(
+        specialization = acmodels.Specialization.objects.create(
             department=department,
-            name="Test Programme",
+            name="Test Specialization",
             code=1,
             max_level=level,
         )
-        self.assertEqual(str(programme), programme.name)
+        self.assertEqual(str(specialization), specialization.name)
 
     def test_course_str(self):
         """test the course str representation"""
@@ -361,14 +361,14 @@ class ModelTest(TestCase):
             faculty=faculty,
             name="Test Faculty",
         )
-        programme = acmodels.Programme.objects.create(
+        specialization = acmodels.Specialization.objects.create(
             department=department,
-            name="Test Programme",
+            name="Test Specialization",
             code=1,
             max_level=level,
         )
         course = acmodels.Course.objects.create(
-            programme=programme,
+            specialization=specialization,
             name="Test Course"
         )
         self.assertEqual(str(course), course.name)

@@ -30,12 +30,12 @@ class DepartmentFilter(filters.FilterSet):
         }
 
 
-class ProgrammeFilter(filters.FilterSet):
+class SpecializationFilter(filters.FilterSet):
     # name = filters.CharFilter(lookup_expr='icontains')
     # description = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
-        model = models.Programme
+        model = models.Specialization
         fields = {
             'name': ['icontains'],
             'code': ['icontains'],
@@ -62,4 +62,4 @@ class LevelFilter(filters.FilterSet):
 
     class Meta:
         model = models.Level
-        fields = {'code': ['icontains'],}
+        fields = {'code': ['icontains']}
