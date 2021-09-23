@@ -94,7 +94,7 @@ class PrivateInformationApiTest(TestCase):
         res = self.client.get(INFO_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_information_not_limited_to_source(self):
         """test that information from all sources is returned"""
@@ -111,8 +111,8 @@ class PrivateInformationApiTest(TestCase):
         res = self.client.get(INFO_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(res.data['results'], serializer.data)
+        self.assertEqual(len(res.data['results']), 2)
 
     def test_retrieve_information_detail(self):
         """test retrieving an information's detail"""

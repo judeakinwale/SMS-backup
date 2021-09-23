@@ -84,7 +84,7 @@ class PrivateAcademicHistoryApiTest(TestCase):
         res = self.client.get(ACADEMIC_HISTORY_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_academic_history_detail(self):
         """test retrieving a academic_history's detail"""

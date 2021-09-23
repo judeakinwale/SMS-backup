@@ -27,6 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         """Meta definition for User."""
 
+        ordering = ['id']
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
@@ -71,6 +72,7 @@ class Staff(models.Model):
     class Meta:
         """Meta definition for Staff."""
 
+        ordering = ['id']
         verbose_name = _("Staff")
         verbose_name_plural = _("Staff")
 
@@ -93,6 +95,7 @@ class Student(models.Model):
     class Meta:
         """Meta definition for Student."""
 
+        ordering = ['id']
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
@@ -118,6 +121,7 @@ class CourseAdviser(models.Model):
     class META:
         """Meta definition for CourseAdviser."""
 
+        ordering = ['id']
         verbose_name = _("CourseAdviser")
         verbose_name_plural = _("CourseAdvisers")
 
@@ -179,6 +183,7 @@ class Biodata(models.Model):
     class Meta:
         """Meta definition for Biodata."""
 
+        ordering = ['id']
         verbose_name = _("Biodata")
         verbose_name_plural = _("Biodata")
 
@@ -220,6 +225,7 @@ class AcademicData(models.Model):
     class Meta:
         """Meta definition for AcademicData."""
 
+        ordering = ['id']
         verbose_name = _("AcademicData")
         verbose_name_plural = _("AcademicData")
 
@@ -246,6 +252,7 @@ class CourseRegistration(models.Model):
     class Meta:
         """Meta definition for CourseRegistration."""
 
+        ordering = ['id']
         verbose_name = _('CourseRegistration')
         verbose_name_plural = _('CourseRegistrations')
 
@@ -279,6 +286,7 @@ class AcademicHistory(models.Model):
     class Meta:
         """Meta definition for AcademicHistory."""
 
+        ordering = ['id']
         verbose_name = _("AcademicHistory")
         verbose_name_plural = _("AcademicHistory")
 
@@ -307,6 +315,7 @@ class HealthData(models.Model):
     class Meta:
         """Meta definition for HealthData."""
 
+        ordering = ['id']
         verbose_name = _("HealthData")
         verbose_name_plural = _("HealthData")
 
@@ -335,6 +344,7 @@ class FamilyData(models.Model):
     class Meta:
         """Meta definition for FamilyData."""
 
+        ordering = ['id']
         verbose_name = _("FamilyData")
         verbose_name_plural = _("FamilyData")
 

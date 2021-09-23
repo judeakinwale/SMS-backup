@@ -101,7 +101,7 @@ class PrivateInformationApiTest(TestCase):
         res = self.client.get(INFO_IMG_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_informtion_image_detail(self):
         """test retrieving an information image detail"""

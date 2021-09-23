@@ -75,7 +75,7 @@ class PrivateQuizApiTest(TestCase):
         res = self.client.get(QUIZ_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     # # TODO:
     # def test_quiz_limited_to_supervisor(self):

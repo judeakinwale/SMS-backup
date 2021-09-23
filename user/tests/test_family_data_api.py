@@ -79,7 +79,7 @@ class PrivateFamilyDataApiTest(TestCase):
         res = self.client.get(FAMILY_DATA_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_family_data_detail(self):
         """test retrieving a family_data's detail"""

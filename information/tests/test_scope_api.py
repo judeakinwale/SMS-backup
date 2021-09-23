@@ -70,9 +70,10 @@ class PrivateInformationApiTest(TestCase):
         serializer = serializers.ScopeSerializer(scopes, many=True, context=serializer_context)
 
         res = self.client.get(SCOPE_URL)
+        # print(f"\nres: {res.data['results']} \nserializer: {serializer.data}\n")
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     # # TODO:
     # # test scopes displayed are limited by filters like faculty departmment course programme level

@@ -83,7 +83,7 @@ class PrivateQuizTakerApiTest(TestCase):
         res = self.client.get(QUIZTAKER_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     # # TODO:
     # def test_quiz_taker_limited_to_quiz(self):

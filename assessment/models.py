@@ -29,6 +29,7 @@ class Quiz(models.Model):
 
         get_latest_by = "timestamp"
         ordering = ["-timestamp"]
+        # ordering = ['id']
         verbose_name = _("Quiz")
         verbose_name_plural = _("Quizzes")
 
@@ -71,6 +72,7 @@ class Answer(models.Model):
     class Meta:
         """Meta definition for Answer."""
 
+        ordering = ['id']
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
 
@@ -91,6 +93,7 @@ class QuizTaker(models.Model):
     class Meta:
         """Meta definition for QuizTaker."""
 
+        ordering = ['id']
         verbose_name = _("QuizTaker")
         verbose_name_plural = _("QuizTakers")
 
@@ -133,6 +136,7 @@ class Response(models.Model):
     class Meta:
         """Meta definition for Response."""
 
+        ordering = ['id']
         verbose_name = _("Response")
         verbose_name_plural = _("Responses")
 
@@ -151,6 +155,7 @@ class Grade(models.Model):
     class Meta:
         """Meta definition for Grade."""
 
+        ordering = ['id']
         verbose_name = _('Grade')
         verbose_name_plural = _('Grades')
 

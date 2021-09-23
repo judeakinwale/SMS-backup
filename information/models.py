@@ -22,6 +22,7 @@ class Information(models.Model):
     class Meta:
         """Meta definition for Information."""
 
+        ordering = ['id']
         verbose_name = _("Information")
         verbose_name_plural = _("Information")
 
@@ -41,6 +42,7 @@ class Notice(models.Model):
     class Meta:
         """Meta definition for Notice."""
 
+        ordering = ['id']
         verbose_name = _("Notice")
         verbose_name_plural = _("Notices")
 
@@ -71,6 +73,7 @@ class Scope(models.Model):
     class Meta:
         """Meta definition for Scope."""
 
+        ordering = ['id']
         verbose_name = _("Scope")
         verbose_name_plural = _("Scopes")
 
@@ -90,6 +93,7 @@ class InformationImage(models.Model):
     class Meta:
         """Meta definition for InformationImage."""
 
+        ordering = ['id']
         verbose_name = _("Information Image")
         verbose_name_plural = _("Information Images")
 

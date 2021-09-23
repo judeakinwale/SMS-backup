@@ -72,7 +72,7 @@ class PrivateGradeApiTest(TestCase):
         res = self.client.get(GRADE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_retrieve_grade_detail(self):
         """test retrieving a grade's detail"""

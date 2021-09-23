@@ -24,6 +24,7 @@ class Faculty(models.Model):
     class Meta:
         """Meta definition for Faculty."""
 
+        ordering = ['id']
         verbose_name = _('Faculty')
         verbose_name_plural = _('Faculty')
 
@@ -67,6 +68,7 @@ class Department(models.Model):
     class Meta:
         """Meta definition for Department."""
 
+        ordering = ['id']
         verbose_name = _('Department')
         verbose_name_plural = _('Departments')
 
@@ -104,6 +106,7 @@ class Specialization(models.Model):
     class Meta:
         """Meta definition for Specialization."""
 
+        ordering = ['id']
         verbose_name = _('Specialization')
         verbose_name_plural = _('Specializations')
 
@@ -132,6 +135,7 @@ class Course(models.Model):
     class Meta:
         """Meta definition for Course."""
 
+        ordering = ['id']
         verbose_name = _('Course')
         verbose_name_plural = _('Courses')
 
@@ -159,6 +163,7 @@ class Level(models.Model):
     class Meta:
         """Meta definition for Level."""
 
+        ordering = ['id']
         verbose_name = _('Level')
         verbose_name_plural = _('Levels')
 

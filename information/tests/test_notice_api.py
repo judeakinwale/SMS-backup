@@ -85,7 +85,7 @@ class PrivateNoticeApiTest(TestCase):
         res = self.client.get(NOTICE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
+        self.assertEqual(res.data['results'], serializer.data)
 
     def test_notice_not_limited_to_source(self):
         """test that notices from all sources is returned"""
@@ -102,8 +102,8 @@ class PrivateNoticeApiTest(TestCase):
         res = self.client.get(NOTICE_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, serializer.data)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(res.data['results'], serializer.data)
+        self.assertEqual(len(res.data['results']), 2)
 
     def test_retrieve_notice_detail(self):
         """test retrieving a notice's detail"""
