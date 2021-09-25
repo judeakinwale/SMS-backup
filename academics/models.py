@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 # Create your models here.
 
@@ -170,3 +171,55 @@ class Level(models.Model):
     def __str__(self):
         """String representation of Level"""
         return f"{self.code}"
+
+
+class Semester(models.Model):
+    """Model definition for Semester."""
+
+    class SemesterChoices(models.IntegerChoices):
+        FIRST = 1, '1st Semester'
+        SECOND = 2, '2nd Semester'
+
+    semester = models.IntegerField(
+        choices=SemesterChoices.choices,
+        null=True,
+        default=SemesterChoices.FIRST
+    )
+
+    class Meta:
+        """Meta definition for Semester."""
+
+        ordering = ['id']
+        verbose_name = 'Semester'
+        verbose_name_plural = 'Semesters'
+
+    def __str__(self):
+        """String representation of Semester."""
+        return f"{self.semester}"
+
+
+class Session(models.Model):
+    """Model definition for Session."""
+
+    year = models.CharField(max_length=4)
+    is_current = models.BooleanField(default=False)
+
+    class Meta:
+        """Meta definition for Session."""
+
+        ordering = ['year']
+        verbose_name = 'Session'
+        verbose_name_plural = 'Sessions'
+
+    def save(self, *args, **kwargs):
+        current_year = datetime.today().year
+        year = datetime.strptime(self.year, "%Y").year
+
+        if year == current_year:
+            self.is_current = True
+
+        super(Session, self).save(*args, **kwargs)  # Call the real save() method
+
+    def __str__(self):
+        """String representation of Session."""
+        return f'{self.year} / {datetime.strptime(self.year, "%Y").year + 1}'

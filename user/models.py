@@ -242,8 +242,10 @@ class CourseRegistration(models.Model):
 
     course = models.ForeignKey(acmodels.Course, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    session = models.CharField(max_length=250, null=True, blank=True)
-    semester = models.CharField(max_length=250, null=True, blank=True)
+    # session = models.CharField(max_length=250, null=True, blank=True)
+    session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
+    # semester = models.CharField(max_length=250, null=True, blank=True)
+    semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True)
     is_completed = models.BooleanField(default=False)
     is_passed = models.BooleanField(default=False)
