@@ -33,7 +33,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         """String representation of User."""
-        return self.email
+        try:
+            names = f"{self.last_name} {self.first_name}"
+            return names
+        except Exception as e:
+            print("Unable to get names")
+            return self.email
 
     def get_staff(self):
         if self.is_staff is True:
@@ -105,10 +110,18 @@ class Student(models.Model):
         return f"{self.matric_no or self.student_id or self.user.email}"
 
     def get_current_course_registrations(self, session, semester):
-        return CourseRegistration.objects.filter(student=self, session=session, semester=semester)
+        return CourseRegistration.objects.filter(student=self, session__is_current=True, semester=semester)
 
-    def get_course_registrations(self):
+    def get_all_course_registrations(self):
         return CourseRegistration.objects.filter(student=self)
+
+    def department(self):
+        dept = self.academic_data.first().department
+        return dept
+
+    def level(self):
+        lvl = self.academic_data.first().level
+        return lvl
 
 
 class CourseAdviser(models.Model):
@@ -117,6 +130,8 @@ class CourseAdviser(models.Model):
     staff = models.ForeignKey(Staff, limit_choices_to={'is_active': True}, on_delete=models.CASCADE)
     department = models.ForeignKey(acmodels.Department, on_delete=models.CASCADE, null=True)
     level = models.ForeignKey(acmodels.Level, on_delete=models.CASCADE, null=True)
+    session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
 
     class META:
         """Meta definition for CourseAdviser."""
@@ -124,6 +139,11 @@ class CourseAdviser(models.Model):
         ordering = ['id']
         verbose_name = _("CourseAdviser")
         verbose_name_plural = _("CourseAdvisers")
+
+    def save(self, *args, **kwargs):
+       self.staff.is_course_adviser = True
+       self.staff.save()
+       super(CourseAdviser, self).save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
         """String representation of CourseAdviser."""
@@ -213,6 +233,8 @@ class AcademicData(models.Model):
         null=True,
         blank=True
     )
+    department = models.ForeignKey(acmodels.Department, on_delete=models.CASCADE, null=True)
+    level = models.ForeignKey(acmodels.Level, on_delete=models.CASCADE, null=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True, blank=True)
     qualification = models.CharField(
@@ -221,6 +243,9 @@ class AcademicData(models.Model):
         null=True,
         default=QualificationChoices.OTHER,
     )
+    session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
+
 
     class Meta:
         """Meta definition for AcademicData."""
@@ -261,6 +286,27 @@ class CourseRegistration(models.Model):
     def __str__(self):
         """String representation of CourseRegistration."""
         return f"{self.course.name} - registration"
+
+
+class Result(models.Model):
+    """Model definition for Result."""
+
+    score = models.FloatField()
+    course = models.ForeignKey(acmodels.Course, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    class Meta:
+        """Meta definition for Result."""
+
+        verbose_name = _('Result')
+        verbose_name_plural = _('Results')
+
+    def __str__(self):
+        """String representation of Result."""
+        return f"{self.score}"
 
 
 class AcademicHistory(models.Model):
