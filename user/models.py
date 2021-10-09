@@ -33,12 +33,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         """String representation of User."""
-        try:
-            names = f"{self.last_name} {self.first_name}"
-            return names
-        except Exception as e:
-            print("Unable to get names")
+        if self.first_name is not None and self.last_name is not None:
+            return f"{self.last_name} {self.first_name}"
+        else: 
             return self.email
+        # try:
+        #     names = f"{self.last_name} {self.first_name}"
+        #     return names
+        # except Exception as e:
+        #     print("Unable to get names")
+        #     return self.email
 
     def get_staff(self):
         if self.is_staff is True:
@@ -257,6 +261,12 @@ class AcademicData(models.Model):
     def __str__(self):
         """String representation of AcademicData."""
         return f"{self.student.matric_no if self.student.matric_no else self.student.student_id}"
+
+    def get_gpa(self):
+        pass
+
+    def get_cgpa(self):
+        pass
 
 
 class CourseRegistration(models.Model):

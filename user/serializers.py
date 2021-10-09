@@ -457,6 +457,41 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class ResultSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Result model"""
+
+    course = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Course.objects.all(),
+        view_name='academics:course-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    student = serializers.HyperlinkedRelatedField(
+        queryset=models.Student.objects.all(),
+        view_name='user:student-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    semester = serializers.StringRelatedField()
+    session = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.Result
+        fields = [
+            'id',
+            'url',
+            'score',
+            'course',
+            'student',
+            'semester',
+            'session',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:result-detail'},
+        }
+
+
 class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the CourseRegistration model"""
 

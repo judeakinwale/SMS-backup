@@ -83,6 +83,21 @@ class BiodataViewSet(viewsets.ModelViewSet):
     filterset_class = filters.BiodataFilter
 
 
+class ResultViewSet(viewsets.ModelViewSet):
+    queryset = models.Result.objects.all()
+    serializer_class = serializers.ResultSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            cpermissions.IsSuperUser
+            | cpermissions.IsBursar
+            | cpermissions.IsITDept
+            | cpermissions.IsStudent
+        )
+    ]
+    filterset_class = filters.ResultFilter
+
+
+
 class AcademicDataViewSet(viewsets.ModelViewSet):
     queryset = models.AcademicData.objects.all()
     serializer_class = serializers.AcademicDataSerializer

@@ -129,6 +129,23 @@ class AcademicHistoryFilter(filters.FilterSet):
         }
 
 
+class ResultFilter(filters.FilterSet):
+
+    class Meta:
+        model = models.Result
+        fields = {
+            'course__name': ['icontains'],
+            'course__code': ['icontains'],
+            'student__user__first_name': ['icontains'],
+            'student__user__last_name': ['icontains'],
+            'student__user__email': ['icontains'],
+            'student__matric_no': ['icontains'],
+            'session__year': ['icontains'],
+            'semester__semester': ['icontains'],
+            'timestamp': ['exact', 'lt', 'gt'],
+        }
+
+
 class HealthDataFilter(filters.FilterSet):
 
     class Meta:
