@@ -63,3 +63,15 @@ class LevelViewSet(viewsets.ModelViewSet):
         )
     ]
     filterset_class = filters.LevelFilter
+
+
+class RecommendedCoursesViewSet(viewsets.ModelViewSet):
+    queryset = models.RecommendedCourses.objects.all()
+    serializer_class = serializers.RecommendedCoursesSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
+        )
+    ]
+    filterset_class = filters.RecommendedCoursesFilter

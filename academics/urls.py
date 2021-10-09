@@ -10,6 +10,7 @@ router.register('department', views.DepartmentViewSet)
 router.register('specialization', views.SpecializationViewSet)
 router.register('course', views.CourseViewSet)
 router.register('level', views.LevelViewSet)
+router.register('recommended_courses', views.RecommendedCoursesViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

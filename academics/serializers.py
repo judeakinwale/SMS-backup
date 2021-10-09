@@ -133,3 +133,36 @@ class LevelSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'academics:level-detail'}
         }
+
+
+class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the RecommendedCourses model"""
+
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=models.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    courses = serializers.HyperlinkedRelatedField(
+        queryset=models.Course.objects.all(),
+        view_name='academics:course-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    semester = serializers.StringRelatedField()
+    level = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.RecommendedCourses
+        fields = [
+            'id',
+            'url',
+            'specialization',
+            'courses',
+            'semester',
+            'level',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'academics:recommended_courses-detail'}
+        }

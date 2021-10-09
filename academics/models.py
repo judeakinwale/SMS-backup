@@ -223,3 +223,22 @@ class Session(models.Model):
     def __str__(self):
         """String representation of Session."""
         return f'{self.year} / {datetime.strptime(self.year, "%Y").year + 1}'
+
+
+class RecommendedCourses(models.Model):
+    """Model definition for RecommendedCourses."""
+
+    specialization = models.ForeignKey(Specialization, related_name=_("recommended_courses"), on_delete=models.CASCADE)
+    courses = models.ManyToManyField(Course)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        """Meta definition for RecommendedCourses."""
+
+        verbose_name = _('RecommendedCourses')
+        verbose_name_plural = _('RecommendedCourses')
+
+    def __str__(self):
+        """String representation of RecommendedCourses."""
+        return f"Recommended courses for {self.specialization} at level: {self.level}"
