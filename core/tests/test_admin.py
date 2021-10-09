@@ -22,7 +22,7 @@ class AdminSiteTests(TestCase):
         url = reverse('admin:user_user_changelist')
         res = self.client.get(url)
 
-        self.assertContains(res, self.user.email)
+        self.assertContains(res, self.user)
 
     def test_user_change_page(self):
         """Test that the user edit page works"""

@@ -2,6 +2,7 @@ from user.models import AcademicData, CourseAdviser, CourseRegistration, Result,
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string, get_template
 from django.utils.html import strip_tags
+from django.shortcuts import HttpResponse
 from reportlab.pdfgen import canvas
 
 
@@ -10,8 +11,35 @@ from reportlab.pdfgen import canvas
 # generate a list of courses registered buy a student for the current semester and session
 
 
-def generate_pdf(name, **kwargs):
-    pass
+def generate_pdf(reqest, name, **kwargs):
+
+    file_name = f"{name}.pdf"
+
+    message = ""
+
+    if 'data' in kwargs:
+        data = kwargs.get('data')
+        try:
+            keys = data.keys()
+            
+        except Exception as e:
+            print(e)
+            return HttpResponse(f"Data is not a python dictionary")
+
+    # create a http response
+    response = HttpResponse(content_type='application/pdf')
+    
+    # force a download of the pdf file
+    response['Content-Disposition'] = f'attachment; filename={file_name}'
+    
+    pdf_file = canvas.Canvas(response)
+    
+    # Write content on the PDF
+    pdf_file.drawString(100, 700, f"Hello {message}")
+    pdf_file.showPage()
+    pdf_file.save()
+    
+    return response
 
 
 def get_all_registered_courses(student):
