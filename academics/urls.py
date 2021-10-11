@@ -10,6 +10,8 @@ router.register('department', views.DepartmentViewSet)
 router.register('specialization', views.SpecializationViewSet)
 router.register('course', views.CourseViewSet)
 router.register('level', views.LevelViewSet)
+router.register('semester', views.SemesterViewSet)
+router.register('session', views.SessionViewSet)
 router.register('recommended_courses', views.RecommendedCoursesViewSet)
 
 urlpatterns = [

@@ -236,6 +236,7 @@ class RecommendedCourses(models.Model):
     class Meta:
         """Meta definition for RecommendedCourses."""
 
+        ordering = ['id']
         verbose_name = _('RecommendedCourses')
         verbose_name_plural = _('RecommendedCourses')
 

@@ -65,6 +65,28 @@ class LevelViewSet(viewsets.ModelViewSet):
     filterset_class = filters.LevelFilter
 
 
+class SemesterViewSet(viewsets.ModelViewSet):
+    queryset = models.Semester.objects.all()
+    serializer_class = serializers.SemesterSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
+        )
+    ]
+
+
+class SessionViewSet(viewsets.ModelViewSet):
+    queryset = models.Session.objects.all()
+    serializer_class = serializers.SessionSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            cpermissions.IsSuperUser
+            | cpermissions.IsITDeptOrReadOnly
+        )
+    ]
+
+
 class RecommendedCoursesViewSet(viewsets.ModelViewSet):
     queryset = models.RecommendedCourses.objects.all()
     serializer_class = serializers.RecommendedCoursesSerializer

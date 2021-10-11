@@ -135,6 +135,37 @@ class LevelSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class SemesterSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Semester model"""
+
+    class Meta:
+        model = models.Semester
+        fields = [
+            'id',
+            'url',
+            'semester',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'academics:semester-detail'}
+        }
+
+
+class SessionSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Session model"""
+
+    class Meta:
+        model = models.Session
+        fields = [
+            'id',
+            'url',
+            'year',
+            'is_current',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'academics:session-detail'}
+        }
+
+
 class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the RecommendedCourses model"""
 
@@ -145,13 +176,25 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
         # required=False,
     )
     courses = serializers.HyperlinkedRelatedField(
+        many=True,
         queryset=models.Course.objects.all(),
         view_name='academics:course-detail',
+        allow_null=True,
+        required=False,
+    )
+    # courses = CourseSerializer(read_only=True, many=True)
+    semester = serializers.HyperlinkedRelatedField(
+        queryset=models.Semester.objects.all(),
+        view_name='academics:semester-detail',
         # allow_null=True,
         # required=False,
     )
-    semester = serializers.StringRelatedField()
-    level = serializers.StringRelatedField()
+    level = serializers.HyperlinkedRelatedField(
+        queryset=models.Level.objects.all(),
+        view_name='academics:level-detail',
+        # allow_null=True,
+        # required=False,
+    )
 
     class Meta:
         model = models.RecommendedCourses
@@ -164,5 +207,6 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
             'level',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'academics:recommended_courses-detail'}
+            'url': {'view_name': 'academics:recommendedcourses-detail'}
         }
+        depth = 1
