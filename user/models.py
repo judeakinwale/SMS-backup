@@ -35,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """String representation of User."""
         if self.first_name is not None and self.last_name is not None:
             return f"{self.last_name} {self.first_name}"
-        else: 
+        else:
             return self.email
         # try:
         #     names = f"{self.last_name} {self.first_name}"
@@ -145,9 +145,9 @@ class CourseAdviser(models.Model):
         verbose_name_plural = _("CourseAdvisers")
 
     def save(self, *args, **kwargs):
-       self.staff.is_course_adviser = True
-       self.staff.save()
-       super(CourseAdviser, self).save(*args, **kwargs)  # Call the real save() method
+        self.staff.is_course_adviser = True
+        self.staff.save()
+        super(CourseAdviser, self).save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
         """String representation of CourseAdviser."""
@@ -250,7 +250,6 @@ class AcademicData(models.Model):
     session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
 
-
     class Meta:
         """Meta definition for AcademicData."""
 
@@ -311,6 +310,7 @@ class Result(models.Model):
     class Meta:
         """Meta definition for Result."""
 
+        ordering = ['id']
         verbose_name = _('Result')
         verbose_name_plural = _('Results')
 

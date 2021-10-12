@@ -97,7 +97,6 @@ class ResultViewSet(viewsets.ModelViewSet):
     filterset_class = filters.ResultFilter
 
 
-
 class AcademicDataViewSet(viewsets.ModelViewSet):
     queryset = models.AcademicData.objects.all()
     serializer_class = serializers.AcademicDataSerializer

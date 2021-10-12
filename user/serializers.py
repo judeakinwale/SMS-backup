@@ -472,8 +472,18 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
         # allow_null=True,
         # required=False,
     )
-    semester = serializers.StringRelatedField()
-    session = serializers.StringRelatedField()
+    semester = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Semester.objects.all(),
+        view_name='academics:semester-detail',
+        allow_null=True,
+        required=False,
+    )
+    session = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Session.objects.all(),
+        view_name='academics:session-detail',
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = models.Result
@@ -502,6 +512,18 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     student = serializers.HyperlinkedRelatedField(
         queryset=models.Student.objects.all(),
         view_name='user:student-detail'
+    )
+    session = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Session.objects.all(),
+        view_name='academics:session-detail',
+        allow_null=True,
+        required=False,
+    )
+    semester = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Semester.objects.all(),
+        view_name='academics:semester-detail',
+        allow_null=True,
+        required=False,
     )
 
     class Meta:
