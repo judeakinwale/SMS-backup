@@ -146,7 +146,10 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             level=self.level
         )
         recommended_courses.courses.add(self.course)
-        serializer = serializers.RecommendedCoursesSerializer(recommended_courses, context=serializer_context)
+        serializer = serializers.RecommendedCoursesSerializer(
+            recommended_courses,
+            context=serializer_context
+        )
 
         url = recommended_courses_detail_url(recommended_courses_id=recommended_courses.id)
         res = self.client.get(url)
@@ -156,13 +159,16 @@ class PrivateRecommendedCoursesApiTest(TestCase):
 
     def test_create_recommended_courses(self):
         """test creating a recommended_courses"""
-        specialization_serializer = serializers.SpecializationSerializer(self.specialization, context=serializer_context)
+        specialization_serializer = serializers.SpecializationSerializer(
+            self.specialization,
+            context=serializer_context
+        )
         semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
         course_serializer = serializers.CourseSerializer(self.course, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'specialization': specialization_serializer.data['url'],
-            'courses': [course_serializer.data['url'],],
+            'courses': [course_serializer.data['url'], ],
             'semester': semester_serializer.data['url'],
             'level': level_serializer.data['url'],
         }
@@ -210,14 +216,16 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             level=self.max_level
         )
 
-        specialization_serializer = serializers.SpecializationSerializer(self.specialization, context=serializer_context)
+        specialization_serializer = serializers.SpecializationSerializer(
+            self.specialization,
+            context=serializer_context
+        )
         semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
-        # specialization = sample_specialization(department=self.department, max_level=self.max_level, name='Specialization 2')
         course_serializer = serializers.CourseSerializer(self.course, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'specialization': specialization_serializer.data['url'],
-            'courses': [course_serializer.data['url'],],
+            'courses': [course_serializer.data['url'], ],
             'semester': semester_serializer.data['url'],
             'level': level_serializer.data['url'],
         }

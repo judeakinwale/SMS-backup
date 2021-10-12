@@ -228,7 +228,11 @@ class Session(models.Model):
 class RecommendedCourses(models.Model):
     """Model definition for RecommendedCourses."""
 
-    specialization = models.ForeignKey(Specialization, related_name=_("recommended_courses"), on_delete=models.CASCADE)
+    specialization = models.ForeignKey(
+        Specialization,
+        related_name=_("recommended_courses"),
+        on_delete=models.CASCADE
+    )
     courses = models.ManyToManyField(Course)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
     level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
