@@ -1,6 +1,7 @@
+from django.conf import settings
 from user.models import CourseAdviser, CourseRegistration, Result, Staff
-from django.core.mail import EmailMessage
-from django.template.loader import get_template  # TODO: add [, render_to_string]
+from django.core.mail import EmailMessage, send_mail
+from django.template.loader import get_template, render_to_string  # TODO: add [, render_to_string]
 # from django.utils.html import strip_tags
 from django.shortcuts import HttpResponse
 from reportlab.pdfgen import canvas
@@ -62,13 +63,17 @@ def get_current_registered_courses(student, semester):
     return reg
 
 
-def send_results_to_course_adviser():
+def send_results_to_course_adviser(request):
     # get all staff that are course advisers
     course_advisers = Staff.objects.filter(is_course_adviser=True)
-    print(course_advisers)
 
     try:
         # get their department and level
+        # print(1)
+        # length =
+        # cond  =
+        if len(course_advisers) < 1:
+            return False
         for adviser in course_advisers:
             course_adviser_email = adviser.user.email
             course_adviser = CourseAdviser.objects.get(staff=adviser)
@@ -96,7 +101,7 @@ def send_results_to_course_adviser():
                 # # for send_mail
                 # subject = f"{course.name} Results"
                 # html_message = render_to_string(
-                #     'mail/results.html',
+                #     'email/results.html',
                 #     {
                 #         'course': course,
                 #         'results': results,
@@ -120,12 +125,12 @@ def send_results_to_course_adviser():
 
                 # Using EmailMessage
                 subject = f"{course.name} Results"
-                sender_email = 'from@example.com'  # TODO: Change email address
+                sender_email = settings.EMAIL_HOST_USER  # TODO: Change email address
                 context = {
                     'course': course,
                     'results': results,
                 }
-                message = get_template('mail/results.html').render(context)
+                message = get_template('email/results.html').render(context)
                 msg = EmailMessage(
                     subject,
                     message,
@@ -135,6 +140,52 @@ def send_results_to_course_adviser():
                 msg.content_subtype = "html"  # Main content is now text/html
                 msg.send()
                 print("Mail successfully sent")
+                return True
 
     except Exception as e:
-        print(e)
+        print(f"There was an exception: {e}")
+        return False
+
+
+def send_sample_email(request):
+    try:
+        subject = "Results"
+        sender_email = settings.EMAIL_HOST_USER  # TODO: Change email address
+        # print(sender_email)
+        context = {
+            'course': 'Mathematics',
+            # 'results': results,
+        }
+        message = get_template('email/results.html').render(context)
+        # print(message)
+
+        msg = EmailMessage(
+            subject,
+            message,
+            sender_email,
+            ['judeakinwale@gmail.com'],
+        )
+        msg.content_subtype = "html"  # Main content is now text/html
+        msg.send()
+
+        # html_message = render_to_string(
+        #     'email/results.html',
+        #     {
+        #         'course': "Physics",
+        #         # 'results': results,
+        #     }
+        # )
+        # test = send_mail(
+        #     subject,
+        #     "Sample Message",
+        #     sender_email,
+        #     ['judeakinwale@gmail.com',],
+        #     # html_message=html_message,
+        #     fail_silently=False,
+        # )
+        # print(test)
+        print("\nMail successfully sent")
+        return True
+    except Exception as e:
+        print(f"There was an exception: {e}")
+        return False
