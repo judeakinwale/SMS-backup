@@ -10,10 +10,10 @@ class InformationViewSet(viewsets.ModelViewSet):
     queryset = models.Information.objects.all()
     serializer_class = serializers.InformationSerializer
     permission_classes = [
-        permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser
-            | cpermissions.IsITDeptOrReadOnly
-        )
+        # permissions.IsAuthenticated & (
+        cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
+        # )
     ]
     filterset_class = filters.InformationFilter
 
@@ -25,10 +25,8 @@ class NoticeViewSet(viewsets.ModelViewSet):
     queryset = models.Notice.objects.all()
     serializer_class = serializers.NoticeSerializer
     permission_classes = [
-        permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser
-            | cpermissions.IsITDept
-        )
+        cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.NoticeFilter
 
@@ -40,10 +38,8 @@ class InformationImageViewSet(viewsets.ModelViewSet):
     queryset = models.InformationImage.objects.all()
     serializer_class = serializers.InformationImageSerializer
     permission_classes = [
-        permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser
-            | cpermissions.IsITDeptOrReadOnly
-        )
+        cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.InformationImageFilter
 
@@ -52,8 +48,6 @@ class ScopeViewSet(viewsets.ModelViewSet):
     queryset = models.Scope.objects.all()
     serializer_class = serializers.ScopeSerializer
     permission_classes = [
-        permissions.IsAuthenticated & (
-            cpermissions.IsSuperUser
-            | cpermissions.IsITDept
-        )
+        cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
