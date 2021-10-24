@@ -440,6 +440,12 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         queryset=get_user_model().objects.all(),
         view_name='user:user-detail'
     )
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
     academic_data = AcademicDataSerializer(allow_null=True, required=False)
 
     class Meta:
@@ -450,6 +456,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
             'user',
             'matric_no',
             'student_id',
+            'specialization',
             'academic_data',
         ]
         extra_kwargs = {

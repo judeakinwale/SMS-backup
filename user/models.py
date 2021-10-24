@@ -89,6 +89,15 @@ class Staff(models.Model):
         """String representation of Staff."""
         return f"{self.employee_id or self.user.email}"
 
+    def department(self):
+        dept = self.specialization.department
+        return dept
+
+    def faculty(self):
+        dept = self.specialization.department
+        faculty = dept.faculty
+        return faculty
+
 
 class Student(models.Model):
     """Model definition for Student."""
@@ -99,6 +108,12 @@ class Student(models.Model):
     )
     matric_no = models.CharField(max_length=250, null=True, blank=True)
     student_id = models.CharField(max_length=250, null=True)
+    specialization = models.ForeignKey(
+        acmodels.Specialization,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -120,8 +135,13 @@ class Student(models.Model):
         return CourseRegistration.objects.filter(student=self)
 
     def department(self):
-        dept = self.academic_data.first().department
+        dept = self.specialization.department
         return dept
+
+    def faculty(self):
+        dept = self.specialization.department
+        faculty = dept.faculty
+        return faculty
 
     def level(self):
         lvl = self.academic_data.first().level
