@@ -136,12 +136,35 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
+# For local development and testing
 STATIC_URL = '/static/'
 STATIC_ROOT = '/staticfiles/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
+
+# Azure blob storage configuration
+
+# AZURE_ACCOUNT_NAME = '<azure container name>'
+# AZURE_ACCOUNT_KEY = '<azure account key for this container>'
+# AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+# AZURE_LOCATION = '<blob container name>'
+# AZURE_CONTAINER = '<blob container name>'
+
+AZURE_ACCOUNT_NAME = 'djangoblobstorage'
+AZURE_ACCOUNT_KEY = 'kKjdW9ZSOD+9oijhoxACRuTb14vwkHNwCvJiWKjF7gKD6N6tCom/yfnPLIUzxVPDRodt8A4JF+LrtStTRT986g=='
+AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+AZURE_LOCATION = 'blobapistorage'
+AZURE_CONTAINER = 'blobapistorage'
+
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+
+# # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'  # Doesn't work
+
+# Throws error if the above azure config is not accurate
+# STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+# DEFAULT_FILE_STORAGE = 'SMS.storage_backends.custom_azure.AzureMediaStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -170,8 +193,8 @@ REST_FRAMEWORK = {
 # djangorestframework_simplejwt configuration
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=20),
 }
 
 # drf-yasg authentication settings
@@ -193,8 +216,10 @@ SWAGGER_SETTINGS = {
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = '******'  # email password, use env variables
-EMAIL_HOST_USER = 'myaccount@gmail.com'  # email address
+# EMAIL_HOST_PASSWORD = '******'  # email password, use env variables
+# EMAIL_HOST_USER = 'myaccount@gmail.com'  # email address
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
