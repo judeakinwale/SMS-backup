@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'crispy_forms',
+    'corsheaders',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -222,6 +224,15 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# django-cors-headers configuration
+# https://github.com/adamchainz/django-cors-headers#configuration
+CORS_ORIGIN_ALLOW_ALL = True # For development
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8000',
+]
+
+
 
 # Enable Heroku
 django_heroku.settings(locals())
