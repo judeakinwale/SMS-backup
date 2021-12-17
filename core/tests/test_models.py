@@ -22,6 +22,19 @@ class ModelTest(TestCase):
     def setUp(self):
         self.user = sample_user()
 
+    def test_create_user_without_password_successful(self):
+        "test creating a user without password sets the last name as the password"
+        email = 'user25stest@gmai.com'
+        first_name = 'user25'
+        last_name = '25stest'
+        user = get_user_model().objects.create_user(
+            email = email,
+            first_name = first_name,
+            last_name = last_name
+        )
+        self.assertEqual(user.email, email)
+        self.assertTrue(user.check_password(last_name.lower()))
+
     def test_create_user_with_email_successful(self):
         """test creating a user with email is successful"""
         email = 'test@gmail.com'
