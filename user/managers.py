@@ -13,6 +13,11 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have a valid email address')
         user = self.model(email=self.normalize_email(email), **kwargs)
+        if password is None:
+            try:
+                password = user.last_name.lower()
+            except Exception as e:
+                raise ValueError('Users has no last_name')
         user.set_password(password)
         user.save(using=self._db)
         return user
