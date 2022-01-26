@@ -288,6 +288,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'middle_name',
             'last_name',
             'email',
+            'specialization',
             'password',
             'biodata',
             'is_staff',

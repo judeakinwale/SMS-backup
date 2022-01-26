@@ -16,6 +16,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     middle_name = models.CharField(max_length=250, null=True, blank=True)
     last_name = models.CharField(max_length=250, null=True)
     email = models.EmailField(max_length=250, unique=True)
+    specialization = models.ForeignKey(
+        acmodels.Specialization,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -85,6 +91,10 @@ class Staff(models.Model):
         verbose_name = _("Staff")
         verbose_name_plural = _("Staff")
 
+    def save(self, *args, **kwargs):
+        self.specialization = self.user.specialization
+        super(Staff, self).save(*args, **kwargs)
+
     def __str__(self):
         """String representation of Staff."""
         return f"{self.employee_id or self.user.email}"
@@ -122,6 +132,10 @@ class Student(models.Model):
         ordering = ['id']
         verbose_name = _("Student")
         verbose_name_plural = _("Students")
+
+    def save(self, *args, **kwargs):
+        self.specialization = self.user.specialization
+        super(Student, self).save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
         """String representation of Student."""
