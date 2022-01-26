@@ -17,7 +17,7 @@ class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=250)
     description = models.TextField(null=True, blank=True)
-    # score = models.IntegerField(null=True, blank=True)
+    timer = models.IntegerField(default=15)
     max_score = models.IntegerField(default=10)
     grade = models.ForeignKey('Grade', on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True)

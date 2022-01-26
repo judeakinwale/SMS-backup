@@ -15,7 +15,7 @@ class QuizFilter(filters.FilterSet):
             'course__name': ['icontains'],
             'course__code': ['exact'],
             'name': ['icontains'],
-            # 'description': ['icontains'],
+            'timer': ['exact'],
             'is_active': ['exact'],
             'is_completed': ['exact'],
         }

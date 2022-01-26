@@ -135,6 +135,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             'max_score',
             'question_set',
             'description',
+            'timer',
             'is_active',
             'is_completed',
             'timestamp',
