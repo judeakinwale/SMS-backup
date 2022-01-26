@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+# from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from datetime import datetime
 
@@ -201,17 +202,18 @@ class Semester(models.Model):
 class Session(models.Model):
     """Model definition for Session."""
 
-    year = models.CharField(max_length=4)
+    year = models.CharField(max_length=4, unique=True)
     is_current = models.BooleanField(default=False)
 
     class Meta:
         """Meta definition for Session."""
 
-        ordering = ['year']
+        ordering = ['-year']
         verbose_name = 'Session'
         verbose_name_plural = 'Sessions'
 
     def save(self, *args, **kwargs):
+        """Modify the model object's properties before saving"""
         current_year = datetime.today().year
         year = datetime.strptime(self.year, "%Y").year
 
@@ -222,7 +224,7 @@ class Session(models.Model):
 
     def __str__(self):
         """String representation of Session."""
-        return f'{self.year} / {datetime.strptime(self.year, "%Y").year + 1}'
+        return f'{self.year}/{datetime.strptime(self.year, "%Y").year + 1}'
 
 
 class RecommendedCourses(models.Model):
