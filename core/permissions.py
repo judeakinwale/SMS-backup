@@ -43,6 +43,7 @@ class IsSuperUser(permissions.BasePermission):
     """Allows full access to superuser"""
 
     def has_permission(self, request, view):
+        
         return bool(
             request.user and
             request.user.is_authenticated and
@@ -55,8 +56,6 @@ class IsSuperUserOrReadOnly(permissions.BasePermission):
     """Allows full access to superuser, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -83,8 +82,6 @@ class IsStaffOrReadOnly(permissions.BasePermission):
     """Allows full access to staff, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -99,14 +96,6 @@ class IsITDept(permissions.BasePermission):
     """Allows full access to IT"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #         request.user.is_authenticated and
-        #         request.user.is_active and
-        #         request.user.staff_set.all()[0].is_IT)
-        # else:
-        #     return False
             
         return bool(
             request.user and
@@ -123,17 +112,6 @@ class IsITDeptOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
 
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_IT)
-        # else:
-        #     return False
-
         return bool(
             request.method in permissions.SAFE_METHODS or
             request.user and
@@ -149,13 +127,6 @@ class IsBursar(permissions.BasePermission):
     """Allows full access to bursar"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #         request.user.is_authenticated and
-        #         request.user.staff_set.all()[0].is_bursar)
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -171,16 +142,6 @@ class IsBursarOrReadOnly(permissions.BasePermission):
     """Allows full access to bursar, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #         request.user.is_authenticated and
-        #         request.user.staff_set.all()[0].is_bursar)
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -197,13 +158,6 @@ class IsLecturer(permissions.BasePermission):
     """Allows full access to lecturer"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #         request.user.is_authenticated and
-        #         request.user.staff_set.all()[0].is_lecturer)
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -219,16 +173,6 @@ class IsLecturerOrReadOnly(permissions.BasePermission):
     """Allows full access to lecturer, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #         request.user.is_authenticated and
-        #         request.user.staff_set.all()[0].is_lecturer)
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -245,13 +189,6 @@ class IsHead(permissions.BasePermission):
     """Allows full access to head of department"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_head_of_department)
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -267,16 +204,6 @@ class IsHeadOrReadOnly(permissions.BasePermission):
     """Allows full access to head of department, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_head_of_department)
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -293,13 +220,6 @@ class IsDean(permissions.BasePermission):
     """Allows full access to dean of faculty"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_dean_of_faculty)
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -315,16 +235,6 @@ class IsDeanOrReadOnly(permissions.BasePermission):
     """Allows full access to dean of faculty, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_dean_of_faculty)
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -341,13 +251,6 @@ class IsCourseAdviser(permissions.BasePermission):
     """Allows full access to course adviser of a department"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_course_adviser)
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -363,16 +266,6 @@ class IsCourseAdviserOrReadOnly(permissions.BasePermission):
     """Allows full access to course adviser of a department, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.is_staff and request.user.staff_set.all().exists():
-        #     return bool(
-        #         request.user and
-        #     request.user.is_authenticated and
-        #     request.user.staff_set.all()[0].is_course_adviser)
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or
@@ -389,10 +282,6 @@ class IsStudent(permissions.BasePermission):
     """Allows full access to student"""
 
     def has_permission(self, request, view):
-        # if request.user.is_active and request.user.student_set.all().exists():
-        #     return True
-        # else:
-        #     return False
 
         return bool(
             request.user and
@@ -406,13 +295,6 @@ class IsStudentOrReadOnly(permissions.BasePermission):
     """Allows full access to student, readonly access to everyone"""
 
     def has_permission(self, request, view):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # if request.user.is_active and request.user.student_set.all().exists():
-        #     return True
-        # else:
-        #     return False
 
         return bool(
             request.method in permissions.SAFE_METHODS or

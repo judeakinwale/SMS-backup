@@ -7,7 +7,6 @@ app_name = 'core'
 
 router = DefaultRouter()
 
-
 urlpatterns = [
     path("", include(router.urls)),
     path('mail/', send_sample_email, name='send_mail')

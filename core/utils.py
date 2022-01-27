@@ -69,9 +69,6 @@ def send_results_to_course_adviser(request):
 
     try:
         # get their department and level
-        # print(1)
-        # length =
-        # cond  =
         if len(course_advisers) < 1:
             return False
         for adviser in course_advisers:
