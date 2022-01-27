@@ -143,3 +143,13 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
         | cpermissions.IsITDept
     ]
     filterset_class = filters.CourseRegistrationFilter
+
+    def perform_create(self, serializer):
+        try:
+            student = models.Student.objects.get(user=self.request.user)
+            registration = serializer.save(student=student)
+        except Exception as e:
+            registration = serializer.save()
+        return registration
+
+

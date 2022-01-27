@@ -519,7 +519,9 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     )
     student = serializers.HyperlinkedRelatedField(
         queryset=models.Student.objects.all(),
-        view_name='user:student-detail'
+        view_name='user:student-detail',
+        allow_null=True,
+        required=False,
     )
     session = serializers.HyperlinkedRelatedField(
         queryset=amodels.Session.objects.all(),
