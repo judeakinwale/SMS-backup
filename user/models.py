@@ -43,12 +43,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             return f"{self.last_name} {self.first_name}"
         else:
             return self.email
-        # try:
-        #     names = f"{self.last_name} {self.first_name}"
-        #     return names
-        # except Exception as e:
-        #     print("Unable to get names")
-        #     return self.email
 
     def get_staff(self):
         if self.is_staff is True:
