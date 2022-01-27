@@ -19,7 +19,6 @@ from SMS.schema import schema_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('users/', include('User.urls')),
     path('core/', include('core.urls', namespace='core')),
     path('api-auth/', include('rest_framework.urls')),
     path("information/", include('information.urls', namespace='information')),
