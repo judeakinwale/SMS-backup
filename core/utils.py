@@ -70,7 +70,8 @@ def send_results_to_course_adviser(request):
     try:
         # get their department and level
         if len(course_advisers) < 1:
-            return False
+            raise ValueError('Course Advisers not found')
+
         for adviser in course_advisers:
             course_adviser_email = adviser.user.email
             course_adviser = CourseAdviser.objects.get(staff=adviser)

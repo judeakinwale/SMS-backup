@@ -17,12 +17,12 @@ serializer_context = {'request': Request(request)}
 class TestSMTP(TestCase):
 
     def setUp(self):
-        # settings.EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+        settings.EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
         self.host = settings.EMAIL_HOST
         self.port = settings.EMAIL_PORT
 
-    # def tearDown(self):
-    #     settings.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    def tearDown(self):
+        settings.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
     # def test_smtp_connection(self, host, port):
     #     # connect to actual host on actual port
