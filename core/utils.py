@@ -187,3 +187,30 @@ def send_sample_email(request):
     except Exception as e:
         print(f"There was an exception: {e}")
         return False
+
+
+def send_account_creation_email(request, reciepients=["judeakinwale@gmail.com",], context={}):
+    """
+    reciepients is an array of reciepient email addresses
+    context should contain: user, school_name, login_url
+    """
+    try:
+        subject = "Account Created"
+        sender_email = settings.EMAIL_HOST_USER  # TODO: Change email address
+
+        message = get_template('email/account_creation.html').render(context)
+
+        msg = EmailMessage(
+            subject,
+            message,
+            sender_email,
+            reciepients, # ['judeakinwale@gmail.com'],
+        )
+        msg.content_subtype = "html"  # Main content is now text/html
+        msg.send()
+
+        print("\nMail successfully sent")
+        return True
+    except Exception as e:
+        print(f"There was an exception: {e}")
+        return False
