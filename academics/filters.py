@@ -74,8 +74,8 @@ class RecommendedCoursesFilter(filters.FilterSet):
         fields = {
             'specialization__name': ['icontains'],
             'specialization__code': ['icontains'],
-            'courses__name': ['icontains'],
-            'courses__code': ['icontains'],
+            'course__name': ['icontains'],
+            'course__code': ['icontains'],
             'semester__semester': ['icontains'],
             'level__code': ['icontains'],
         }

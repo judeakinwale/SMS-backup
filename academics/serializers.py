@@ -175,8 +175,8 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
         # allow_null=True,
         # required=False,
     )
-    courses = serializers.HyperlinkedRelatedField(
-        many=True,
+    course = serializers.HyperlinkedRelatedField(
+        # many=True,
         queryset=models.Course.objects.all(),
         view_name='academics:course-detail',
         allow_null=True,
@@ -202,9 +202,10 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'specialization',
-            'courses',
+            'course',
             'semester',
             'level',
+            'is_compulsory',
         ]
         extra_kwargs = {
             'url': {'view_name': 'academics:recommendedcourses-detail'}

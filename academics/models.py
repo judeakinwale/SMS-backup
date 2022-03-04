@@ -235,9 +235,11 @@ class RecommendedCourses(models.Model):
         related_name=_("recommended_courses"),
         on_delete=models.CASCADE
     )
-    courses = models.ManyToManyField(Course)
+    # courses = models.ManyToManyField(Course)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
     level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
+    is_compulsory = models.BooleanField(default=True)
 
     class Meta:
         """Meta definition for RecommendedCourses."""

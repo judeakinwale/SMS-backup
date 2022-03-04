@@ -144,9 +144,10 @@ class PrivateRecommendedCoursesApiTest(TestCase):
         recommended_courses = sample_recommended_courses(
             specialization=self.specialization,
             semester=self.semester,
-            level=self.level
+            level=self.level,
+            course=self.course
         )
-        recommended_courses.courses.add(self.course)
+        # recommended_courses.courses.add(self.course)
         serializer = serializers.RecommendedCoursesSerializer(
             recommended_courses,
             context=serializer_context
@@ -169,7 +170,7 @@ class PrivateRecommendedCoursesApiTest(TestCase):
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'specialization': specialization_serializer.data['url'],
-            'courses': [course_serializer.data['url'], ],
+            'course': course_serializer.data['url'],
             'semester': semester_serializer.data['url'],
             'level': level_serializer.data['url'],
         }
@@ -226,7 +227,7 @@ class PrivateRecommendedCoursesApiTest(TestCase):
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
             'specialization': specialization_serializer.data['url'],
-            'courses': [course_serializer.data['url'], ],
+            'course': course_serializer.data['url'],
             'semester': semester_serializer.data['url'],
             'level': level_serializer.data['url'],
         }
