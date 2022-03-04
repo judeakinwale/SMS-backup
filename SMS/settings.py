@@ -215,7 +215,10 @@ SWAGGER_SETTINGS = {
 
 # Email Configuration
 EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+if DEBUG == True:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST')
 # EMAIL_HOST_PASSWORD = '******'  # email password, use env variables
 # EMAIL_HOST_USER = 'myaccount@gmail.com'  # email address
@@ -228,7 +231,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # https://github.com/adamchainz/django-cors-headers#configuration
 CORS_ORIGIN_ALLOW_ALL = True # For development
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000',
+    # 'http://127.0.0.1:8000',
 ]
 
 
