@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets, permissions
 from user import serializers, models, filters
 from core import permissions as cpermissions
+from core import utils
 
 # Create your views here.
 
@@ -15,6 +16,24 @@ class UserViewSet(viewsets.ModelViewSet):
         | cpermissions.IsITDept
     ]
     filterset_class = filters.UserFilter
+
+    def perform_create(self, serializer):
+        user = serializer.save() 
+        try:
+            # print(f"user serializer: {user.email} \n\n")
+            # print(f"user serializer data: {serializer.data} \n\n")
+            reciepients = [user.email,]
+            context = {
+                "user": user,
+                "school_name": "UNI",
+                "login_url": "https://sms-lotus.herokuapp.com/api-auth/login/"
+            }
+            utils.send_account_creation_email(self.request, reciepients, context)
+        except Exception as e:
+            print(f"user creation email error: {e} \n")
+            
+        return user
+
 
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):

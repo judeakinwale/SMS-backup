@@ -32,7 +32,7 @@ def sample_staff(user, **kwargs):
 
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
-    ignored_keys = ['image']
+    ignored_keys = ['image', 'new_user']
     relevant_keys = sorted(set(payload.keys()).difference(ignored_keys))
     for key in relevant_keys:
         try:
@@ -116,8 +116,29 @@ class PrivateStaffApiTest(TestCase):
             'employee_id': 'Emp 104',
         }
 
-        res = self.client.post(STAFF_URL, payload)
+        res = self.client.post(STAFF_URL, payload, format='json')
 
+        staff = models.Staff.objects.get(id=res.data['id'])
+        staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        test_all_model_attributes(self, payload, staff, staff_serializer)
+
+    def test_create_staff_and_user(self):
+        """test creating a staff and user at the same time"""
+        payload = {
+            'new_user': {
+                'first_name': "Staff",
+                'last_name': "User",
+                'email': "staffuser@gmail.com",
+                'password': "01010101",
+                'is_staff': True
+            },
+            'employee_id': 'Emp 104',
+        }
+
+        res = self.client.post(STAFF_URL, payload, format='json')
+        # print(res.data)
         staff = models.Staff.objects.get(id=res.data['id'])
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
 
@@ -135,7 +156,7 @@ class PrivateStaffApiTest(TestCase):
         }
 
         url = staff_detail_url(staff.id)
-        res = self.client.patch(url, payload)
+        res = self.client.patch(url, payload, format='json')
 
         staff.refresh_from_db()
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
@@ -148,16 +169,24 @@ class PrivateStaffApiTest(TestCase):
         staff = sample_staff(user=self.user)
 
         payload = {
-            'user': self.serializer.data['url'],
+            # 'user': self.serializer.data['url'],
             'employee_id': 'Emp 104',
+            'new_user': {
+                'first_name': "NewStaff",
+                'last_name': "UserOne",
+                'email': "staffuserone@gmail.com",
+                'password': "00001111",
+                'is_staff': True
+            },
             'is_lecturer': True,
         }
 
         url = staff_detail_url(staff.id)
-        res = self.client.put(url, payload)
+        res = self.client.put(url, payload, format='json')
 
         staff.refresh_from_db()
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
+        # print(staff_serializer.data)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, staff, staff_serializer)

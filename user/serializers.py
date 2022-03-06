@@ -330,24 +330,24 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             try:
                 biodata = models.Biodata.objects.get(user=user)
                 # print("\nBiodata exists")
-                biodata.marital_status = biodata_data.get('marital_status', instance.marital_status)
-                biodata.gender = biodata_data.get('gender', instance.gender)
-                biodata.religion = biodata_data.get('religion', instance.religion)
-                biodata.birthday = biodata_data.get('birthday', instance.birthday)
-                biodata.nationality = biodata_data.get('nationality', instance.nationality)
-                biodata.state_of_origin = biodata_data.get('state_of_origin', instance.state_of_origin)
-                biodata.local_govt = biodata_data.get('local_govt', instance.local_govt)
+                biodata.marital_status = biodata_data.get('marital_status', biodata.marital_status)
+                biodata.gender = biodata_data.get('gender', biodata.gender)
+                biodata.religion = biodata_data.get('religion', biodata.religion)
+                biodata.birthday = biodata_data.get('birthday', biodata.birthday)
+                biodata.nationality = biodata_data.get('nationality', biodata.nationality)
+                biodata.state_of_origin = biodata_data.get('state_of_origin', biodata.state_of_origin)
+                biodata.local_govt = biodata_data.get('local_govt', biodata.local_govt)
                 biodata.permanent_address = biodata_data.get(
                     'permanent_address',
-                    instance.permanent_address,
+                    biodata.permanent_address,
                 )
-                biodata.address = biodata_data.get('address', instance.address)
-                biodata.phone_no_1 = biodata_data.get('phone_no_1', instance.phone_no_1)
-                biodata.phone_no_2 = biodata_data.get('phone_no_2', instance.phone_no_2)
-                biodata.profile_picture = biodata_data.get('profile_picture', instance.profile_picture)
-                biodata.academic_history = biodata_data.get('academic_history', instance.academic_history)
-                biodata.health_data = biodata_data.get('health_data', instance.health_data)
-                biodata.family_data = biodata_data.get('family_data', instance.family_data)
+                biodata.address = biodata_data.get('address', biodata.address)
+                biodata.phone_no_1 = biodata_data.get('phone_no_1', biodata.phone_no_1)
+                biodata.phone_no_2 = biodata_data.get('phone_no_2', biodata.phone_no_2)
+                biodata.profile_picture = biodata_data.get('profile_picture', biodata.profile_picture)
+                biodata.academic_history = biodata_data.get('academic_history', biodata.academic_history)
+                biodata.health_data = biodata_data.get('health_data', biodata.health_data)
+                biodata.family_data = biodata_data.get('family_data', biodata.family_data)
                 biodata.save()
             except Exception:
                 # print("\nBiodata doesn't exist")
@@ -371,8 +371,11 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
 
     user = serializers.HyperlinkedRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail'
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
     )
+    new_user = UserSerializer(allow_null=True, required=False)
     specialization = serializers.HyperlinkedRelatedField(
         queryset=amodels.Specialization.objects.all(),
         view_name='academics:specialization-detail',
@@ -386,6 +389,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'user',
+            'new_user',
             'employee_id',
             'specialization',
             'is_active',
@@ -398,6 +402,62 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:staff-detail'},
         }
+
+    def create(self, validated_data):
+        """create a new user with an encrypted password, a related user and return the user"""
+        try:
+            new_user_data = validated_data.pop("new_user")
+            new_user = get_user_model().objects.create_user(**new_user_data)
+
+            user = validated_data.pop("user") if "user" in validated_data else None
+            # if validated_data["user"]: user = validated_data.pop("user")
+            # print(user)
+            staff = models.Staff.objects.create(user=new_user, **validated_data)
+
+            if staff.user and staff.specialization and not new_user.specialization:
+                new_user.specialization = staff.specialization
+                new_user.save()
+
+        except Exception as e:
+            staff = models.Staff.objects.create(**validated_data)
+                
+        return staff
+
+    def update(self, instance, validated_data):
+        """update a user, correctly setting the password and return it"""
+
+        if 'new_user' not in validated_data or validated_data['new_user'] == []:
+            staff = super().update(instance, validated_data)
+        elif 'user' in validated_data:
+
+            new_user_data = validated_data.pop('new_user')
+            print("removed new user data, user provided in request")
+            staff = super().update(instance, validated_data)
+        else:
+
+            new_user_data = validated_data.pop('new_user')
+            password = new_user_data.pop('password')
+            
+            staff = super().update(instance, validated_data)
+            user = staff.user
+
+            try:
+                user.first_name = new_user_data.get('first_name', user.first_name)
+                user.middle_name = new_user_data.get('middle_name', user.middle_name)
+                user.last_name = new_user_data.get('last_name', user.last_name)
+                user.email = new_user_data.get('email', user.email)
+                user.is_staff = new_user_data.get('is_staff', user.is_staff)
+
+                if staff.user and staff.specialization and not user.specialization:
+                    user.specialization = staff.specialization
+
+                if password: user.set_password(password)
+                user.save()
+
+            except Exception as e:
+                print(e)
+
+        return staff
 
 
 class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
@@ -439,8 +499,11 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
 
     user = serializers.HyperlinkedRelatedField(
         queryset=get_user_model().objects.all(),
-        view_name='user:user-detail'
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
     )
+    new_user = UserSerializer(allow_null=True, required=False)
     specialization = serializers.HyperlinkedRelatedField(
         queryset=amodels.Specialization.objects.all(),
         view_name='academics:specialization-detail',
@@ -454,6 +517,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'id',
             'url',
+            'new_user',
             'user',
             'matric_no',
             'student_id',
@@ -463,6 +527,61 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:student-detail'},
         }
+
+    def create(self, validated_data):
+        """create a new user with an encrypted password, a related user and return the user"""
+        try:
+            new_user_data = validated_data.pop("new_user")
+            new_user = get_user_model().objects.create_user(**new_user_data)
+
+            user = validated_data.pop("user") if "user" in validated_data else None
+            # if validated_data["user"]: user = validated_data.pop("user")
+            # print(user)
+            student = models.Student.objects.create(user=new_user, **validated_data)
+
+            if student.user and student.specialization and not new_user.specialization:
+                new_user.specialization = student.specialization
+                new_user.save()
+
+        except Exception as e:
+            student = models.Student.objects.create(**validated_data)
+                
+        return student
+
+    def update(self, instance, validated_data):
+        """update a user, correctly setting the password and return it"""
+
+        if 'new_user' not in validated_data or validated_data['new_user'] == []:
+            student = super().update(instance, validated_data)
+        elif 'user' in validated_data:
+
+            new_user_data = validated_data.pop('new_user')
+            print("removed new user data, user provided in request")
+            student = super().update(instance, validated_data)
+        else:
+
+            new_user_data = validated_data.pop('new_user')
+            password = new_user_data.pop('password')
+            
+            student = super().update(instance, validated_data)
+            user = student.user
+
+            try:
+                user.first_name = new_user_data.get('first_name', user.first_name)
+                user.middle_name = new_user_data.get('middle_name', user.middle_name)
+                user.last_name = new_user_data.get('last_name', user.last_name)
+                user.email = new_user_data.get('email', user.email)
+
+                if student.user and student.specialization and not user.specialization:
+                    user.specialization = student.specialization
+
+                if password: user.set_password(password)
+                user.save()
+
+            except Exception as e:
+                print(e)
+
+        return student
 
 
 class ResultSerializer(serializers.HyperlinkedModelSerializer):

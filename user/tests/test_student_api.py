@@ -28,7 +28,7 @@ def sample_student(user, **kwargs):
 
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
-    ignored_keys = ['image']
+    ignored_keys = ['image', 'new_user']
     relevant_keys = sorted(set(payload.keys()).difference(ignored_keys))
     for key in relevant_keys:
         try:
@@ -112,7 +112,30 @@ class PrivateStudentApiTest(TestCase):
             'student_id': 'S 1034',
         }
 
-        res = self.client.post(STUDENT_URL, payload)
+        res = self.client.post(STUDENT_URL, payload, format='json')
+
+        student = models.Student.objects.get(id=res.data['id'])
+        student_serializer = serializers.StudentSerializer(student, context=serializer_context)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        test_all_model_attributes(self, payload, student, student_serializer)
+
+    def test_create_student_and_staff(self):
+        """test creating a student"""
+        payload = {
+            # 'user': self.serializer.data['url'],
+            'new_user': {
+                'first_name': "NewStudent",
+                'last_name': "UserOne",
+                'email': "studentuserone@gmail.com",
+                'password': "11110000",
+                'is_staff': True
+            },
+            'student_id': 'S 1034',
+        }
+
+        res = self.client.post(STUDENT_URL, payload, format='json')
+        # print(res.data)
 
         student = models.Student.objects.get(id=res.data['id'])
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)
@@ -142,12 +165,19 @@ class PrivateStudentApiTest(TestCase):
         student = sample_student(user=self.user)
 
         payload = {
-            'user': self.serializer.data['url'],
+            # 'user': self.serializer.data['url'],
+            'new_user': {
+                'first_name': "NewStudent",
+                'last_name': "UserOne",
+                'email': "studentuserone@gmail.com",
+                'password': "11110000",
+                'is_staff': True
+            },
             'student_id': 'S 1034',
         }
 
         url = student_detail_url(student.id)
-        res = self.client.put(url, payload)
+        res = self.client.put(url, payload, format='json')
 
         student.refresh_from_db()
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)
