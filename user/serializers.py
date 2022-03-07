@@ -412,13 +412,18 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
             user = validated_data.pop("user") if "user" in validated_data else None
             # if validated_data["user"]: user = validated_data.pop("user")
             # print(user)
-            staff = models.Staff.objects.create(user=new_user, **validated_data)
+            if user and new_user:
+                print("Both user and new_user provided. Only user is used!")
+                staff = models.Staff.objects.create(user=user, **validated_data)
+            else:
+                staff = models.Staff.objects.create(user=new_user, **validated_data)
 
             if staff.user and staff.specialization and not new_user.specialization:
                 new_user.specialization = staff.specialization
                 new_user.save()
 
-        except Exception as e:
+        except Exception:
+            print("new_user not provided")
             staff = models.Staff.objects.create(**validated_data)
                 
         return staff
@@ -537,13 +542,18 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
             user = validated_data.pop("user") if "user" in validated_data else None
             # if validated_data["user"]: user = validated_data.pop("user")
             # print(user)
-            student = models.Student.objects.create(user=new_user, **validated_data)
+            if user and new_user:
+                print("Both user and new_user provided. Only user is used!")
+                student = models.Student.objects.create(user=user, **validated_data)
+            else:
+                student = models.Student.objects.create(user=new_user, **validated_data)
 
             if student.user and student.specialization and not new_user.specialization:
                 new_user.specialization = student.specialization
                 new_user.save()
 
-        except Exception as e:
+        except Exception:
+            print("new_user not provided")
             student = models.Student.objects.create(**validated_data)
                 
         return student

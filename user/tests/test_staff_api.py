@@ -127,6 +127,7 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff_and_user(self):
         """test creating a staff and user at the same time"""
         payload = {
+            'user': self.serializer.data['url'],
             'new_user': {
                 'first_name': "Staff",
                 'last_name': "User",

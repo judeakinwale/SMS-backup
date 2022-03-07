@@ -17,7 +17,7 @@ class UserManager(BaseUserManager):
             try:
                 password = user.last_name.lower()
             except Exception as e:
-                raise ValueError('Users has no last_name')
+                raise ValueError(f"User has no last_name: {e}")
         user.set_password(password)
         user.save(using=self._db)
         return user
