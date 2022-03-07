@@ -43,7 +43,7 @@ class IsSuperUser(permissions.BasePermission):
     """Allows full access to superuser"""
 
     def has_permission(self, request, view):
-        
+
         return bool(
             request.user and
             request.user.is_authenticated and
@@ -96,7 +96,7 @@ class IsITDept(permissions.BasePermission):
     """Allows full access to IT"""
 
     def has_permission(self, request, view):
-            
+
         return bool(
             request.user and
             request.user.is_active and

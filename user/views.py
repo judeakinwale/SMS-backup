@@ -18,11 +18,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filterset_class = filters.UserFilter
 
     def perform_create(self, serializer):
-        user = serializer.save() 
+        user = serializer.save()
         try:
             # print(f"user serializer: {user.email} \n\n")
             # print(f"user serializer data: {serializer.data} \n\n")
-            reciepients = [user.email,]
+            reciepients = [user.email, ]
             context = {
                 "user": user,
                 "school_name": "UNI",
@@ -31,9 +31,8 @@ class UserViewSet(viewsets.ModelViewSet):
             utils.send_account_creation_email(self.request, reciepients, context)
         except Exception as e:
             print(f"user creation email error: {e} \n")
-            
-        return user
 
+        return user
 
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):
@@ -167,8 +166,6 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
         try:
             student = models.Student.objects.get(user=self.request.user)
             registration = serializer.save(student=student)
-        except Exception as e:
+        except Exception:
             registration = serializer.save()
         return registration
-
-

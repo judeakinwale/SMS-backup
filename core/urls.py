@@ -1,4 +1,3 @@
-from django.core.mail import send_mail
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .utils import send_sample_email

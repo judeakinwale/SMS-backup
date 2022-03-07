@@ -28,9 +28,9 @@ class ModelTest(TestCase):
         first_name = 'user25'
         last_name = '25stest'
         user = get_user_model().objects.create_user(
-            email = email,
-            first_name = first_name,
-            last_name = last_name
+            email=email,
+            first_name=first_name,
+            last_name=last_name
         )
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(last_name.lower()))

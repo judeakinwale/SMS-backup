@@ -189,7 +189,7 @@ def send_sample_email(request):
         return False
 
 
-def send_account_creation_email(request, reciepients=["judeakinwale@gmail.com",], context={}):
+def send_account_creation_email(request, reciepients=["judeakinwale@gmail.com", ], context={}):
     """
     reciepients is an array of reciepient email addresses
     context should contain: user, school_name, login_url
@@ -204,7 +204,7 @@ def send_account_creation_email(request, reciepients=["judeakinwale@gmail.com",]
             subject,
             message,
             sender_email,
-            reciepients, # ['judeakinwale@gmail.com'],
+            reciepients,  # ['judeakinwale@gmail.com'],
         )
         msg.content_subtype = "html"  # Main content is now text/html
         msg.send()

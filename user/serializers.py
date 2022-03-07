@@ -425,7 +425,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         except Exception:
             print("new_user not provided")
             staff = models.Staff.objects.create(**validated_data)
-                
+
         return staff
 
     def update(self, instance, validated_data):
@@ -442,7 +442,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
 
             new_user_data = validated_data.pop('new_user')
             password = new_user_data.pop('password')
-            
+
             staff = super().update(instance, validated_data)
             user = staff.user
 
@@ -456,7 +456,9 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
                 if staff.user and staff.specialization and not user.specialization:
                     user.specialization = staff.specialization
 
-                if password: user.set_password(password)
+                if password:
+                    user.set_password(password)
+
                 user.save()
 
             except Exception as e:
@@ -555,7 +557,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         except Exception:
             print("new_user not provided")
             student = models.Student.objects.create(**validated_data)
-                
+
         return student
 
     def update(self, instance, validated_data):
@@ -572,7 +574,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
 
             new_user_data = validated_data.pop('new_user')
             password = new_user_data.pop('password')
-            
+
             student = super().update(instance, validated_data)
             user = student.user
 
@@ -585,7 +587,9 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
                 if student.user and student.specialization and not user.specialization:
                     user.specialization = student.specialization
 
-                if password: user.set_password(password)
+                if password:
+                    user.set_password(password)
+
                 user.save()
 
             except Exception as e:
