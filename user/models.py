@@ -61,7 +61,6 @@ class Staff(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="staff",
         limit_choices_to={'is_staff': True},
     )
     employee_id = models.CharField(max_length=250, null=True)
