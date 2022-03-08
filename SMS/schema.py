@@ -6,7 +6,7 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="School Management System API",
-        default_version='v0.5',
+        default_version='v1.0',
         description="School management system",
         # terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="judeakinwale@gmail.com"),
