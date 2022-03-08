@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from user import models
 from academics import models as amodels
+from academics import serializers as aserializers
 
 # For JWT and drf-yasg integration
 from drf_yasg.utils import swagger_auto_schema
@@ -573,10 +574,12 @@ class StaffSerializer(BaseStaffSerializer):
     """serializer for the Staff model"""
 
     new_user = UserSerializer(allow_null=True, required=False)
+    courses = aserializers.CourseSerializer(source='course_set', many=True, read_only=True)
 
     class Meta(BaseStaffSerializer.Meta):
         additional_fields = [
             'new_user',
+            'courses',
         ]
         fields = BaseStaffSerializer.Meta.fields + additional_fields
 
