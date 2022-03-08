@@ -11,6 +11,94 @@ from rest_framework_simplejwt.views import (
 )
 
 
+class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
+    """base serializer for the User model"""
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'id',
+            'url',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'email',
+            'specialization',
+            'password',
+            'is_staff',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:user-detail'},
+            'password': {'write_only': True, 'min_length': 5},
+        }
+
+
+class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Staff model"""
+
+    user = serializers.HyperlinkedRelatedField(
+        queryset=get_user_model().objects.filter(is_staff=True),
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = models.Staff
+        fields = [
+            'id',
+            'url',
+            'user',
+            'employee_id',
+            'specialization',
+            'is_active',
+            'is_lecturer',
+            'is_bursar',
+            'is_IT',
+            'is_head_of_department',
+            'is_dean_of_faculty',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:staff-detail'},
+        }
+
+
+class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Student model"""
+
+    user = serializers.HyperlinkedRelatedField(
+        queryset=get_user_model().objects.all(),
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = models.Student
+        fields = [
+            'id',
+            'url',
+            'user',
+            'matric_no',
+            'student_id',
+            'specialization',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:student-detail'},
+        }
+
+
 class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the AcademicData model"""
 
@@ -121,6 +209,130 @@ class FamilyDataSerializer(serializers.HyperlinkedModelSerializer):
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:familydata-detail'},
+        }
+
+
+class ResultSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Result model"""
+
+    course = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Course.objects.all(),
+        view_name='academics:course-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    student = serializers.HyperlinkedRelatedField(
+        queryset=models.Student.objects.all(),
+        view_name='user:student-detail',
+        # allow_null=True,
+        # required=False,
+    )
+    semester = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Semester.objects.all(),
+        view_name='academics:semester-detail',
+        allow_null=True,
+        required=False,
+    )
+    session = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Session.objects.all(),
+        view_name='academics:session-detail',
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = models.Result
+        fields = [
+            'id',
+            'url',
+            'score',
+            'course',
+            'student',
+            'semester',
+            'session',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:result-detail'},
+        }
+
+
+class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the CourseRegistration model"""
+
+    course = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Course.objects.all(),
+        view_name='academics:course-detail'
+    )
+    student = serializers.HyperlinkedRelatedField(
+        queryset=models.Student.objects.all(),
+        view_name='user:student-detail',
+        allow_null=True,
+        required=False,
+    )
+    session = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Session.objects.all(),
+        view_name='academics:session-detail',
+        allow_null=True,
+        required=False,
+    )
+    semester = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Semester.objects.all(),
+        view_name='academics:semester-detail',
+        allow_null=True,
+        required=False,
+    )
+
+    class Meta:
+        model = models.CourseRegistration
+        fields = [
+            'id',
+            'url',
+            'course',
+            'student',
+            'session',
+            'semester',
+            'is_active',
+            'is_completed',
+            'is_passed',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:courseregistration-detail'},
+        }
+
+
+class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the CourseAdviser model"""
+
+    staff = serializers.HyperlinkedRelatedField(
+        queryset=models.Staff.objects.filter(is_active=True),
+        view_name='user:staff-detail'
+    )
+    department = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Department.objects.all(),
+        view_name='academics:department-detail'
+        # allow_null=True,
+        # required=False,
+    )
+    level = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Level.objects.all(),
+        view_name='academics:level-detail'
+        # allow_null=True,
+        # required=False,
+    )
+
+    class Meta:
+        model = models.CourseAdviser
+        fields = [
+            'id',
+            'url',
+            'staff',
+            'department',
+            'level',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'user:courseadviser-detail'},
         }
 
 
@@ -274,29 +486,20 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         return biodata
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(BaseUserSerializer):
     """serializer for the User model"""
 
     biodata = BiodataSerializer(allow_null=True, required=False)
+    staff = BaseStaffSerializer(source='staff_set', many=True, read_only=True)
+    student = BaseStudentSerializer(source='student_set', many=True, read_only=True)
 
-    class Meta:
-        model = get_user_model()
-        fields = [
-            'id',
-            'url',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'email',
-            'specialization',
-            'password',
+    class Meta(BaseUserSerializer.Meta):
+        additional_fields = [
             'biodata',
-            'is_staff',
+            'staff',
+            'student',
         ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:user-detail'},
-            'password': {'write_only': True, 'min_length': 5},
-        }
+        fields = BaseUserSerializer.Meta.fields + additional_fields
 
     def create(self, validated_data):
         """create a new user with an encrypted password, a related biodata and return the user"""
@@ -308,11 +511,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             user = get_user_model().objects.create_user(**validated_data)
             models.Biodata.objects.create(user=user, **biodata_data)
 
-        if user.is_staff is True:
-            models.Staff.objects.create(user=user)
-        else:
-            student = models.Student.objects.create(user=user)
-            models.AcademicData.objects.create(student=student)
+        # if user.is_staff is True:
+        #     models.Staff.objects.create(user=user)
+        # else:
+        #     student = models.Student.objects.create(user=user)
+        #     models.AcademicData.objects.create(student=student)
 
         return user
 
@@ -366,42 +569,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return user
 
 
-class StaffSerializer(serializers.HyperlinkedModelSerializer):
+class StaffSerializer(BaseStaffSerializer):
     """serializer for the Staff model"""
 
-    user = serializers.HyperlinkedRelatedField(
-        queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
-        allow_null=True,
-        required=False,
-    )
     new_user = UserSerializer(allow_null=True, required=False)
-    specialization = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
-        allow_null=True,
-        required=False,
-    )
 
-    class Meta:
-        model = models.Staff
-        fields = [
-            'id',
-            'url',
-            'user',
+    class Meta(BaseStaffSerializer.Meta):
+        additional_fields = [
             'new_user',
-            'employee_id',
-            'specialization',
-            'is_active',
-            'is_lecturer',
-            'is_bursar',
-            'is_IT',
-            'is_head_of_department',
-            'is_dean_of_faculty',
         ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:staff-detail'},
-        }
+        fields = BaseStaffSerializer.Meta.fields + additional_fields
 
     def create(self, validated_data):
         """create a new user with an encrypted password, a related user and return the user"""
@@ -413,7 +590,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
             # if validated_data["user"]: user = validated_data.pop("user")
             # print(user)
             if user and new_user:
-                print("Both user and new_user provided. Only user is used!")
+                print("\nBoth user and new_user provided. Only user is used!")
                 staff = models.Staff.objects.create(user=user, **validated_data)
             else:
                 staff = models.Staff.objects.create(user=new_user, **validated_data)
@@ -423,7 +600,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
                 new_user.save()
 
         except Exception:
-            print("new_user not provided")
+            print("\nnew_user not provided")
             staff = models.Staff.objects.create(**validated_data)
 
         return staff
@@ -436,7 +613,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
         elif 'user' in validated_data:
 
             new_user_data = validated_data.pop('new_user')
-            print("removed new user data, user provided in request")
+            print("\nremoved new user data, user provided in request")
             staff = super().update(instance, validated_data)
         else:
 
@@ -462,78 +639,27 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
                 user.save()
 
             except Exception as e:
-                print(e)
+                print(f"\nThere was an error updating user: {e}")
 
         return staff
 
 
-class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the CourseAdviser model"""
-
-    staff = serializers.HyperlinkedRelatedField(
-        queryset=models.Staff.objects.filter(is_active=True),
-        view_name='user:staff-detail'
-    )
-    department = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Department.objects.all(),
-        view_name='academics:department-detail'
-        # allow_null=True,
-        # required=False,
-    )
-    level = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Level.objects.all(),
-        view_name='academics:level-detail'
-        # allow_null=True,
-        # required=False,
-    )
-
-    class Meta:
-        model = models.CourseAdviser
-        fields = [
-            'id',
-            'url',
-            'staff',
-            'department',
-            'level',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:courseadviser-detail'},
-        }
-
-
-class StudentSerializer(serializers.HyperlinkedModelSerializer):
+class StudentSerializer(BaseStudentSerializer):
     """serializer for the Student model"""
 
-    user = serializers.HyperlinkedRelatedField(
-        queryset=get_user_model().objects.all(),
-        view_name='user:user-detail',
-        allow_null=True,
-        required=False,
-    )
     new_user = UserSerializer(allow_null=True, required=False)
-    specialization = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
-        allow_null=True,
-        required=False,
-    )
-    academic_data = AcademicDataSerializer(allow_null=True, required=False)
+    academic_data = AcademicDataSerializer(read_only=True)
+    results = ResultSerializer(source='result_set', many=True, read_only=True)
+    course_registrations = CourseRegistrationSerializer(source='courseregistration_set', many=True, read_only=True) 
 
-    class Meta:
-        model = models.Student
-        fields = [
-            'id',
-            'url',
+    class Meta(BaseStudentSerializer.Meta):
+        additional_fields = [
             'new_user',
-            'user',
-            'matric_no',
-            'student_id',
-            'specialization',
             'academic_data',
+            'results',
+            'course_registrations',
         ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:student-detail'},
-        }
+        fields = BaseStudentSerializer.Meta.fields + additional_fields
 
     def create(self, validated_data):
         """create a new user with an encrypted password, a related user and return the user"""
@@ -545,7 +671,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
             # if validated_data["user"]: user = validated_data.pop("user")
             # print(user)
             if user and new_user:
-                print("Both user and new_user provided. Only user is used!")
+                print("\nBoth user and new_user provided. Only user is used!")
                 student = models.Student.objects.create(user=user, **validated_data)
             else:
                 student = models.Student.objects.create(user=new_user, **validated_data)
@@ -555,7 +681,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
                 new_user.save()
 
         except Exception:
-            print("new_user not provided")
+            print("\nnew_user not provided")
             student = models.Student.objects.create(**validated_data)
 
         return student
@@ -568,7 +694,7 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
         elif 'user' in validated_data:
 
             new_user_data = validated_data.pop('new_user')
-            print("removed new user data, user provided in request")
+            print("\nremoved new user data, user provided in request")
             student = super().update(instance, validated_data)
         else:
 
@@ -593,99 +719,9 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
                 user.save()
 
             except Exception as e:
-                print(e)
+                print(f"\nThere was an error updating user: {e}")
 
         return student
-
-
-class ResultSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the Result model"""
-
-    course = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail',
-        # allow_null=True,
-        # required=False,
-    )
-    student = serializers.HyperlinkedRelatedField(
-        queryset=models.Student.objects.all(),
-        view_name='user:student-detail',
-        # allow_null=True,
-        # required=False,
-    )
-    semester = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
-        allow_null=True,
-        required=False,
-    )
-    session = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
-        allow_null=True,
-        required=False,
-    )
-
-    class Meta:
-        model = models.Result
-        fields = [
-            'id',
-            'url',
-            'score',
-            'course',
-            'student',
-            'semester',
-            'session',
-            'timestamp',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:result-detail'},
-        }
-
-
-class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the CourseRegistration model"""
-
-    course = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail'
-    )
-    student = serializers.HyperlinkedRelatedField(
-        queryset=models.Student.objects.all(),
-        view_name='user:student-detail',
-        allow_null=True,
-        required=False,
-    )
-    session = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
-        allow_null=True,
-        required=False,
-    )
-    semester = serializers.HyperlinkedRelatedField(
-        queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
-        allow_null=True,
-        required=False,
-    )
-
-    class Meta:
-        model = models.CourseRegistration
-        fields = [
-            'id',
-            'url',
-            'course',
-            'student',
-            'session',
-            'semester',
-            'is_active',
-            'is_completed',
-            'is_passed',
-            'timestamp',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'user:courseregistration-detail'},
-        }
 
 
 # Simple JWT integration with drf-yasg
