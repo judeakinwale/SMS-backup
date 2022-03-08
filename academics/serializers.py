@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from academics import models
+from assessment import serializers as aserializers
 
 
 class LevelSerializer(serializers.HyperlinkedModelSerializer):
@@ -109,6 +110,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
+    quizzes = aserializers.QuizSerializer(source='course_set', many=True, read_only=True)
 
     class Meta:
         model = models.Course
@@ -120,6 +122,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
             'code',
             'description',
             'coordinator',
+            'quizzes',
             'is_active',
         ]
         extra_kwargs = {
