@@ -115,7 +115,13 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
 class QuizSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Quiz model"""
 
-    supervisor = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
+    # supervisor = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
+    supervisor = serializers.HyperlinkedRelatedField(
+        queryset=get_user_model().objects.filter(is_staff=True),
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
     question_set = QuestionSerializer(many=True, allow_null=True, required=False)
     course = serializers.HyperlinkedRelatedField(
         queryset=amodels.Course.objects.all(),
@@ -250,7 +256,13 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
 class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the QuizTaker model"""
 
-    student = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
+    # student = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
+    student = serializers.HyperlinkedRelatedField(
+        queryset=get_user_model().objects.all(),
+        view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
     quiz = serializers.HyperlinkedRelatedField(
         queryset=models.Quiz.objects.all(),
         view_name='assessment:quiz-detail',

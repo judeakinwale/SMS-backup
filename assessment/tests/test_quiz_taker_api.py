@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from assessment import models, serializers
+from user import serializers as userializers
 
 
 QUIZTAKER_URL = reverse('assessment:quiztaker-list')
@@ -69,6 +70,7 @@ class PrivateQuizTakerApiTest(TestCase):
             password='testpass'
         )
         self.client.force_authenticate(self.user)
+        self.serializer = userializers.UserSerializer(self.user, context=serializer_context)
         self.quiz = sample_quiz(supervisor=self.user)
 
     def tearDown(self):
@@ -105,7 +107,7 @@ class PrivateQuizTakerApiTest(TestCase):
         """test creating a quiz_taker"""
         quiz_serializer = serializers.QuizSerializer(self.quiz, context=serializer_context)
         payload = {
-            'student': self.user.id,
+            'student': self.serializer.data['url'],
             'quiz': quiz_serializer.data['url'],
         }
 
@@ -139,7 +141,7 @@ class PrivateQuizTakerApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'student': self.user.id,
+            'student': self.serializer.data['url'],
             'quiz': quiz_serializer.data['url'],
         }
 
