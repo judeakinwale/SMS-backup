@@ -5,6 +5,7 @@ from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from core import permissions
 from user import models as umodels
+from django.urls import reverse
 
 
 CREATE_USER_URL = reverse('user:user-list')
@@ -24,15 +25,18 @@ class PermissionTest(TestCase):
         self.user_payload = {
             'email': 'staff@email.com',
             'password': '00000000',
+            'is_active': True,
         }
         self.staff_payload = {
             'email': 'staff@email.com',
             'password': '00000000',
+            'is_active': True,
             'is_staff': True,
         }
         self.superuser_payload = {
             'email': 'staff@email.com',
             'password': '00000000',
+            'is_active': True,
             'is_staff': True,
             'is_superuser': True,
         }
@@ -51,6 +55,8 @@ class PermissionTest(TestCase):
         """test the IsSuperUser permission"""
         request.user = self.superuser
         permission = permissions.IsSuperUser().has_permission(request, None)
+        path_url = request.build_absolute_uri(reverse('password_reset:reset-password-confirm'))
+        print(path_url)
 
         self.assertTrue(permission)
 
@@ -135,8 +141,10 @@ class PermissionTest(TestCase):
         staff = umodels.Staff.objects.get(user=user)
         staff.is_dean_of_faculty = True
         staff.save()
+        print(f"staff: {request.user and request.user.is_authenticated and request.user.is_staff and request.user.staff_set.all().exists() and request.user.staff_set.all()[0].is_dean_of_faculty}")
 
         permission = permissions.IsDean().has_permission(request, None)
+        print(permission)
 
         self.assertTrue(permission)
 

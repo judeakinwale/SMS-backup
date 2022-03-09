@@ -37,6 +37,9 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
             'is_staff',
             'is_superuser',
         ]
+        optional_fields = [
+            'is_active',
+        ]
         extra_kwargs = {
             'url': {'view_name': 'user:user-detail'},
             'password': {'write_only': True, 'min_length': 5, 'required': False, 'allow_null': True},
