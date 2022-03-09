@@ -26,6 +26,7 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
             'specialization',
             'password',
             'is_staff',
+            'is_superuser',
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:user-detail'},
