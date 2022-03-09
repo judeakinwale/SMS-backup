@@ -738,6 +738,20 @@ class StudentSerializer(BaseStudentSerializer):
         return student
 
 
+class AccountSerializer(BaseUserSerializer):
+    biodata = BiodataSerializer(read_only=True)
+    staff = StaffSerializer(source='staff_set', many=True, read_only=True)
+    student = StudentSerializer(source='student_set', many=True, read_only=True)
+
+    class Meta(BaseUserSerializer.Meta):
+        additional_fields = [
+            'biodata',
+            'staff',
+            'student',
+        ]
+        fields = BaseUserSerializer.Meta.fields + additional_fields
+
+
 # Simple JWT integration with drf-yasg
 class TokenObtainPairResponseSerializer(serializers.Serializer):
     access = serializers.CharField()

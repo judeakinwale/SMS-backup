@@ -37,7 +37,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):
     """manage the authenticated user"""
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_class = filters.UserFilter
 
