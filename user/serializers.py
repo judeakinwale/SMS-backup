@@ -14,6 +14,14 @@ from rest_framework_simplejwt.views import (
 
 class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
     """base serializer for the User model"""
+    
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
+    
     class Meta:
         model = get_user_model()
         fields = [
@@ -25,12 +33,13 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
             'email',
             'specialization',
             'password',
+            'is_active',
             'is_staff',
             'is_superuser',
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:user-detail'},
-            'password': {'write_only': True, 'min_length': 5},
+            'password': {'write_only': True, 'min_length': 5, 'required': False, 'allow_null': True},
         }
 
 
@@ -95,6 +104,7 @@ class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
             'matric_no',
             'student_id',
             'specialization',
+            'is_active',
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:student-detail'},
