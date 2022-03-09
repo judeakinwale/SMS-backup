@@ -92,7 +92,6 @@ class PrivateQuizApiTest(TestCase):
         }
 
         res = self.client.post(QUIZ_URL, payload)
-        print(payload)
 
         quiz = models.Quiz.objects.get(id=res.data['id'])
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)

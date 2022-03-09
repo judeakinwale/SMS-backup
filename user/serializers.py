@@ -512,9 +512,9 @@ class UserSerializer(BaseUserSerializer):
             user = get_user_model().objects.create_user(**validated_data)
             models.Biodata.objects.create(user=user, **biodata_data)
 
-        # if user.is_staff is True:
-        #     models.Staff.objects.create(user=user)
-        # else:
+        if user.is_staff is True and len(user.staff_set.all()) == 0:
+            models.Staff.objects.create(user=user)
+        # elif len(user.student_set.all) == 0:
         #     student = models.Student.objects.create(user=user)
         #     models.AcademicData.objects.create(student=student)
 
