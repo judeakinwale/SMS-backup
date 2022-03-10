@@ -216,10 +216,11 @@ SWAGGER_SETTINGS = {
 
 # Email Configuration
 EMAIL_USE_TLS = True
-if DEBUG == True:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST')
 # EMAIL_HOST_PASSWORD = '******'  # email password, use env variables
 # EMAIL_HOST_USER = 'myaccount@gmail.com'  # email address
