@@ -154,6 +154,7 @@ class PrivateUserApiTests(TestCase):
             'password': 'newpass123',
         }
         res = self.client.patch(ACCOUNT_URL, payload)
+        print(res.data)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, payload['first_name'])

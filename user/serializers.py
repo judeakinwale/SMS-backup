@@ -753,6 +753,15 @@ class AccountSerializer(BaseUserSerializer):
             'student',
         ]
         fields = BaseUserSerializer.Meta.fields + additional_fields
+        
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password')
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+            
+        return user
 
 
 # Simple JWT integration with drf-yasg
