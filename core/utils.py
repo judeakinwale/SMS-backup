@@ -161,7 +161,7 @@ def send_sample_email(request):
             subject,
             message,
             sender_email,
-            ['judeakinwale@gmail.com'],
+            ['akinwalejude@gmail.com'],
         )
         msg.content_subtype = "html"  # Main content is now text/html
         msg.send()
@@ -175,13 +175,14 @@ def send_sample_email(request):
         # )
         # test = send_mail(
         #     subject,
-        #     "Sample Message",
+        #     "Sample Message for Email",
         #     sender_email,
         #     ['judeakinwale@gmail.com',],
         #     # html_message=html_message,
         #     fail_silently=False,
         # )
-        # print(test)
+        # print(f"test: {test}")
+        # print(f"msg: {msg}\nsender_email: {sender_email}\nmessage:{message}")
         print("\nMail successfully sent")
         return True
     except Exception as e:
