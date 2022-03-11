@@ -24,20 +24,20 @@ class TestSMTP(TestCase):
     # def tearDown(self):
     #     settings.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-    # def test_smtp_connection(self, host, port):
-    #     # connect to actual host on actual port
-    #     smtp = smtplib.SMTP(host, port)
-    #     smtp.starttls()
+    def test_smtp_connection(self, host, port):
+        # connect to actual host on actual port
+        smtp = smtplib.SMTP(host, port)
+        smtp.starttls()
 
-    #     # check we have an open socket
-    #     self.assertIsNotNone(smtp.sock)
+        # check we have an open socket
+        self.assertIsNotNone(smtp.sock)
 
-    #     # run a no-operation, which is basically a server-side pass-through
-    #     self.assertEqual(smtp.noop(), (250, '2.0.0 OK'))
+        # run a no-operation, which is basically a server-side pass-through
+        self.assertEqual(smtp.noop(), (250, '2.0.0 OK'))
 
-    #     # assert disconnected
-    #     self.assertEqual(smtp.quit(), (221, '2.0.0 Service closing transmission channel'))
-    #     self.assertIsNone(smtp.sock)
+        # assert disconnected
+        self.assertEqual(smtp.quit(), (221, '2.0.0 Service closing transmission channel'))
+        self.assertIsNone(smtp.sock)
 
     def test_smtp_connection(self):
         # connect to actual host on actual port

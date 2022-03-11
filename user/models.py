@@ -86,7 +86,8 @@ class Staff(models.Model):
         verbose_name_plural = _("Staff")
 
     def save(self, *args, **kwargs):
-        self.specialization = self.user.specialization
+        if self.user.specialization and self.specialization != self.user.specialization:
+            self.specialization = self.user.specialization
         super(Staff, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -94,13 +95,19 @@ class Staff(models.Model):
         return f"{self.employee_id or self.user.email}"
 
     def department(self):
-        dept = self.specialization.department
-        return dept
+        try:
+            dept = self.specialization.department
+            return dept
+        except Exception:
+            return None
 
     def faculty(self):
-        dept = self.specialization.department
-        faculty = dept.faculty
-        return faculty
+        try:
+            dept = self.specialization.department
+            faculty = dept.faculty
+            return faculty
+        except Exception:
+            return None
 
 
 class Student(models.Model):
@@ -128,7 +135,8 @@ class Student(models.Model):
         verbose_name_plural = _("Students")
 
     def save(self, *args, **kwargs):
-        self.specialization = self.user.specialization
+        if self.user.specialization and self.specialization != self.user.specialization:
+            self.specialization = self.user.specialization
         super(Student, self).save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
@@ -143,17 +151,26 @@ class Student(models.Model):
         return CourseRegistration.objects.filter(student=self)
 
     def department(self):
-        dept = self.specialization.department
-        return dept
+        try:
+            dept = self.specialization.department
+            return dept
+        except Exception:
+            return None
 
     def faculty(self):
-        dept = self.specialization.department
-        faculty = dept.faculty
-        return faculty
+        try:
+            dept = self.specialization.department
+            faculty = dept.faculty
+            return faculty
+        except Exception:
+            return None
 
     def level(self):
-        lvl = self.academic_data.first().level
-        return lvl
+        try:
+            lvl = self.academic_data.first().level
+            return lvl
+        except Exception:
+            return None
 
 
 class CourseAdviser(models.Model):

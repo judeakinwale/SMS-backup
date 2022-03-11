@@ -4,6 +4,8 @@ from user import serializers, models, filters
 from core import permissions as cpermissions
 from core import utils
 
+from drf_yasg.utils import no_body, swagger_auto_schema
+
 # Create your views here.
 
 
@@ -34,9 +36,46 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return user
 
+    @swagger_auto_schema(operation_description="create a user and an optional biodata",
+                         operation_summary='create user and optional biodata')
+    def create(self, request, *args, **kwargs):
+        """create method docstring"""
+        return super().create(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_description="list a user and an optional biodata",
+                         operation_summary='list user and optional biodata')
+    def list(self, request, *args, **kwargs):
+        """list method docstring"""
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="retrieve a user and an optional biodata",
+                         operation_summary='retrieve user and optional biodata')
+    def retrieve(self, request, *args, **kwargs):
+        """retrieve method docstring"""
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="update a user and an optional biodata",
+                         operation_summary='update user and update or create optional biodata')
+    def update(self, request, *args, **kwargs):
+        """update method docstring"""
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="update a user and an optional biodata",
+                         operation_summary='partial_update user and update or create optional biodata')
+    def partial_update(self, request, *args, **kwargs):
+        """partial_update method docstring"""
+        return super().partial_update(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="update a user and an optional biodata",
+                         operation_summary='delete user')
+    def destroy(self, request, *args, **kwargs):
+        """destroy method docstring"""
+        return super().destroy(request, *args, **kwargs)
+
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):
     """manage the authenticated user"""
+    queryset = get_user_model().objects.all()
     serializer_class = serializers.AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_class = filters.UserFilter
@@ -44,6 +83,42 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         """retrieve and return the authenticated user"""
         return self.request.user
+    
+    # @swagger_auto_schema(operation_description="create a user",
+    #                      operation_summary='create user')
+    # def create(self, request, *args, **kwargs):
+    #     """create method docstring"""
+    #     return super().create(request, *args, **kwargs)
+    
+    # @swagger_auto_schema(operation_description="list a user",
+    #                      operation_summary='list user')
+    # def list(self, request, *args, **kwargs):
+    #     """list method docstring"""
+    #     return super().list(request, *args, **kwargs)
+    
+    @swagger_auto_schema(operation_description="retrieve authenticated user details",
+                         operation_summary='retrieve authenticated user details (account)')
+    def retrieve(self, request, *args, **kwargs):
+        """retrieve method docstring"""
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="update authenticated user details and update or create biodata",
+                         operation_summary='update authenticated user details (account) and update or create biodata')
+    def update(self, request, *args, **kwargs):
+        """update method docstring"""
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_description="partial update authenticated user details and update or create biodata",
+                         operation_summary='partial update authenticated user details (account) and update or create biodata')
+    def partial_update(self, request, *args, **kwargs):
+        """partial_update method docstring"""
+        return super().partial_update(request, *args, **kwargs)
+
+    # @swagger_auto_schema(operation_description="update a user and an optional biodata",
+    #                      operation_summary='delete user')
+    # def destroy(self, request, *args, **kwargs):
+    #     """destroy method docstring"""
+    #     return super().destroy(request, *args, **kwargs)
 
 
 class StaffViewSet(viewsets.ModelViewSet):
@@ -91,6 +166,11 @@ class BiodataViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.BiodataFilter
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
+    
 
 
 class ResultViewSet(viewsets.ModelViewSet):

@@ -28,7 +28,7 @@ def sample_student(user, **kwargs):
 
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
-    ignored_keys = ['image', 'new_user']
+    ignored_keys = ['image', 'user']
     relevant_keys = sorted(set(payload.keys()).difference(ignored_keys))
     for key in relevant_keys:
         try:
@@ -108,7 +108,14 @@ class PrivateStudentApiTest(TestCase):
     def test_create_student(self):
         """test creating a student"""
         payload = {
-            'user': self.serializer.data['url'],
+            # 'user': self.serializer.data['url'],
+            'user': {
+                'first_name': "NewStudent",
+                'last_name': "UserOne",
+                'email': "studentuserone@gmail.com",
+                'password': "11110000",
+                'is_staff': True
+            },
             'student_id': 'S 1034',
         }
 
@@ -124,7 +131,7 @@ class PrivateStudentApiTest(TestCase):
         """test creating a student"""
         payload = {
             # 'user': self.serializer.data['url'],
-            'new_user': {
+            'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
                 'email': "studentuserone@gmail.com",
@@ -166,7 +173,7 @@ class PrivateStudentApiTest(TestCase):
 
         payload = {
             # 'user': self.serializer.data['url'],
-            'new_user': {
+            'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
                 'email': "studentuserone@gmail.com",
@@ -178,6 +185,9 @@ class PrivateStudentApiTest(TestCase):
 
         url = student_detail_url(student.id)
         res = self.client.put(url, payload, format='json')
+        # print(f"payload url: {payload['user']}")
+        # print(f"res data url: {res.data['user']}")
+        # print(f"res data: {res.data}")
 
         student.refresh_from_db()
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)

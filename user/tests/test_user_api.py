@@ -103,6 +103,8 @@ class PrivateUserApiTests(TestCase):
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
+        # print("\n1\n")
+        # print(res.data)
 
         user = get_user_model().objects.get(id=res.data['id'], email=res.data['email'])
 
@@ -154,7 +156,7 @@ class PrivateUserApiTests(TestCase):
             'password': 'newpass123',
         }
         res = self.client.patch(ACCOUNT_URL, payload)
-        print(res.data)
+        # print(res.data)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, payload['first_name'])

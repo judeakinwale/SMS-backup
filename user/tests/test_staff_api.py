@@ -32,7 +32,7 @@ def sample_staff(user, **kwargs):
 
 def test_all_model_attributes(insance, payload, model, serializer):
     """test model attributes against a payload, with instance being self in a testcase class """
-    ignored_keys = ['image', 'new_user']
+    ignored_keys = ['image', 'user']
     relevant_keys = sorted(set(payload.keys()).difference(ignored_keys))
     for key in relevant_keys:
         try:
@@ -112,7 +112,14 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff(self):
         """test creating a staff"""
         payload = {
-            'user': self.serializer.data['url'],
+            # 'user': self.serializer.data['url'],
+            'user': {
+                'first_name': "Staff",
+                'last_name': "User",
+                'email': "staffuser@gmail.com",
+                'password': "01010101",
+                'is_staff': True
+            },
             'employee_id': 'Emp 104',
         }
 
@@ -127,8 +134,8 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff_and_user(self):
         """test creating a staff and user at the same time"""
         payload = {
-            'user': self.serializer.data['url'],
-            'new_user': {
+            # 'user': self.serializer.data['url'],
+            'user': {
                 'first_name': "Staff",
                 'last_name': "User",
                 'email': "staffuser@gmail.com",
@@ -172,7 +179,7 @@ class PrivateStaffApiTest(TestCase):
         payload = {
             # 'user': self.serializer.data['url'],
             'employee_id': 'Emp 104',
-            'new_user': {
+            'user': {
                 'first_name': "NewStaff",
                 'last_name': "UserOne",
                 'email': "staffuserone@gmail.com",
