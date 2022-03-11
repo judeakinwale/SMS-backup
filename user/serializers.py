@@ -375,11 +375,17 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
         queryset=models.Staff.objects.filter(is_active=True),
         view_name='user:staff-detail'
     )
+    specialization = serializers.HyperlinkedRelatedField(
+        queryset=amodels.Specialization.objects.all(),
+        view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
     department = serializers.HyperlinkedRelatedField(
         queryset=amodels.Department.objects.all(),
-        view_name='academics:department-detail'
-        # allow_null=True,
-        # required=False,
+        view_name='academics:department-detail',
+        allow_null=True,
+        required=False,
     )
     level = serializers.HyperlinkedRelatedField(
         queryset=amodels.Level.objects.all(),
@@ -406,6 +412,7 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'staff',
+            'specialization',
             'department',
             'level',
             'semester',
@@ -1117,6 +1124,8 @@ class TokenObtainPairResponseSerializer(serializers.Serializer):
 
 class DecoratedTokenObtainPairView(TokenObtainPairView):
     @swagger_auto_schema(
+        operation_description='login',
+        operation_summary='login',
         responses={
             status.HTTP_200_OK: TokenObtainPairResponseSerializer})
     def post(self, request, *args, **kwargs):
@@ -1135,6 +1144,8 @@ class TokenRefreshResponseSerializer(serializers.Serializer):
 
 class DecoratedTokenRefreshView(TokenRefreshView):
     @swagger_auto_schema(
+        operation_description='generata access token using refresh token',
+        operation_summary='generata access token using refresh token',
         responses={
             status.HTTP_200_OK: TokenRefreshResponseSerializer})
     def post(self, request, *args, **kwargs):
@@ -1151,6 +1162,8 @@ class TokenVerifyResponseSerializer(serializers.Serializer):
 
 class DecoratedTokenVerifyView(TokenVerifyView):
     @swagger_auto_schema(
+        operation_description='verify access token is still valid',
+        operation_summary='verify access token is still valid',
         responses={
             status.HTTP_200_OK: TokenVerifyResponseSerializer})
     def post(self, request, *args, **kwargs):

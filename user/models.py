@@ -177,7 +177,18 @@ class CourseAdviser(models.Model):
     """Model definition for CourseAdviser"""
 
     staff = models.ForeignKey(Staff, limit_choices_to={'is_active': True}, on_delete=models.CASCADE)
-    department = models.ForeignKey(acmodels.Department, on_delete=models.CASCADE, null=True)
+    specialization = models.ForeignKey(
+        acmodels.Specialization,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
+    department = models.ForeignKey(
+        acmodels.Department,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     level = models.ForeignKey(acmodels.Level, on_delete=models.CASCADE, null=True)
     session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
