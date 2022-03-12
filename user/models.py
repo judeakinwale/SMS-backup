@@ -327,14 +327,9 @@ class AcademicData(models.Model):
 class CourseRegistration(models.Model):
     """Model definition for CourseRegistration."""
 
-    # TODO:
-    # convert session and semester to foreignkeys or datetime choices
-
     course = models.ForeignKey(acmodels.Course, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    # session = models.CharField(max_length=250, null=True, blank=True)
     session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
-    # semester = models.CharField(max_length=250, null=True, blank=True)
     semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
     is_active = models.BooleanField(default=True)
     is_completed = models.BooleanField(default=False)

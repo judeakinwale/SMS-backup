@@ -3,10 +3,6 @@ from user import models
 
 
 class UserFilter(filters.FilterSet):
-    # first_name = filters.CharFilter(lookup_expr='icontains')
-    # middle_name = filters.CharFilter(lookup_expr='icontains')
-    # last_name = filters.CharFilter(lookup_expr='icontains')
-    # email = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = models.User

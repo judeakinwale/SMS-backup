@@ -193,6 +193,17 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class AcademicDataResponseSerializer(AcademicDataSerializer):
+    """serializer for the AcademicData model"""
+
+    student = BaseStudentSerializer(read_only=True)
+    specialization = aserializers.SpecializationSerializer(read_only=True)
+    department = aserializers.DepartmentSerializer(read_only=True)
+    level = aserializers.LevelSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
+
+
 class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the AcademicHistory model"""
 
@@ -323,6 +334,15 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class ResultResponseSerializer(ResultSerializer):
+    """serializer for the Result model"""
+
+    course = aserializers.CourseSerializer(read_only=True)
+    student = BaseStudentSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
+
+
 class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the CourseRegistration model"""
 
@@ -366,6 +386,15 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:courseregistration-detail'},
         }
+
+
+class   CourseRegistrationResponseSerializer(CourseRegistrationSerializer):
+    """serializer for the CourseRegistration model"""
+
+    course = aserializers.CourseSerializer(read_only=True)
+    student = BaseStudentSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
 
 
 class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
@@ -421,6 +450,17 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:courseadviser-detail'},
         }
+
+
+class CourseAdviserResponseSerializer(CourseAdviserSerializer):
+    """serializer for the CourseAdviser model"""
+
+    staff = BaseStaffSerializer(read_only=True)
+    specialization = aserializers.SpecializationSerializer(read_only=True)
+    department = aserializers.DepartmentSerializer(read_only=True)
+    level = aserializers.LevelSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
 
 
 class BiodataSerializer(serializers.HyperlinkedModelSerializer):
@@ -620,6 +660,12 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         return biodata
 
 
+class BiodataResponseSerializer(BiodataSerializer):
+    """serializer for the Biodata model"""
+
+    user = BaseUserSerializer(read_only=True)
+
+
 class UserSerializer(BaseUserSerializer):
     """serializer for the User model"""
 
@@ -757,6 +803,11 @@ class UserSerializer(BaseUserSerializer):
         return user
 
 
+class UserResponseSerializer(UserSerializer):
+
+    specialization = aserializers.SpecializationSerializer(read_only=True)
+
+
 class StaffSerializer(BaseStaffSerializer):
     """serializer for the Staff model"""
 
@@ -874,6 +925,11 @@ class StaffSerializer(BaseStaffSerializer):
         return super().update(instance, validated_data)
 
         # return staff
+
+
+class StaffResponseSerializer(StaffSerializer):
+
+    specialization = aserializers.SpecializationSerializer(read_only=True)
 
 
 class StudentSerializer(BaseStudentSerializer):
@@ -1016,6 +1072,11 @@ class StudentSerializer(BaseStudentSerializer):
         # return student
 
 
+class StudentResponseSerializer(StudentSerializer):
+
+    specialization = aserializers.SpecializationSerializer(read_only=True)
+
+
 class AccountSerializer(BaseUserSerializer):
     biodata = BiodataSerializer(required=False, allow_null=True)
     staff = StaffSerializer(source='staff_set', many=True, read_only=True)
@@ -1108,6 +1169,11 @@ class AccountSerializer(BaseUserSerializer):
             user.save()
                 
         return user
+
+
+class AccountResponseSerializer(AccountSerializer):
+
+    specialization = aserializers.SpecializationSerializer(read_only=True)
 
 
 # Simple JWT integration with drf-yasg
