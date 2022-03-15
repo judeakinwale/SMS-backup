@@ -113,7 +113,7 @@ class PrivateAnswerApiTest(TestCase):
         """test creating an answer"""
         question_serializer = serializers.QuestionSerializer(self.question, context=serializer_context)
         payload = {
-            'question': question_serializer.data['url'],
+            'question': self.question.id,
             'text': 'Test text 2',
             'is_correct': True
         }
@@ -148,7 +148,7 @@ class PrivateAnswerApiTest(TestCase):
         question = sample_question(quiz=self.quiz, label='Label 2')
         question_serializer = serializers.QuestionSerializer(question, context=serializer_context)
         payload = {
-            'question': question_serializer.data['url'],
+            'question': question.id,
             'text': 'Test text 3',
             'is_correct': True
         }

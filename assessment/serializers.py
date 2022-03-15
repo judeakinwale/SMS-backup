@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from assessment import models
 from academics import models as amodels
+from user import models as umodels
 
 
 class GradeSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,9 +25,9 @@ class GradeSerializer(serializers.HyperlinkedModelSerializer):
 class AnswerSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Answer model"""
 
-    question = serializers.HyperlinkedRelatedField(
+    question = serializers.PrimaryKeyRelatedField(
         queryset=models.Question.objects.all(),
-        view_name='assessment:question-detail',
+        # view_name='assessment:question-detail',
         allow_null=True,
         required=False,
     )
@@ -48,9 +49,9 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Question model"""
 
-    quiz = serializers.HyperlinkedRelatedField(
+    quiz = serializers.PrimaryKeyRelatedField(
         queryset=models.Quiz.objects.all(),
-        view_name='assessment:quiz-detail',
+        # view_name='assessment:quiz-detail',
         allow_null=True,
         required=False,
     )
@@ -116,16 +117,16 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Quiz model"""
 
     # supervisor = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
-    supervisor = serializers.HyperlinkedRelatedField(
+    supervisor = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
     question_set = QuestionSerializer(many=True, allow_null=True, required=False)
-    course = serializers.HyperlinkedRelatedField(
+    course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail',
+        # view_name='academics:course-detail',
         allow_null=True,
         required=False
     )
@@ -276,21 +277,22 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the QuizTaker model"""
 
     # student = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
-    student = serializers.HyperlinkedRelatedField(
-        queryset=get_user_model().objects.all(),
-        view_name='user:user-detail',
+    student = serializers.PrimaryKeyRelatedField(
+        # queryset=get_user_model().objects.all(),
+        queryset=umodels.Student.objects.all(),
+        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
-    quiz = serializers.HyperlinkedRelatedField(
+    quiz = serializers.PrimaryKeyRelatedField(
         queryset=models.Quiz.objects.all(),
-        view_name='assessment:quiz-detail',
+        # view_name='assessment:quiz-detail',
         allow_null=True,
         required=False,
     )
-    grade = serializers.HyperlinkedRelatedField(
+    grade = serializers.PrimaryKeyRelatedField(
         queryset=models.Grade.objects.all(),
-        view_name='assessment:grade-detail',
+        # view_name='assessment:grade-detail',
         allow_null=True,
         required=False,
     )
@@ -316,17 +318,17 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
 class ResponseSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Response model"""
 
-    quiz_taker = serializers.HyperlinkedRelatedField(
+    quiz_taker = serializers.PrimaryKeyRelatedField(
         queryset=models.QuizTaker.objects.all(),
-        view_name='assessment:quiztaker-detail',
+        # view_name='assessment:quiztaker-detail',
     )
-    question = serializers.HyperlinkedRelatedField(
+    question = serializers.PrimaryKeyRelatedField(
         queryset=models.Question.objects.all(),
-        view_name='assessment:question-detail',
+        # view_name='assessment:question-detail',
     )
-    answer = serializers.HyperlinkedRelatedField(
+    answer = serializers.PrimaryKeyRelatedField(
         queryset=models.Answer.objects.all(),
-        view_name='assessment:answer-detail',
+        # view_name='assessment:answer-detail',
         allow_null=True,
         required=False,
     )

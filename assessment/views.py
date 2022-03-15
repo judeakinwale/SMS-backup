@@ -167,7 +167,8 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
     filterset_class = filters.QuizTakerFilter
 
     def perform_create(self, serializer):
-        return serializer.save(student=self.request.user)
+        # return serializer.save(student=self.request.user.student_set.all().first())
+        return super().perform_create(serializer)
     
     @swagger_auto_schema(operation_description="create a quiz taker",
                          operation_summary='create quiz taker')

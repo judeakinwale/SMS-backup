@@ -108,7 +108,7 @@ class PrivateStudentApiTest(TestCase):
     def test_create_student(self):
         """test creating a student"""
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
@@ -130,7 +130,7 @@ class PrivateStudentApiTest(TestCase):
     def test_create_student_and_staff(self):
         """test creating a student"""
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
@@ -172,7 +172,7 @@ class PrivateStudentApiTest(TestCase):
         student = sample_student(user=self.user)
 
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",

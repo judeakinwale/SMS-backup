@@ -133,7 +133,7 @@ class PrivateCourseApiTest(TestCase):
             context=serializer_context
         )
         payload = {
-            'specialization': specialization_serializer.data['url'],
+            'specialization': specialization.id,
             'name': 'Course 2',
             'description': 'some description text',
         }
@@ -175,7 +175,7 @@ class PrivateCourseApiTest(TestCase):
             context=serializer_context
         )
         payload = {
-            'specialization': specialization_serializer.data['url'],
+            'specialization': specialization.id,
             'name': 'Course 3',
             'description': 'some description text',
         }

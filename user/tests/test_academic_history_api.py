@@ -103,7 +103,7 @@ class PrivateAcademicHistoryApiTest(TestCase):
     def test_create_academic_history(self):
         """test creating a academic_history"""
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 
@@ -143,7 +143,7 @@ class PrivateAcademicHistoryApiTest(TestCase):
         academic_history = sample_academic_history(biodata=self.biodata)
 
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 

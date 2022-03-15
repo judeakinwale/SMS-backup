@@ -119,7 +119,7 @@ class PrivateInformationApiTest(TestCase):
         """test creating an information image without an image file"""
         info_serializer = serializers.InformationSerializer(self.info, context=serializer_context)
         payload = {
-            'information': info_serializer.data['url'],
+            'information': self.info.id,
         }
 
         res = self.client.post(INFO_IMG_URL, payload)
@@ -139,7 +139,7 @@ class PrivateInformationApiTest(TestCase):
             ntf.seek(0)
 
             payload = {
-                'information': info_serializer.data['url'],
+                'information': self.info.id,
                 'image': ntf,
                 'description': 'Test image description'
             }
@@ -181,7 +181,7 @@ class PrivateInformationApiTest(TestCase):
             ntf.seek(0)
 
             payload = {
-                'information': info_serializer.data['url'],
+                'information': self.info.id,
                 'image': ntf,
                 'description': 'Test image description'
             }

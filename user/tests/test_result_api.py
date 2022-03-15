@@ -191,10 +191,10 @@ class PrivateResultApiTest(TestCase):
         session_serializer = aserializers.SessionSerializer(self.session, context=serializer_context)
         payload = {
             "score": self.score,
-            "course": course_serializer.data['url'],
-            "student": student_serializer.data['url'],
-            "semester": semester_serializer.data['url'],
-            "session": session_serializer.data['url'],
+            "course": self.course.id,
+            "student": self.student.id,
+            "semester": self.semester.id,
+            "session": self.session.id,
         }
 
         res = self.client.post(RESULT_URL, payload)
@@ -226,17 +226,17 @@ class PrivateResultApiTest(TestCase):
         """test updating a result's detail using put"""
         result = sample_result(score=55, course=self.course, student=self.student)
 
-        course_serializer = aserializers.CourseSerializer(self.course, context=serializer_context)
-        student_serializer = serializers.StudentSerializer(self.student, context=serializer_context)
-        semester_serializer = aserializers.SemesterSerializer(self.semester, context=serializer_context)
-        session_serializer = aserializers.SessionSerializer(self.session, context=serializer_context)
+        # course_serializer = aserializers.CourseSerializer(self.course, context=serializer_context)
+        # student_serializer = serializers.StudentSerializer(self.student, context=serializer_context)
+        # semester_serializer = aserializers.SemesterSerializer(self.semester, context=serializer_context)
+        # session_serializer = aserializers.SessionSerializer(self.session, context=serializer_context)
 
         payload = {
             "score": self.score,
-            "course": course_serializer.data['url'],
-            "student": student_serializer.data['url'],
-            "semester": semester_serializer.data['url'],
-            "session": session_serializer.data['url'],
+            "course": self.course.id,
+            "student": self.student.id,
+            "semester": self.semester.id,
+            "session": self.session.id,
         }
 
         url = result_detail_url(result.id)

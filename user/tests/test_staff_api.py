@@ -112,7 +112,7 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff(self):
         """test creating a staff"""
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'user': {
                 'first_name': "Staff",
                 'last_name': "User",
@@ -124,6 +124,7 @@ class PrivateStaffApiTest(TestCase):
         }
 
         res = self.client.post(STAFF_URL, payload, format='json')
+        
 
         staff = models.Staff.objects.get(id=res.data['id'])
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
@@ -134,7 +135,7 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff_and_user(self):
         """test creating a staff and user at the same time"""
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'user': {
                 'first_name': "Staff",
                 'last_name': "User",
@@ -158,7 +159,7 @@ class PrivateStaffApiTest(TestCase):
         staff = sample_staff(user=self.user)
 
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'employee_id': 'Emp 104',
             'is_lecturer': True,
         }
@@ -177,7 +178,7 @@ class PrivateStaffApiTest(TestCase):
         staff = sample_staff(user=self.user)
 
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'employee_id': 'Emp 104',
             'user': {
                 'first_name': "NewStaff",

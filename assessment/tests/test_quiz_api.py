@@ -87,7 +87,7 @@ class PrivateQuizApiTest(TestCase):
     def test_create_quiz(self):
         """test creating a quiz"""
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test name 2',
         }
 
@@ -104,7 +104,7 @@ class PrivateQuizApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'An updated name'
         }
 
@@ -121,7 +121,7 @@ class PrivateQuizApiTest(TestCase):
         """test updating a quiz's detail using put"""
         quiz = sample_quiz(supervisor=self.user)
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test name 3',
         }
 
@@ -137,7 +137,7 @@ class PrivateQuizApiTest(TestCase):
     def test_create_quiz_with_questions(self):
         """test creating a quiz with questions attached"""
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test quiz 4',
             'question_set': [
                 {'label': 'Test label 2', },
@@ -153,7 +153,7 @@ class PrivateQuizApiTest(TestCase):
     def test_create_quiz_with_questions_and_answers(self):
         """test creating a quiz with questions attached and answers attached to the questions"""
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test quiz 4',
             'question_set': [
                 {
@@ -185,7 +185,7 @@ class PrivateQuizApiTest(TestCase):
         """test updating a quiz with questions attached and answers attached to the questions using patch"""
         quiz = sample_quiz(supervisor=self.user)
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test quiz 4',
             'question_set': [
                 {
@@ -220,7 +220,7 @@ class PrivateQuizApiTest(TestCase):
         """test updating a quiz with questions attached and answers attached to the questions using put"""
         quiz = sample_quiz(supervisor=self.user)
         payload = {
-            'supervisor': self.serializer.data['url'],
+            'supervisor': self.user.id,
             'name': 'Test quiz 4',
             'question_set': [
                 {

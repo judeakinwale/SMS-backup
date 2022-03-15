@@ -104,7 +104,7 @@ class PrivateQuestionApiTest(TestCase):
         """test creating a question"""
         quiz_serializer = serializers.QuizSerializer(self.quiz, context=serializer_context)
         payload = {
-            'quiz': quiz_serializer.data['url'],
+            'quiz': self.quiz.id,
             'label': 'Test label 2',
         }
 
@@ -122,7 +122,7 @@ class PrivateQuestionApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'quiz': quiz_serializer.data['url'],
+            'quiz': quiz.id,
             'label': 'An updated label'
         }
 
@@ -141,7 +141,7 @@ class PrivateQuestionApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'quiz': quiz_serializer.data['url'],
+            'quiz': quiz.id,
             'label': 'Test label 3',
             'order': 1,
         }
@@ -160,7 +160,7 @@ class PrivateQuestionApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'quiz': quiz_serializer.data['url'],
+            'quiz': quiz.id,
             'label': 'Test label 3',
             'answer_set': [
                 {'text': 'Question 1', },
@@ -203,7 +203,7 @@ class PrivateQuestionApiTest(TestCase):
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'quiz': quiz_serializer.data['url'],
+            'quiz': quiz.id,
             'label': 'Test Question 3',
             'answer_set': [
                 {'text': 'Answer 1', },

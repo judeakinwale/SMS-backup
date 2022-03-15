@@ -165,8 +165,8 @@ class PrivateCourseRegistrationApiTest(TestCase):
     def test_create_course_registration(self):
         """test creating a course_registration"""
         payload = {
-            'course': self.course_serializer.data['url'],
-            'student': self.student_serializer.data['url'],
+            'course': self.course.id,
+            'student': self.student.id,
             'is_active': False,
         }
 
@@ -208,8 +208,8 @@ class PrivateCourseRegistrationApiTest(TestCase):
         serializer = aserializers.CourseSerializer(course, context=serializer_context)
 
         payload = {
-            'course': serializer.data['url'],
-            'student': self.student_serializer.data['url'],
+            'course': course.id,
+            'student': self.student.id,
             'is_active': False,
         }
 

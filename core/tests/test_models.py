@@ -289,8 +289,13 @@ class ModelTest(TestCase):
             name='Test quiz',
             description='This is a test quiz description'
         )
+        student = umodels.Student.objects.create(
+            user=self.user,
+            matric_no=23412322,
+            student_id=1,
+        )
         quiz_taker = amodels.QuizTaker.objects.create(
-            student=self.user,
+            student=student,
             quiz=quiz,
         )
         self.assertEqual(str(quiz_taker), str(quiz_taker.student))
@@ -302,8 +307,13 @@ class ModelTest(TestCase):
             name='Test quiz',
             description='This is a test quiz description'
         )
+        student = umodels.Student.objects.create(
+            user=self.user,
+            matric_no=23412322,
+            student_id=1,
+        )
         quiz_taker = amodels.QuizTaker.objects.create(
-            student=self.user,
+            student=student,
         )
         question = amodels.Question.objects.create(
             quiz=quiz,

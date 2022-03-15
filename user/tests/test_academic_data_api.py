@@ -105,7 +105,7 @@ class PrivateAcademicDataApiTest(TestCase):
     def test_create_academic_data(self):
         """test creating a academic_data"""
         payload = {
-            'student': self.serializer.data['url'],
+            'student': self.student.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 
@@ -125,7 +125,7 @@ class PrivateAcademicDataApiTest(TestCase):
         academic_data = sample_academic_data(student=self.student)
 
         payload = {
-            # 'student': self.serializer.data['url'],
+            # 'student': self.student.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 
@@ -146,7 +146,7 @@ class PrivateAcademicDataApiTest(TestCase):
         academic_data = sample_academic_data(student=self.student)
 
         payload = {
-            'student': self.serializer.data['url'],
+            'student': self.student.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 

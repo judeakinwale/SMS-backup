@@ -21,6 +21,10 @@ def quiz_taker_detail_url(quiz_taker_id):
     """return url for the quiz_taker detail"""
     return reverse('assessment:quiztaker-detail', args=[quiz_taker_id])
 
+def sample_student(user, **kwargs):
+    """create and return sample student"""
+    return models.Student.objects.create(user=user, **kwargs)
+
 
 def sample_quiz(supervisor, **kwargs):
     """create and return a sample quiz"""
@@ -70,7 +74,8 @@ class PrivateQuizTakerApiTest(TestCase):
             password='testpass'
         )
         self.client.force_authenticate(self.user)
-        self.serializer = userializers.UserSerializer(self.user, context=serializer_context)
+        self.student = sample_student(self.user)
+        self.serializer = userializers.StudentSerializer(self.student, context=serializer_context)
         self.quiz = sample_quiz(supervisor=self.user)
 
     def tearDown(self):
@@ -78,7 +83,7 @@ class PrivateQuizTakerApiTest(TestCase):
 
     def test_retrieve_quiz_taker(self):
         """test retrieving a list of quiz_takers"""
-        sample_quiz_taker(student=self.user, quiz=self.quiz)
+        sample_quiz_taker(student=self.student, quiz=self.quiz)
         quiz_taker = models.QuizTaker.objects.all()
         serializer = serializers.QuizTakerSerializer(quiz_taker, many=True, context=serializer_context)
 
@@ -94,7 +99,7 @@ class PrivateQuizTakerApiTest(TestCase):
 
     def test_retrieve_quiz_taker_detail(self):
         """test retrieving a quiz_taker's detail"""
-        quiz_taker = sample_quiz_taker(student=self.user, quiz=self.quiz)
+        quiz_taker = sample_quiz_taker(student=self.student, quiz=self.quiz)
         serializer = serializers.QuizTakerSerializer(quiz_taker, context=serializer_context)
 
         url = quiz_taker_detail_url(quiz_taker_id=quiz_taker.id)
@@ -107,11 +112,12 @@ class PrivateQuizTakerApiTest(TestCase):
         """test creating a quiz_taker"""
         quiz_serializer = serializers.QuizSerializer(self.quiz, context=serializer_context)
         payload = {
-            'student': self.serializer.data['url'],
-            'quiz': quiz_serializer.data['url'],
+            'student': self.student.id,
+            'quiz': self.quiz.id,
         }
 
         res = self.client.post(QUIZTAKER_URL, payload)
+        # print(res.data)
 
         quiz_taker = models.QuizTaker.objects.get(id=res.data['id'])
         quiz_taker_serializer = serializers.QuizTakerSerializer(quiz_taker, context=serializer_context)
@@ -121,7 +127,7 @@ class PrivateQuizTakerApiTest(TestCase):
 
     def test_partial_update_quiz_taker(self):
         """test partially updating a quiz_taker's detail using patch"""
-        quiz_taker = sample_quiz_taker(student=self.user, quiz=self.quiz)
+        quiz_taker = sample_quiz_taker(student=self.student, quiz=self.quiz)
         payload = {
             'completed': True,
         }
@@ -137,16 +143,17 @@ class PrivateQuizTakerApiTest(TestCase):
 
     def test_full_update_quiz_taker(self):
         """test updating a quiz_taker's detail using put"""
-        quiz_taker = sample_quiz_taker(student=self.user, quiz=self.quiz)
+        quiz_taker = sample_quiz_taker(student=self.student, quiz=self.quiz)
         quiz = sample_quiz(supervisor=self.user)
         quiz_serializer = serializers.QuizSerializer(quiz, context=serializer_context)
         payload = {
-            'student': self.serializer.data['url'],
-            'quiz': quiz_serializer.data['url'],
+            'student': self.student.id,
+            'quiz': quiz.id,
         }
 
         url = quiz_taker_detail_url(quiz_taker.id)
         res = self.client.put(url, payload)
+        # print(res.data)
 
         quiz_taker.refresh_from_db()
         quiz_taker_serializer = serializers.QuizTakerSerializer(quiz_taker, context=serializer_context)

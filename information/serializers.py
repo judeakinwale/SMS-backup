@@ -7,9 +7,9 @@ from academics import models as amodels
 class InformationImageSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the InformationImage model"""
 
-    information = serializers.HyperlinkedRelatedField(
+    information = serializers.PrimaryKeyRelatedField(
         queryset=models.Information.objects.all(),
-        view_name='information:information-detail',
+        # view_name='information:information-detail',
         allow_null=True,
         required=False,
     )
@@ -37,9 +37,9 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False
     )
-    scope = serializers.HyperlinkedRelatedField(
+    scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
-        view_name='information:scope-detail',
+        # view_name='information:scope-detail',
     )
     images = InformationImageSerializer(many=True, allow_null=True, required=False)
 
@@ -161,9 +161,9 @@ class NoticeSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False
     )
-    scope = serializers.HyperlinkedRelatedField(
+    scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
-        view_name='information:scope-detail',
+        # view_name='information:scope-detail',
     )
 
     class Meta:
@@ -177,33 +177,33 @@ class NoticeSerializer(serializers.HyperlinkedModelSerializer):
 class ScopeSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Scope model"""
 
-    faculty = serializers.HyperlinkedRelatedField(
+    faculty = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Faculty.objects.all(),
-        view_name='academics:faculty-detail',
+        # view_name='academics:faculty-detail',
         allow_null=True,
         required=False,
     )
-    departmment = serializers.HyperlinkedRelatedField(
+    departmment = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        view_name='academics:departmment-detail',
+        # view_name='academics:departmment-detail',
         allow_null=True,
         required=False,
     )
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
-    course = serializers.HyperlinkedRelatedField(
+    course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail',
+        # view_name='academics:course-detail',
         allow_null=True,
         required=False,
     )
-    level = serializers.HyperlinkedRelatedField(
+    level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        view_name='academics:level-detail',
+        # view_name='academics:level-detail',
         allow_null=True,
         required=False,
     )

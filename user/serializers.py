@@ -14,10 +14,20 @@ from rest_framework_simplejwt.views import (
 
 class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
     """base serializer for the User model"""
-    
-    specialization = serializers.HyperlinkedRelatedField(
+    # test = serializers.HyperlinkedRelatedField(
+    #     queryset=models.Test.objects.all(),
+    #     # view_name='testapp:test-detail',
+    #     allow_null=True,
+    #     required=False,
+    # )
+    # specialization = serializers.PrimaryKeyRelatedField(
+    #     queryset=amodels.Specialization.objects.all(),
+    #     # view_name='academics:specialization-detail',
+    #     allow_null=True,
+    #     required=False,
+    # )
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -50,15 +60,25 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
 class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Staff model"""
 
-    user = serializers.HyperlinkedRelatedField(
+    # user = serializers.PrimaryKeyRelatedField(
+    #     queryset=get_user_model().objects.filter(is_staff=True),
+    #     # view_name='user:user-detail',
+    #     allow_null=True,
+    #     required=False,
+    # )
+    user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
-    specialization = serializers.HyperlinkedRelatedField(
+    # specialization = serializers.PrimaryKeyRelatedField(
+    #     queryset=amodels.Specialization.objects.all(),
+    #     # view_name='academics:specialization-detail',
+    #     allow_null=True,
+    #     required=False,
+    # )
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -90,15 +110,15 @@ class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
 class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Student model"""
 
-    user = serializers.HyperlinkedRelatedField(
+    user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -134,37 +154,37 @@ class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
 class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the AcademicData model"""
 
-    student = serializers.HyperlinkedRelatedField(
+    student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        view_name='user:student-detail'
+        # view_name='user:student-detail'
     )
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
-    department = serializers.HyperlinkedRelatedField(
+    department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        view_name='academics:department-detail',
+        # view_name='academics:department-detail',
         allow_null=True,
         required=False,
     )
-    level = serializers.HyperlinkedRelatedField(
+    level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        view_name='academics:level-detail',
+        # view_name='academics:level-detail',
         allow_null=True,
         required=False,
     )
-    semester = serializers.HyperlinkedRelatedField(
+    semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
+        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
-    session = serializers.HyperlinkedRelatedField(
+    session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
+        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
@@ -207,9 +227,9 @@ class AcademicDataResponseSerializer(AcademicDataSerializer):
 class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the AcademicHistory model"""
 
-    biodata = serializers.HyperlinkedRelatedField(
+    biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        view_name='user:biodata-detail',
+        # view_name='user:biodata-detail',
         required=False
     )
 
@@ -232,9 +252,9 @@ class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
 class HealthDataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the HealthData model"""
 
-    biodata = serializers.HyperlinkedRelatedField(
+    biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        view_name='user:biodata-detail',
+        # view_name='user:biodata-detail',
         allow_null=True,
         required=False,
     )
@@ -262,9 +282,9 @@ class HealthDataSerializer(serializers.HyperlinkedModelSerializer):
 class FamilyDataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the FamilyData model"""
 
-    biodata = serializers.HyperlinkedRelatedField(
+    biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        view_name='user:biodata-detail',
+        # view_name='user:biodata-detail',
         allow_null=True,
         required=False,
     )
@@ -292,27 +312,27 @@ class FamilyDataSerializer(serializers.HyperlinkedModelSerializer):
 class ResultSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Result model"""
 
-    course = serializers.HyperlinkedRelatedField(
+    course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail',
+        # view_name='academics:course-detail',
         # allow_null=True,
         # required=False,
     )
-    student = serializers.HyperlinkedRelatedField(
+    student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        view_name='user:student-detail',
+        # view_name='user:student-detail',
         # allow_null=True,
         # required=False,
     )
-    semester = serializers.HyperlinkedRelatedField(
+    semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
+        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
-    session = serializers.HyperlinkedRelatedField(
+    session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
+        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
@@ -346,25 +366,25 @@ class ResultResponseSerializer(ResultSerializer):
 class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the CourseRegistration model"""
 
-    course = serializers.HyperlinkedRelatedField(
+    course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        view_name='academics:course-detail'
+        # view_name='academics:course-detail'
     )
-    student = serializers.HyperlinkedRelatedField(
+    student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        view_name='user:student-detail',
+        # view_name='user:student-detail',
         allow_null=True,
         required=False,
     )
-    session = serializers.HyperlinkedRelatedField(
+    session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
+        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
-    semester = serializers.HyperlinkedRelatedField(
+    semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
+        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
@@ -400,37 +420,37 @@ class CourseRegistrationResponseSerializer(CourseRegistrationSerializer):
 class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the CourseAdviser model"""
 
-    staff = serializers.HyperlinkedRelatedField(
+    staff = serializers.PrimaryKeyRelatedField(
         queryset=models.Staff.objects.filter(is_active=True),
-        view_name='user:staff-detail'
+        # view_name='user:staff-detail'
     )
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
-    department = serializers.HyperlinkedRelatedField(
+    department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        view_name='academics:department-detail',
+        # view_name='academics:department-detail',
         allow_null=True,
         required=False,
     )
-    level = serializers.HyperlinkedRelatedField(
+    level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        view_name='academics:level-detail'
+        # view_name='academics:level-detail'
         # allow_null=True,
         # required=False,
     )
-    semester = serializers.HyperlinkedRelatedField(
+    semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        view_name='academics:semester-detail',
+        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
-    session = serializers.HyperlinkedRelatedField(
+    session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        view_name='academics:session-detail',
+        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
@@ -466,9 +486,9 @@ class CourseAdviserResponseSerializer(CourseAdviserSerializer):
 class BiodataSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Biodata model"""
 
-    user = serializers.HyperlinkedRelatedField(
+    user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False
     )

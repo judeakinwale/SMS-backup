@@ -119,10 +119,11 @@ class PrivateNoticeApiTest(TestCase):
 
     def test_create_notice(self):
         """test creating a notice"""
-        scope_serializer = serializers.ScopeSerializer(sample_scope(), context=serializer_context)
+        scope = sample_scope()
+        scope_serializer = serializers.ScopeSerializer(scope, context=serializer_context)
         payload = {
             'source': self.user.id,
-            'scope': scope_serializer.data['url'],
+            'scope': scope.id,
             'title': 'Test title 2',
             'message': 'message for test title 2',
         }
@@ -141,7 +142,7 @@ class PrivateNoticeApiTest(TestCase):
         scope = sample_scope(description='Private', is_general=False)
         scope_serializer = serializers.ScopeSerializer(scope, context=serializer_context)
         payload = {
-            'scope': scope_serializer.data['url'],
+            'scope': scope.id,
             'message': 'An updated message'
         }
 
@@ -161,7 +162,7 @@ class PrivateNoticeApiTest(TestCase):
         scope_serializer = serializers.ScopeSerializer(scope, context=serializer_context)
         payload = {
             'source': self.user.id,
-            'scope': scope_serializer.data['url'],
+            'scope': scope.id,
             'title': 'Test title 3',
             'message': 'An updated message'
         }

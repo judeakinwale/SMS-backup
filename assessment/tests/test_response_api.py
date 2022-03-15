@@ -47,6 +47,11 @@ def sample_response(quiz_taker, question, **kwargs):
     return models.Response.objects.create(quiz_taker=quiz_taker, question=question, **kwargs)
 
 
+def sample_student(user, **kwargs):
+    """create and return sample student"""
+    return models.Student.objects.create(user=user, **kwargs)
+
+
 def sample_quiz_taker(student, quiz, **kwargs):
     """create and return a sample quiz_taker"""
     defaults = {}
@@ -91,7 +96,8 @@ class PrivateResponseApiTest(TestCase):
         self.quiz = sample_quiz(supervisor=self.user)
         self.question = sample_question(quiz=self.quiz)
         self.answer = sample_answer(question=self.question)
-        self.quiz_taker = sample_quiz_taker(student=self.user, quiz=self.quiz)
+        self.student = sample_student(self.user)
+        self.quiz_taker = sample_quiz_taker(student=self.student, quiz=self.quiz)
 
     def tearDown(self):
         pass
@@ -135,9 +141,9 @@ class PrivateResponseApiTest(TestCase):
         answer_serializer = serializers.AnswerSerializer(answer, context=serializer_context)
 
         payload = {
-            'quiz_taker': quiz_taker_serializer.data['url'],
-            'question': question_serializer.data['url'],
-            'answer': answer_serializer.data['url'],
+            'quiz_taker': self.quiz_taker.id,
+            'question': self.question.id,
+            'answer': self.answer.id,
         }
 
         res = self.client.post(RESPONSE_URL, payload)
@@ -156,7 +162,7 @@ class PrivateResponseApiTest(TestCase):
         answer_serializer = serializers.AnswerSerializer(answer, context=serializer_context)
 
         payload = {
-            'answer': answer_serializer.data['url'],
+            'answer': self.answer.id,
         }
 
         url = response_detail_url(response.id)
@@ -182,9 +188,9 @@ class PrivateResponseApiTest(TestCase):
         answer_serializer = serializers.AnswerSerializer(answer, context=serializer_context)
 
         payload = {
-            'quiz_taker': quiz_taker_serializer.data['url'],
-            'question': question_serializer.data['url'],
-            'answer': answer_serializer.data['url'],
+            'quiz_taker': self.quiz_taker.id,
+            'question': self.question.id,
+            'answer': self.answer.id,
         }
 
         url = response_detail_url(response.id)

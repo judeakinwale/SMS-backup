@@ -53,29 +53,29 @@ class SessionSerializer(serializers.HyperlinkedModelSerializer):
 class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the RecommendedCourses model"""
 
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=models.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
         # allow_null=True,
         # required=False,
     )
-    course = serializers.HyperlinkedRelatedField(
+    course = serializers.PrimaryKeyRelatedField(
         # many=True,
         queryset=models.Course.objects.all(),
-        view_name='academics:course-detail',
+        # view_name='academics:course-detail',
         allow_null=True,
         required=False,
     )
     # courses = CourseSerializer(read_only=True, many=True)
-    semester = serializers.HyperlinkedRelatedField(
+    semester = serializers.PrimaryKeyRelatedField(
         queryset=models.Semester.objects.all(),
-        view_name='academics:semester-detail',
+        # view_name='academics:semester-detail',
         # allow_null=True,
         # required=False,
     )
-    level = serializers.HyperlinkedRelatedField(
+    level = serializers.PrimaryKeyRelatedField(
         queryset=models.Level.objects.all(),
-        view_name='academics:level-detail',
+        # view_name='academics:level-detail',
         # allow_null=True,
         # required=False,
     )
@@ -100,13 +100,13 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Course model"""
 
-    specialization = serializers.HyperlinkedRelatedField(
+    specialization = serializers.PrimaryKeyRelatedField(
         queryset=models.Specialization.objects.all(),
-        view_name='academics:specialization-detail',
+        # view_name='academics:specialization-detail',
     )
-    coordinator = serializers.HyperlinkedRelatedField(
+    coordinator = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
@@ -133,13 +133,13 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
 class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Specialization model"""
 
-    department = serializers.HyperlinkedRelatedField(
+    department = serializers.PrimaryKeyRelatedField(
         queryset=models.Department.objects.all(),
-        view_name='academics:department-detail',
+        # view_name='academics:department-detail',
     )
-    max_level = serializers.HyperlinkedRelatedField(
+    max_level = serializers.PrimaryKeyRelatedField(
         queryset=models.Level.objects.all(),
-        view_name='academics:level-detail',
+        # view_name='academics:level-detail',
     )
     courses = CourseSerializer(source='course_set', many=True, read_only=True)
     recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
@@ -166,13 +166,13 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Department model"""
 
-    faculty = serializers.HyperlinkedRelatedField(
+    faculty = serializers.PrimaryKeyRelatedField(
         queryset=models.Faculty.objects.all(),
-        view_name='academics:faculty-detail',
+        # view_name='academics:faculty-detail',
     )
-    head = serializers.HyperlinkedRelatedField(
+    head = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False
     )
@@ -199,9 +199,9 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
 class FacultySerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Faculty model"""
 
-    dean = serializers.HyperlinkedRelatedField(
+    dean = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        view_name='user:user-detail',
+        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )

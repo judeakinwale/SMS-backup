@@ -95,7 +95,7 @@ class PrivateHealthDataApiTest(TestCase):
     def test_create_health_data(self):
         """test creating a health_data"""
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'diabetes': True,
         }
 
@@ -129,7 +129,7 @@ class PrivateHealthDataApiTest(TestCase):
         health_data = sample_health_data(biodata=self.biodata)
 
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'diabetes': True,
         }
 

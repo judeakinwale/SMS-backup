@@ -95,7 +95,7 @@ class PrivateFamilyDataApiTest(TestCase):
     def test_create_family_data(self):
         """test creating a family_data"""
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'guardian_full_name': 'Test Guardian',
         }
 
@@ -129,7 +129,7 @@ class PrivateFamilyDataApiTest(TestCase):
         family_data = sample_family_data(biodata=self.biodata)
 
         payload = {
-            'biodata': self.serializer.data['url'],
+            'biodata': self.biodata.id,
             'guardian_full_name': 'Test Guardian',
         }
 

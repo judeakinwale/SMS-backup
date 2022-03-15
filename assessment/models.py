@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from academics.models import Course
+from user.models import Student
 
 # Create your models here.
 
@@ -84,7 +85,7 @@ class Answer(models.Model):
 class QuizTaker(models.Model):
     """Model definition for QuizTaker."""
 
-    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True, blank=True)
     grade = models.ForeignKey("Grade", on_delete=models.CASCADE, null=True, blank=True)
     completed = models.BooleanField(default=False)

@@ -120,7 +120,7 @@ class PrivateBiodataApiTest(TestCase):
     def test_create_biodata(self):
         """test creating a biodata"""
         payload = {
-            'user': self.serializer.data['url'],
+            'user': self.user.id,
         }
 
         res = self.client.post(BIODATA_URL, payload)
@@ -136,7 +136,7 @@ class PrivateBiodataApiTest(TestCase):
         biodata = sample_biodata(user=self.user)
 
         payload = {
-            # 'user': self.serializer.data['url'],
+            # 'user': self.user.id,
             'phone_no_1': '012347893',
         }
 
@@ -154,7 +154,7 @@ class PrivateBiodataApiTest(TestCase):
         biodata = sample_biodata(user=self.user)
 
         payload = {
-            'user': self.serializer.data['url'],
+            'user': self.user.id,
         }
 
         url = biodata_detail_url(biodata.id)

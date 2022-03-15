@@ -122,9 +122,9 @@ class PrivateSpecializationApiTest(TestCase):
         department_serializer = serializers.DepartmentSerializer(department, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
-            'department': department_serializer.data['url'],
+            'department': department.id,
             'name': 'Specialization 2',
-            'max_level': level_serializer.data['url'],
+            'max_level': self.level.id,
             'description': 'some description text',
         }
 
@@ -165,9 +165,9 @@ class PrivateSpecializationApiTest(TestCase):
         department_serializer = serializers.DepartmentSerializer(department, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
-            'department': department_serializer.data['url'],
+            'department': department.id,
             'name': 'Specialization 3',
-            'max_level': level_serializer.data['url'],
+            'max_level': self.level.id,
             'description': 'some description text',
         }
 

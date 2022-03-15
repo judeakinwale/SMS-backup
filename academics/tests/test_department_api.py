@@ -98,7 +98,7 @@ class PrivateDepartmentApiTest(TestCase):
         faculty = sample_faculty(name='Faculty 2')
         serializer = serializers.FacultySerializer(faculty, context=serializer_context)
         payload = {
-            'faculty': serializer.data['url'],
+            'faculty': faculty.id,
             'name': 'Department 2',
             'description': 'some description text',
         }
@@ -133,7 +133,7 @@ class PrivateDepartmentApiTest(TestCase):
         faculty = sample_faculty(name='Faculty 3')
         faculty_serializer = serializers.FacultySerializer(faculty, context=serializer_context)
         payload = {
-            'faculty': faculty_serializer.data['url'],
+            'faculty': faculty.id,
             'name': 'Department 3',
             'description': 'some description text',
         }

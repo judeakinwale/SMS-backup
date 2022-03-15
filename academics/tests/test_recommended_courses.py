@@ -165,14 +165,14 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             self.specialization,
             context=serializer_context
         )
-        semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
         course_serializer = serializers.CourseSerializer(self.course, context=serializer_context)
+        semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
-            'specialization': specialization_serializer.data['url'],
-            'course': course_serializer.data['url'],
-            'semester': semester_serializer.data['url'],
-            'level': level_serializer.data['url'],
+            'specialization': self.specialization.id,
+            'course': self.course.id,
+            'semester': self.semester.id,
+            'level': self.level.id,
         }
 
         res = self.client.post(RECOMMEDED_COURSES_URL, payload)
@@ -195,7 +195,7 @@ class PrivateRecommendedCoursesApiTest(TestCase):
         )
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
-            'level': level_serializer.data['url'],
+            'level': self.level.id,
         }
 
         url = recommended_courses_detail_url(recommended_courses.id)
@@ -222,14 +222,14 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             self.specialization,
             context=serializer_context
         )
-        semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
         course_serializer = serializers.CourseSerializer(self.course, context=serializer_context)
+        semester_serializer = serializers.SemesterSerializer(self.semester, context=serializer_context)
         level_serializer = serializers.LevelSerializer(self.level, context=serializer_context)
         payload = {
-            'specialization': specialization_serializer.data['url'],
-            'course': course_serializer.data['url'],
-            'semester': semester_serializer.data['url'],
-            'level': level_serializer.data['url'],
+            'specialization': self.specialization.id,
+            'course': self.course.id,
+            'semester': self.semester.id,
+            'level': self.level.id,
         }
 
         url = recommended_courses_detail_url(recommended_courses.id)
