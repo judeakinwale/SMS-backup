@@ -1133,16 +1133,105 @@ class AccountSerializer(BaseUserSerializer):
     #     # return user
             
 
+    # def update(self, instance, validated_data):
+    #     # password = validated_data.pop('password')
+    #     # user = super().update(instance, validated_data)
+    #     # if password:
+    #     #     user.set_password(password)
+    #     #     user.save()
+            
+    #     # return user
+        
+    #     password = validated_data.pop('password') if 'password' in validated_data else False
+    #     # try:
+    #     #     password = validated_data.pop('password')
+    #     # except Exception:
+    #     #     pass
+        
+    #     try:
+    #         print(super())
+    #         nested_data = validated_data.pop('biodata')
+    #         user = super().update(instance, validated_data)
+                
+    #         nested_serializer = self.fields['biodata']
+    #         nested_instance = instance.biodata
+    #         # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
+    #         if nested_instance:
+    #             biodata = nested_serializer.update(nested_instance, nested_data)
+    #         else:
+    #             nested_data.update(user=user)
+    #             biodata = models.Biodata.objects.create(**nested_data)
+    #             # biodata = nested_serializer.create(nested_data)
+    #         # validated_data['academic_data'] = academic_data
+            
+    #         # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)
+    #         # print(f"biodata: {biodata}")
+    #         # # validated_data['biodata'] = biodata
+
+    #     except  Exception as e:
+    #         # print(e)
+    #         user = super().update(instance, validated_data)
+            
+    #     # print(f"updated user: {user}")
+    #     # print(f"updated user password: {password}")
+            
+    #     if password:
+    #         user.set_password(password)
+    #         user.save()
+                
+    #     return user
+    
     def update(self, instance, validated_data):
-        # password = validated_data.pop('password')
-        # user = super().update(instance, validated_data)
+        """update a user, correctly setting the password and return it"""
+
+        # if 'biodata' not in validated_data or validated_data['biodata'] == []:
+        #     password = validated_data.pop('password')
+        #     user = super().update(instance, validated_data)
+        # else:
+        #     biodata_data = validated_data.pop('biodata')
+        #     password = validated_data.pop('password')
+        #     user = super().update(instance, validated_data)
+
+        #     try:
+        #         biodata = models.Biodata.objects.get(user=user)
+        #         # print("\nBiodata exists")
+        #         biodata.marital_status = biodata_data.get('marital_status', biodata.marital_status)
+        #         biodata.gender = biodata_data.get('gender', biodata.gender)
+        #         biodata.religion = biodata_data.get('religion', biodata.religion)
+        #         biodata.birthday = biodata_data.get('birthday', biodata.birthday)
+        #         biodata.nationality = biodata_data.get('nationality', biodata.nationality)
+        #         biodata.state_of_origin = biodata_data.get('state_of_origin', biodata.state_of_origin)
+        #         biodata.local_govt = biodata_data.get('local_govt', biodata.local_govt)
+        #         biodata.permanent_address = biodata_data.get(
+        #             'permanent_address',
+        #             biodata.permanent_address,
+        #         )
+        #         biodata.address = biodata_data.get('address', biodata.address)
+        #         biodata.phone_no_1 = biodata_data.get('phone_no_1', biodata.phone_no_1)
+        #         biodata.phone_no_2 = biodata_data.get('phone_no_2', biodata.phone_no_2)
+        #         biodata.profile_picture = biodata_data.get('profile_picture', biodata.profile_picture)
+        #         biodata.academic_history = biodata_data.get('academic_history', biodata.academic_history)
+        #         biodata.health_data = biodata_data.get('health_data', biodata.health_data)
+        #         biodata.family_data = biodata_data.get('family_data', biodata.family_data)
+        #         biodata.save()
+        #     except Exception:
+        #         # print("\nBiodata doesn't exist")
+        #         biodata = models.Biodata.objects.create(user=user, **biodata_data)
+
         # if password:
         #     user.set_password(password)
         #     user.save()
-            
+
+        # if user.is_staff is True:
+        #     try:
+        #         models.Staff.objects.get(user=user)
+        #     except Exception:
+        #         models.Staff.objects.create(user=user)
+
         # return user
         
         password = validated_data.pop('password') if 'password' in validated_data else False
+        # print(password)
         # try:
         #     password = validated_data.pop('password')
         # except Exception:
@@ -1158,9 +1247,11 @@ class AccountSerializer(BaseUserSerializer):
             if nested_instance:
                 biodata = nested_serializer.update(nested_instance, nested_data)
             else:
-                nested_data.update(user=user)
+                # nested_data.update(user=user)
+                nested_data['user'] = user
                 biodata = models.Biodata.objects.create(**nested_data)
                 # biodata = nested_serializer.create(nested_data)
+
             # validated_data['academic_data'] = academic_data
             
             # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)
