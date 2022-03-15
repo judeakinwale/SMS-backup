@@ -169,6 +169,25 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                     for answer_data in answer_set_data:
                         answer_data['question'] = question
                         models.Answer.objects.create(**answer_data)
+                        
+        # try:
+        #     question_set_data = validated_data.pop('question_set')
+        #     quiz =  super().create(validated_data)
+        #     for question_data in question_set_data:
+        #         question_data['quiz'] = quiz
+                
+        #         try:
+        #             print("finding answerset")
+        #             answer_set_data = validated_data.pop('answer_set')
+        #             question =  models.Question.objects.create(**question_data)
+        #             for answer_data in answer_set_data:
+        #                 print("finding answers in answerset")
+        #                 answer_data['question'] = question
+        #                 models.Answer.objects.create(**answer_data)
+        #         except Exception:
+        #             question =  models.Question.objects.create(**question_data)
+        # except Exception:
+        #     quiz =  super().create(validated_data)
 
         return quiz
 
