@@ -388,7 +388,7 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class   CourseRegistrationResponseSerializer(CourseRegistrationSerializer):
+class CourseRegistrationResponseSerializer(CourseRegistrationSerializer):
     """serializer for the CourseRegistration model"""
 
     course = aserializers.CourseSerializer(read_only=True)
@@ -505,7 +505,7 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         if 'academic_history' in validated_data:
-            academic_history_data = validated_data.pop('academic_history')
+            academic_history_data_list = validated_data.pop('academic_history')
 
         if 'health_data' in validated_data:
             health_data_data = validated_data.pop('health_data')
@@ -516,20 +516,21 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         biodata = super().create(validated_data)
 
         try:
-            models.AcademicHistory.objects.create(
-                biodata=biodata,
-                **academic_history_data
-            )
+            for academic_history_data in academic_history_data_list:
+                academic_history_data['biodata'] = biodata
+                models.AcademicHistory.objects.create(**academic_history_data)
         except Exception:
             pass
 
         try:
-            models.HealthData.objects.create(biodata=biodata, **health_data_data)
+            health_data_data['biodata'] = biodata
+            models.HealthData.objects.create(**health_data_data)
         except Exception:
             pass
 
         try:
-            models.FamilyData.objects.create(biodata=biodata, **family_data_data)
+            family_data_data['biodata'] = biodata
+            models.FamilyData.objects.create(**family_data_data)
         except Exception:
             pass
 
@@ -714,6 +715,8 @@ class UserSerializer(BaseUserSerializer):
             
         if user.is_staff is True and len(user.staff_set.all()) == 0:
             models.Staff.objects.create(user=user)
+        else:
+            models.Student.objects.create(user=user)
 
         return user
 
@@ -766,15 +769,16 @@ class UserSerializer(BaseUserSerializer):
 
         # return user
         
-        try:
-            password = validated_data.pop('password')
-        except Exception:
-            pass
+        password = validated_data.pop('password') if 'password' in validated_data else False
+        # print(password)
+        # try:
+        #     password = validated_data.pop('password')
+        # except Exception:
+        #     pass
         
         try:
             nested_data = validated_data.pop('biodata')
             user = super().update(instance, validated_data)
-            nested_data.update(user=user)
                 
             nested_serializer = self.fields['biodata']
             nested_instance = instance.biodata
@@ -782,7 +786,11 @@ class UserSerializer(BaseUserSerializer):
             if nested_instance:
                 biodata = nested_serializer.update(nested_instance, nested_data)
             else:
-                biodata = nested_serializer.create(nested_data)
+                # nested_data.update(user=user)
+                nested_data['user'] = user
+                biodata = models.Biodata.objects.create(**nested_data)
+                # biodata = nested_serializer.create(nested_data)
+
             # validated_data['academic_data'] = academic_data
             
             # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)
@@ -1134,15 +1142,15 @@ class AccountSerializer(BaseUserSerializer):
             
         # return user
         
-        try:
-            password = validated_data.pop('password')
-        except Exception:
-            pass
+        password = validated_data.pop('password') if 'password' in validated_data else False
+        # try:
+        #     password = validated_data.pop('password')
+        # except Exception:
+        #     pass
         
         try:
             nested_data = validated_data.pop('biodata')
             user = super().update(instance, validated_data)
-            nested_data.update(user=user)
                 
             nested_serializer = self.fields['biodata']
             nested_instance = instance.biodata
@@ -1150,7 +1158,9 @@ class AccountSerializer(BaseUserSerializer):
             if nested_instance:
                 biodata = nested_serializer.update(nested_instance, nested_data)
             else:
-                biodata = nested_serializer.create(nested_data)
+                nested_data.update(user=user)
+                biodata = models.Biodata.objects.create(**nested_data)
+                # biodata = nested_serializer.create(nested_data)
             # validated_data['academic_data'] = academic_data
             
             # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)

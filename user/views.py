@@ -1,9 +1,17 @@
 from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
 from rest_framework import generics, viewsets, permissions
 from user import serializers, models, filters
 from core import permissions as cpermissions
 from core import utils
 
+from django_rest_passwordreset.signals import reset_password_token_created
 from drf_yasg.utils import no_body, swagger_auto_schema
 
 # Create your views here.
@@ -32,8 +40,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = serializer.save()
         try:
-            # print(f"user serializer: {user.email} \n\n")
-            # print(f"user serializer data: {serializer.data} \n\n")
             reciepients = [user.email, ]
             context = {
                 "user": user,
@@ -807,3 +813,53 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         """destroy method docstring"""
         return super().destroy(request, *args, **kwargs)
+
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    """
+    Handles password reset tokens
+    When a token is created, an e-mail needs to be sent to the user
+    :param sender: View Class that sent the signal
+    :param instance: View Instance that sent the signal
+    :param reset_password_token: Token Model Object
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    try:
+        # send an e-mail to the user
+        print(reset_password_token.user)
+        title="School Management Portal"
+        context = {
+            'current_user': reset_password_token.user,
+            'username': reset_password_token.user.first_name,
+            'email': reset_password_token.user.email,
+            'reset_password_url': "{}?token={}".format(
+                instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+                reset_password_token.key)
+        }
+
+        # render email text
+        email_html_message = render_to_string('email/user_reset_password.html', context)
+        # print("context set")
+        email_plaintext_message = render_to_string('email/user_reset_password.txt', context)
+
+        msg = EmailMultiAlternatives(
+            # title:
+            f"Password Reset for {title}",
+            # message:
+            email_plaintext_message,
+            # from:   # "noreply@somehost.local"
+            settings.EMAIL_HOST_USER,
+            # to:
+            [reset_password_token.user.email,],
+        )
+        print("message created")
+        msg.attach_alternative(email_html_message, "text/html")
+        print("html attached")
+        msg.send()
+        print("Forgot Password Mail successfully sent")
+    except Exception as e:
+        print(f"There was an error sending Forgot Password Mail: {e}")
