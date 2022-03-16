@@ -533,7 +533,10 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         if 'family_data' in validated_data:
             family_data_data = validated_data.pop('family_data')
 
-        biodata = super().create(validated_data)
+        try:
+            biodata = super().create(validated_data)
+        except Exception:
+            biodata = models.Biodata.objects.create(**validated_data)
 
         try:
             for academic_history_data in academic_history_data_list:
@@ -726,7 +729,7 @@ class UserSerializer(BaseUserSerializer):
             nested_data.update(user=user)
             # biodata = models.Biodata.objects.create(**nested_data, user=user)
             biodata = models.Biodata.objects.create(**nested_data)
-            # print(f"biodata: {biodata}")
+            print(f"biodata: {biodata}")
             # validated_data['biodata'] = biodata
             # return user
         except  Exception as e:
@@ -797,18 +800,33 @@ class UserSerializer(BaseUserSerializer):
         #     pass
         
         try:
+            print("started")
             nested_data = validated_data.pop('biodata')
             user = super().update(instance, validated_data)
                 
             nested_serializer = self.fields['biodata']
-            nested_instance = instance.biodata
-            # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
-            if nested_instance:
-                biodata = nested_serializer.update(nested_instance, nested_data)
-            else:
+            # print(f"nested serializer: {nested_serializer.data}")
+            try:
+                nested_instance = instance.biodata
+                print("code not broke")
+                # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
+                if nested_instance:
+                    print("nested instance exists")
+                    print(nested_instance)
+                    biodata = nested_serializer.update(nested_instance, nested_data)
+                # else:
+                #     # nested_data.update(user=user)
+                #     print("nested instance not found")
+                #     nested_data['user'] = user
+                #     biodata = models.Biodata.objects.create(**nested_data)
+                #     print("biodata created")
+                #     # biodata = nested_serializer.create(nested_data)
+            except Exception:
                 # nested_data.update(user=user)
+                print("nested instance not found")
                 nested_data['user'] = user
                 biodata = models.Biodata.objects.create(**nested_data)
+                print("biodata created")
                 # biodata = nested_serializer.create(nested_data)
 
             # validated_data['academic_data'] = academic_data
@@ -1262,14 +1280,27 @@ class AccountSerializer(BaseUserSerializer):
             user = super().update(instance, validated_data)
                 
             nested_serializer = self.fields['biodata']
-            nested_instance = instance.biodata
-            # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
-            if nested_instance:
-                biodata = nested_serializer.update(nested_instance, nested_data)
-            else:
+            try:
+                nested_instance = instance.biodata
+                print("code not broke")
+                # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
+                if nested_instance:
+                    print("nested instance exists")
+                    print(nested_instance)
+                    biodata = nested_serializer.update(nested_instance, nested_data)
+                # else:
+                #     # nested_data.update(user=user)
+                #     print("nested instance not found")
+                #     nested_data['user'] = user
+                #     biodata = models.Biodata.objects.create(**nested_data)
+                #     print("biodata created")
+                #     # biodata = nested_serializer.create(nested_data)
+            except Exception:
                 # nested_data.update(user=user)
+                print("nested instance not found")
                 nested_data['user'] = user
                 biodata = models.Biodata.objects.create(**nested_data)
+                print("biodata created")
                 # biodata = nested_serializer.create(nested_data)
 
             # validated_data['academic_data'] = academic_data

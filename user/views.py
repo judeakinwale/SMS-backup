@@ -367,8 +367,8 @@ class BiodataViewSet(viewsets.ModelViewSet):
         except (KeyError, AttributeError):
             return super().get_serializer_class()
     
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
         
     @swagger_auto_schema(
         operation_description="create a biodata and attached academic data, health data and family data",

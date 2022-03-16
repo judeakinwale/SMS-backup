@@ -250,13 +250,13 @@ class Biodata(models.Model):
         choices=ReligionChoices.choices,
         default=ReligionChoices.OTHER,
     )
-    birthday = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    birthday = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True)
     nationality = models.CharField(max_length=250, null=True, blank=True)
-    state_of_origin = models.CharField(max_length=250, null=True)
-    local_govt = models.CharField(max_length=250, null=True)
-    permanent_address = models.CharField(max_length=250, null=True)
+    state_of_origin = models.CharField(max_length=250, null=True, blank=True)
+    local_govt = models.CharField(max_length=250, null=True, blank=True)
+    permanent_address = models.CharField(max_length=250, null=True, blank=True)
     address = models.CharField(max_length=250, null=True, blank=True)
-    phone_no_1 = models.CharField(max_length=20, null=True)
+    phone_no_1 = models.CharField(max_length=20, null=True, blank=True)
     phone_no_2 = models.CharField(max_length=20, null=True, blank=True)
     profile_picture = models.ImageField(blank=True, null=True, upload_to='images/profile_pictures/')
 

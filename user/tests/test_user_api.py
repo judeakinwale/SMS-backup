@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
+from user import models
 
 
 CREATE_USER_URL = reverse('user:user-list')
@@ -13,6 +14,11 @@ ACCOUNT_URL = reverse('user:account')
 def user_detail_url(user_id):
     """url for a user detail view"""
     return reverse('user:user-detail', args=[user_id])
+
+
+def sample_biodata(user, **kwargs):
+    """create and return sample biodata"""
+    return models.Biodata.objects.create(user=user, **kwargs)
 
 
 class PublicUserApiTests(TestCase):
@@ -199,6 +205,8 @@ class PrivateUserApiTests(TestCase):
 
         url = user_detail_url(user.id)
         res = self.client.patch(url, payload, format='json')
+        print("update using patch")
+        print(res.data)
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])
@@ -211,6 +219,7 @@ class PrivateUserApiTests(TestCase):
     def test_full_update_user_with_attached_biodata(self):
         """test updating a user with a biodata attached using put"""
         user = get_user_model().objects.create_user(**self.payload_full)
+        biodata = sample_biodata(user)
         payload = {
             'email': 'test@gmail.com',
             'first_name': 'test',
@@ -223,6 +232,8 @@ class PrivateUserApiTests(TestCase):
 
         url = user_detail_url(user.id)
         res = self.client.put(url, payload, format='json')
+        print("update using put")
+        print(res.data)
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])
