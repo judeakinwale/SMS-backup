@@ -205,8 +205,8 @@ class PrivateUserApiTests(TestCase):
 
         url = user_detail_url(user.id)
         res = self.client.patch(url, payload, format='json')
-        print("update using patch")
-        print(res.data)
+        # print("update using patch")
+        # print(res.data)
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])
@@ -232,8 +232,8 @@ class PrivateUserApiTests(TestCase):
 
         url = user_detail_url(user.id)
         res = self.client.put(url, payload, format='json')
-        print("update using put")
-        print(res.data)
+        # print("update using put")
+        # print(res.data)
 
         user.refresh_from_db()
         self.assertEqual(user.first_name, payload['first_name'])

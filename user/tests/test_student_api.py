@@ -120,6 +120,7 @@ class PrivateStudentApiTest(TestCase):
         }
 
         res = self.client.post(STUDENT_URL, payload, format='json')
+        # print(res.data)
 
         student = models.Student.objects.get(id=res.data['id'])
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)

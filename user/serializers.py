@@ -583,14 +583,18 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         try:
             for academic_history_data in academic_history_data_list:
                 nested_data = academic_history_data
-                nested_data.update(biodata=biodata)
                     
                 nested_serializer = self.fields['academic_history']
-                nested_instance = instance.academic_history
+                try:
+                    nested_instance = instance.academic_history
 
-                if nested_instance:
-                    academic_history = nested_serializer.update(nested_instance, nested_data)
-                else:
+                    if nested_instance:
+                        academic_history = nested_serializer.update(nested_instance, nested_data)
+                    else:
+                        nested_data.update(biodata=biodata)
+                        academic_history = nested_serializer.create(nested_data)
+                except Exception:
+                    nested_data.update(biodata=biodata)
                     academic_history = nested_serializer.create(nested_data)
         except  Exception as e:
             # print(e)
@@ -615,15 +619,21 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         
         try:
             nested_data = health_data_data
-            nested_data.update(biodata=biodata)
                 
             nested_serializer = self.fields['health_data']
-            nested_instance = instance.health_data
+            try:
+                nested_instance = instance.health_data
 
-            if nested_instance:
-                health_data = nested_serializer.update(nested_instance, nested_data)
-            else:
+                if nested_instance:
+                    health_data = nested_serializer.update(nested_instance, nested_data)
+                else:
+                    nested_data.update(biodata=biodata)
+                    health_data = nested_serializer.create(nested_data)
+                    
+            except Exception:
+                nested_data.update(biodata=biodata)
                 health_data = nested_serializer.create(nested_data)
+                # health_data = models.HealthData.objects.create(**nested_data)
         except  Exception as e:
             # print(e)
             pass
@@ -668,14 +678,18 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         
         try:
             nested_data = family_data_data
-            nested_data.update(biodata=biodata)
                 
             nested_serializer = self.fields['family_data']
-            nested_instance = instance.family_data
+            try:
+                nested_instance = instance.family_data
 
-            if nested_instance:
-                family_data = nested_serializer.update(nested_instance, nested_data)
-            else:
+                if nested_instance:
+                    family_data = nested_serializer.update(nested_instance, nested_data)
+                else:
+                    nested_data.update(biodata=biodata)
+                    family_data = nested_serializer.create(nested_data)
+            except Exception:
+                nested_data.update(biodata=biodata)
                 family_data = nested_serializer.create(nested_data)
         except  Exception as e:
             # print(e)
@@ -999,26 +1013,6 @@ class StudentSerializer(BaseStudentSerializer):
 
     def create(self, validated_data):
         """create a new user with an encrypted password, a related user and return the user"""
-        # try:
-        #     new_user_data = validated_data.pop("new_user")
-        #     new_user = get_user_model().objects.create_user(**new_user_data)
-
-        #     user = validated_data.pop("user") if "user" in validated_data else None
-        #     # if validated_data["user"]: user = validated_data.pop("user")
-        #     # print(user)
-        #     if user and new_user:
-        #         print("\nBoth user and new_user provided. Only user is used!")
-        #         student = models.Student.objects.create(user=user, **validated_data)
-        #     else:
-        #         student = models.Student.objects.create(user=new_user, **validated_data)
-
-        #     if student.user and student.specialization and not new_user.specialization:
-        #         new_user.specialization = student.specialization
-        #         new_user.save()
-
-        # except Exception:
-        #     print("\nnew_user not provided")
-        #     student = models.Student.objects.create(**validated_data)
         
         try:
             user = get_user_model().objects.create_user(**validated_data['user'])
@@ -1028,60 +1022,29 @@ class StudentSerializer(BaseStudentSerializer):
             # print(e)
             pass
             
-        # try:
-        #     specialization = amodels.Specialization.objects.create(**validated_data['specialization'])
-        #     print(f"specialization: {specialization}")
-        #     validated_data['specialization'] = specialization
-        # except  Exception as e:
-        #     # print(e)
-        #     pass
+        try:
+            academic_data_data = validated_user.pop('academic_data')
+        except Exception:
+            pass
+        
+        student = super().create(validated_data)
         
         try:
-            academic_data = models.AcademicData.objects.create(**validated_data['academic_data'])
+            # validated_user.pop('academic_data')
+            academic_data_data['student'] = student
+            academic_data = models.AcademicData.objects.create(**academic_data_data)
             # print(f"academic_data: {academic_data}")
             validated_data['academic_data'] = academic_data
         except  Exception as e:
             # print(e)
             pass
             
-        return super().create(validated_data)
+        # return super().create(validated_data)
 
-        # return student
+        return student
 
     def update(self, instance, validated_data):
         """update a user, correctly setting the password and return it"""
-
-        # if 'new_user' not in validated_data or validated_data['new_user'] == []:
-        #     student = super().update(instance, validated_data)
-        # elif 'user' in validated_data:
-
-        #     new_user_data = validated_data.pop('new_user')
-        #     print("\nremoved new user data, user provided in request")
-        #     student = super().update(instance, validated_data)
-        # else:
-
-        #     new_user_data = validated_data.pop('new_user')
-        #     password = new_user_data.pop('password')
-
-        #     student = super().update(instance, validated_data)
-        #     user = student.user
-
-        #     try:
-        #         user.first_name = new_user_data.get('first_name', user.first_name)
-        #         user.middle_name = new_user_data.get('middle_name', user.middle_name)
-        #         user.last_name = new_user_data.get('last_name', user.last_name)
-        #         user.email = new_user_data.get('email', user.email)
-
-        #         if student.user and student.specialization and not user.specialization:
-        #             user.specialization = student.specialization
-
-        #         if password:
-        #             user.set_password(password)
-
-        #         user.save()
-
-        #     except Exception as e:
-        #         print(f"\nThere was an error updating user: {e}")
         
         try:
             nested_serializer = self.fields['user']
@@ -1136,144 +1099,11 @@ class AccountSerializer(BaseUserSerializer):
             'student',
         ]
         fields = BaseUserSerializer.Meta.fields + additional_fields
-
-    # def create(self, validated_data):
-    #     try:
-    #         nested_data = validated_data.pop('biodata')
-    #         user = super().create(validated_data)
-    #         nested_data.update(user=user)
-    #         # biodata = models.Biodata.objects.create(**nested_data, user=user)
-    #         biodata = models.Biodata.objects.create(**nested_data)
-    #         # print(f"biodata: {biodata}")
-    #         # validated_data['biodata'] = biodata
-    #         return user
-    #     except  Exception as e:
-    #         # print(e)
-    #         return super().create(validated_data)
-        
-    #     # try:
-    #     #     nested_data = validated_data.pop('biodata')
-    #     #     user = get_user_model().objects.create_user(**validated_data)
-    #     #     # print(f"\n\n{user.check_password(validated_data['password'])}\n\n")
-    #     #     nested_data.update(user=user)
-    #     #     # biodata = models.Biodata.objects.create(**nested_data, user=user)
-    #     #     biodata = models.Biodata.objects.create(**nested_data)
-    #     #     # print(f"biodata: {biodata}")
-    #     #     # validated_data['biodata'] = biodata
-    #     #     # return user
-    #     # except  Exception as e:
-    #     #     # print(e)
-    #     #     user = get_user_model().objects.create_user(**validated_data)
-            
-    #     # if user.is_staff is True and len(user.staff_set.all()) == 0:
-    #     #     models.Staff.objects.create(user=user)
-
-    #     # return user
-            
-
-    # def update(self, instance, validated_data):
-    #     # password = validated_data.pop('password')
-    #     # user = super().update(instance, validated_data)
-    #     # if password:
-    #     #     user.set_password(password)
-    #     #     user.save()
-            
-    #     # return user
-        
-    #     password = validated_data.pop('password') if 'password' in validated_data else False
-    #     # try:
-    #     #     password = validated_data.pop('password')
-    #     # except Exception:
-    #     #     pass
-        
-    #     try:
-    #         print(super())
-    #         nested_data = validated_data.pop('biodata')
-    #         user = super().update(instance, validated_data)
-                
-    #         nested_serializer = self.fields['biodata']
-    #         nested_instance = instance.biodata
-    #         # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
-    #         if nested_instance:
-    #             biodata = nested_serializer.update(nested_instance, nested_data)
-    #         else:
-    #             nested_data.update(user=user)
-    #             biodata = models.Biodata.objects.create(**nested_data)
-    #             # biodata = nested_serializer.create(nested_data)
-    #         # validated_data['academic_data'] = academic_data
-            
-    #         # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)
-    #         # print(f"biodata: {biodata}")
-    #         # # validated_data['biodata'] = biodata
-
-    #     except  Exception as e:
-    #         # print(e)
-    #         user = super().update(instance, validated_data)
-            
-    #     # print(f"updated user: {user}")
-    #     # print(f"updated user password: {password}")
-            
-    #     if password:
-    #         user.set_password(password)
-    #         user.save()
-                
-    #     return user
     
     def update(self, instance, validated_data):
         """update a user, correctly setting the password and return it"""
-
-        # if 'biodata' not in validated_data or validated_data['biodata'] == []:
-        #     password = validated_data.pop('password')
-        #     user = super().update(instance, validated_data)
-        # else:
-        #     biodata_data = validated_data.pop('biodata')
-        #     password = validated_data.pop('password')
-        #     user = super().update(instance, validated_data)
-
-        #     try:
-        #         biodata = models.Biodata.objects.get(user=user)
-        #         # print("\nBiodata exists")
-        #         biodata.marital_status = biodata_data.get('marital_status', biodata.marital_status)
-        #         biodata.gender = biodata_data.get('gender', biodata.gender)
-        #         biodata.religion = biodata_data.get('religion', biodata.religion)
-        #         biodata.birthday = biodata_data.get('birthday', biodata.birthday)
-        #         biodata.nationality = biodata_data.get('nationality', biodata.nationality)
-        #         biodata.state_of_origin = biodata_data.get('state_of_origin', biodata.state_of_origin)
-        #         biodata.local_govt = biodata_data.get('local_govt', biodata.local_govt)
-        #         biodata.permanent_address = biodata_data.get(
-        #             'permanent_address',
-        #             biodata.permanent_address,
-        #         )
-        #         biodata.address = biodata_data.get('address', biodata.address)
-        #         biodata.phone_no_1 = biodata_data.get('phone_no_1', biodata.phone_no_1)
-        #         biodata.phone_no_2 = biodata_data.get('phone_no_2', biodata.phone_no_2)
-        #         biodata.profile_picture = biodata_data.get('profile_picture', biodata.profile_picture)
-        #         biodata.academic_history = biodata_data.get('academic_history', biodata.academic_history)
-        #         biodata.health_data = biodata_data.get('health_data', biodata.health_data)
-        #         biodata.family_data = biodata_data.get('family_data', biodata.family_data)
-        #         biodata.save()
-        #     except Exception:
-        #         # print("\nBiodata doesn't exist")
-        #         biodata = models.Biodata.objects.create(user=user, **biodata_data)
-
-        # if password:
-        #     user.set_password(password)
-        #     user.save()
-
-        # if user.is_staff is True:
-        #     try:
-        #         models.Staff.objects.get(user=user)
-        #     except Exception:
-        #         models.Staff.objects.create(user=user)
-
-        # return user
         
         password = validated_data.pop('password') if 'password' in validated_data else False
-        # print(password)
-        # try:
-        #     password = validated_data.pop('password')
-        # except Exception:
-        #     pass
         
         try:
             nested_data = validated_data.pop('biodata')
@@ -1284,30 +1114,19 @@ class AccountSerializer(BaseUserSerializer):
                 nested_instance = instance.biodata
                 print("code not broke")
                 # nested_data = validated_data['biodata']  # this may throw an exception, as `academic_data` is part of `validated_data`
-                if nested_instance:
-                    print("nested instance exists")
-                    print(nested_instance)
-                    biodata = nested_serializer.update(nested_instance, nested_data)
-                # else:
-                #     # nested_data.update(user=user)
-                #     print("nested instance not found")
-                #     nested_data['user'] = user
-                #     biodata = models.Biodata.objects.create(**nested_data)
-                #     print("biodata created")
-                #     # biodata = nested_serializer.create(nested_data)
+                # if nested_instance:
+                #     # print("nested instance exists")
+                #     # print(nested_instance)
+                #     biodata = nested_serializer.update(nested_instance, nested_data)
+                biodata = nested_serializer.update(nested_instance, nested_data)
+
             except Exception:
                 # nested_data.update(user=user)
-                print("nested instance not found")
+                # print("nested instance not found")
                 nested_data['user'] = user
                 biodata = models.Biodata.objects.create(**nested_data)
-                print("biodata created")
+                # print("biodata created")
                 # biodata = nested_serializer.create(nested_data)
-
-            # validated_data['academic_data'] = academic_data
-            
-            # biodata = models.Biodata.objects.create(**validated_data['biodata'], user=user)
-            # print(f"biodata: {biodata}")
-            # # validated_data['biodata'] = biodata
 
         except  Exception as e:
             # print(e)
