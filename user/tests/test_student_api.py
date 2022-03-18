@@ -108,7 +108,6 @@ class PrivateStudentApiTest(TestCase):
     def test_create_student(self):
         """test creating a student"""
         payload = {
-            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
@@ -120,7 +119,6 @@ class PrivateStudentApiTest(TestCase):
         }
 
         res = self.client.post(STUDENT_URL, payload, format='json')
-        # print(res.data)
 
         student = models.Student.objects.get(id=res.data['id'])
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)
@@ -131,7 +129,6 @@ class PrivateStudentApiTest(TestCase):
     def test_create_student_and_staff(self):
         """test creating a student"""
         payload = {
-            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
@@ -143,7 +140,6 @@ class PrivateStudentApiTest(TestCase):
         }
 
         res = self.client.post(STUDENT_URL, payload, format='json')
-        # print(res.data)
 
         student = models.Student.objects.get(id=res.data['id'])
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)
@@ -173,7 +169,6 @@ class PrivateStudentApiTest(TestCase):
         student = sample_student(user=self.user)
 
         payload = {
-            # 'user': self.user.id,
             'user': {
                 'first_name': "NewStudent",
                 'last_name': "UserOne",
@@ -186,9 +181,6 @@ class PrivateStudentApiTest(TestCase):
 
         url = student_detail_url(student.id)
         res = self.client.put(url, payload, format='json')
-        # print(f"payload url: {payload['user']}")
-        # print(f"res data url: {res.data['user']}")
-        # print(f"res data: {res.data}")
 
         student.refresh_from_db()
         student_serializer = serializers.StudentSerializer(student, context=serializer_context)

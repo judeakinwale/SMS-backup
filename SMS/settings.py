@@ -213,7 +213,7 @@ SWAGGER_SETTINGS = {
         }
     },
     'PERSIST_AUTH': True,
-    'DEFAULT_MODEL_DEPTH': 3,
+    'DEFAULT_MODEL_DEPTH': 2,
 }
 
 # Email Configuration

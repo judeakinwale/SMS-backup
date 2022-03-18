@@ -31,6 +31,7 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
+    full_name = serializers.CharField(source='get_full_name', read_only=True)
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     
     class Meta:
@@ -41,6 +42,7 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
             'first_name',
             'middle_name',
             'last_name',
+            'full_name',
             'email',
             'specialization',
             'password',
@@ -839,7 +841,11 @@ class UserSerializer(BaseUserSerializer):
                 # nested_data.update(user=user)
                 print("nested instance not found")
                 nested_data['user'] = user
-                biodata = models.Biodata.objects.create(**nested_data)
+                try:
+                    biodata = nested_serializer.create(nested_data)
+                except Exception:
+                    biodata = models.Biodata.objects.create(**nested_data)
+                # biodata = models.Biodata.objects.create(**nested_data)
                 print("biodata created")
                 # biodata = nested_serializer.create(nested_data)
 
@@ -1124,9 +1130,11 @@ class AccountSerializer(BaseUserSerializer):
                 # nested_data.update(user=user)
                 # print("nested instance not found")
                 nested_data['user'] = user
-                biodata = models.Biodata.objects.create(**nested_data)
+                try:
+                    biodata = nested_serializer.create(nested_data)
+                except Exception:
+                    biodata = models.Biodata.objects.create(**nested_data)
                 # print("biodata created")
-                # biodata = nested_serializer.create(nested_data)
 
         except  Exception as e:
             # print(e)

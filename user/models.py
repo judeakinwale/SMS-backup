@@ -44,15 +44,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return self.email
 
-    def get_staff(self):
-        if self.is_staff is True:
-            try:
-                staff = Staff.objects.get(user=self)
-            except Exception:
-                staff = Staff.objects.create(user=self)
-            return staff
+    # def get_staff(self):
+    #     if self.is_staff is True:
+    #         try:
+    #             staff = Staff.objects.get(user=self)
+    #         except Exception:
+    #             staff = Staff.objects.create(user=self)
+    #         return staff
+    #     else:
+    #         return None
+    
+    def get_full_name(self):
+        if self.first_name and self.last_name and self.middle_name:
+            return f"{self.last_name} {self.first_name} {self.middle_name}"
+        elif self.first_name and self.last_name:
+            return f"{self.last_name} {self.first_name}"
         else:
-            return None
+            return f"{self.email}"
 
 
 class Staff(models.Model):

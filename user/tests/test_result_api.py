@@ -150,23 +150,6 @@ class PrivateResultApiTest(TestCase):
         except Exception:
             self.assertEqual(res.data['results'], response_serializer.data)
 
-    # def test_result_not_limited_to_user(self):
-    #     """test that results from all users is returned"""
-    #     sample_result(score=70, course=self.course, student=self.student)
-    #     user2 = get_user_model().objects.create_user(
-    #         'test2@test.com',
-    #         'testpass2'
-    #     )
-    #     sample_result(user=user2)
-
-    #     result = models.Result.objects.all()
-    #     serializer = serializers.ResultSerializer(result, many=True, context=serializer_context)
-
-    #     res = self.client.get(RESULT_URL)
-
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(res.data['results'], serializer.data)
-    #     self.assertEqual(len(res.data['results']), 2)
 
     def test_retrieve_result_detail(self):
         """test retrieving a result's detail"""
@@ -185,10 +168,10 @@ class PrivateResultApiTest(TestCase):
 
     def test_create_result(self):
         """test creating a result"""
-        course_serializer = aserializers.CourseSerializer(self.course, context=serializer_context)
-        student_serializer = serializers.StudentSerializer(self.student, context=serializer_context)
-        semester_serializer = aserializers.SemesterSerializer(self.semester, context=serializer_context)
-        session_serializer = aserializers.SessionSerializer(self.session, context=serializer_context)
+        # course_serializer = aserializers.CourseSerializer(self.course, context=serializer_context)
+        # student_serializer = serializers.StudentSerializer(self.student, context=serializer_context)
+        # semester_serializer = aserializers.SemesterSerializer(self.semester, context=serializer_context)
+        # session_serializer = aserializers.SessionSerializer(self.session, context=serializer_context)
         payload = {
             "score": self.score,
             "course": self.course.id,

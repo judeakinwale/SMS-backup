@@ -136,7 +136,6 @@ class PrivateBiodataApiTest(TestCase):
         biodata = sample_biodata(user=self.user)
 
         payload = {
-            # 'user': self.user.id,
             'phone_no_1': '012347893',
         }
 

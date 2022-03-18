@@ -157,6 +157,13 @@ class StaffViewSet(viewsets.ModelViewSet):
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
+        
+    def perform_create(self, serializer):
+        try:
+            user = self.request.data.get("user")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(user=self.request.user)
     
     @swagger_auto_schema(
         operation_description="create a staff and attached user",
@@ -296,6 +303,13 @@ class StudentViewSet(viewsets.ModelViewSet):
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
+        
+    def perform_create(self, serializer):
+        try:
+            user = self.request.data.get("user")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(user=self.request.user)
     
     @swagger_auto_schema(
         operation_description="create a student and attached user",
@@ -367,8 +381,13 @@ class BiodataViewSet(viewsets.ModelViewSet):
         except (KeyError, AttributeError):
             return super().get_serializer_class()
     
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        try:
+            user = self.request.data.get("user")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(user=self.request.user)
+            
         
     @swagger_auto_schema(
         operation_description="create a biodata and attached academic data, health data and family data",
@@ -569,6 +588,13 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
     ]
     filterset_class = filters.AcademicHistoryFilter
     
+    def perform_create(self, serializer):
+        try:
+            biodata = self.request.data.get("biodata")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(biodata=self.request.user.biodata)
+    
     @swagger_auto_schema(
         operation_description="create a academic_history",
         operation_summary='create academic_history'
@@ -629,6 +655,13 @@ class HealthDataViewSet(viewsets.ModelViewSet):
     ]
     filterset_class = filters.HealthDataFilter
     
+    def perform_create(self, serializer):
+        try:
+            biodata = self.request.data.get("biodata")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(biodata=self.request.user.biodata)
+    
     @swagger_auto_schema(
         operation_description="create a health data",
         operation_summary='create health data'
@@ -688,6 +721,13 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStudent
     ]
     filterset_class = filters.FamilyDataFilter
+    
+    def perform_create(self, serializer):
+        try:
+            biodata = self.request.data.get("biodata")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(biodata=self.request.user.biodata)
     
     @swagger_auto_schema(
         operation_description="create a family data",

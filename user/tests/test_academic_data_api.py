@@ -125,7 +125,6 @@ class PrivateAcademicDataApiTest(TestCase):
         academic_data = sample_academic_data(student=self.student)
 
         payload = {
-            # 'student': self.student.id,
             'start_date': datetime.today().strftime('%Y-%m-%d'),
         }
 

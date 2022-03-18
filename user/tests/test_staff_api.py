@@ -112,7 +112,6 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff(self):
         """test creating a staff"""
         payload = {
-            # 'user': self.user.id,
             'user': {
                 'first_name': "Staff",
                 'last_name': "User",
@@ -135,7 +134,6 @@ class PrivateStaffApiTest(TestCase):
     def test_create_staff_and_user(self):
         """test creating a staff and user at the same time"""
         payload = {
-            # 'user': self.user.id,
             'user': {
                 'first_name': "Staff",
                 'last_name': "User",
@@ -147,7 +145,7 @@ class PrivateStaffApiTest(TestCase):
         }
 
         res = self.client.post(STAFF_URL, payload, format='json')
-        # print(res.data)
+        
         staff = models.Staff.objects.get(id=res.data['id'])
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
 
@@ -159,7 +157,6 @@ class PrivateStaffApiTest(TestCase):
         staff = sample_staff(user=self.user)
 
         payload = {
-            # 'user': self.user.id,
             'employee_id': 'Emp 104',
             'is_lecturer': True,
         }
@@ -178,7 +175,6 @@ class PrivateStaffApiTest(TestCase):
         staff = sample_staff(user=self.user)
 
         payload = {
-            # 'user': self.user.id,
             'employee_id': 'Emp 104',
             'user': {
                 'first_name': "NewStaff",
@@ -195,7 +191,6 @@ class PrivateStaffApiTest(TestCase):
 
         staff.refresh_from_db()
         staff_serializer = serializers.StaffSerializer(staff, context=serializer_context)
-        # print(staff_serializer.data)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         test_all_model_attributes(self, payload, staff, staff_serializer)
