@@ -288,6 +288,8 @@ class AcademicData(models.Model):
 
     # Definitions for model choices
     class QualificationChoices(models.TextChoices):
+        BSC = 'B.Sc', _('B.Sc')
+        MSC = 'M.Sc', _('M.Sc')
         OTHER = 'Other', _('Other')
 
     student = models.OneToOneField(

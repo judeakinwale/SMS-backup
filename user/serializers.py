@@ -1083,17 +1083,26 @@ class StudentSerializer(BaseStudentSerializer):
         
         try:
             nested_serializer = self.fields['academic_data']
-            nested_instance = instance.academic_data
-            nested_data = validated_data['academic_data']  # this may throw an exception, as `academic_data` is part of `validated_data`
-            academic_data = nested_serializer.update(nested_instance, nested_data)
+            nested_data = validated_data.pop('academic_data')  # this may throw an exception, as `academic_data` is part of `validated_data`
+            student = super().update(instance, validated_data)
+            try:
+                nested_instance = instance.academic_data
+                academic_data = nested_serializer.update(nested_instance, nested_data)
+            except Exception:
+                nested_data['student'] = student
+                try:
+                    academic_data = nested_serializer.create(nested_data)
+                except Exception: 
+                    academic_data = models.AcademicData.objects.create(**nested_data)
+                
             validated_data['academic_data'] = academic_data
         except  Exception as e:
             # print(e)
-            pass
+            student = super().update(instance, validated_data)
         
-        return super().update(instance, validated_data)
+        # return super().update(instance, validated_data)
 
-        # return student
+        return student
 
 
 class StudentResponseSerializer(StudentSerializer):
