@@ -383,6 +383,9 @@ class AcademicHistory(models.Model):
 
     # Definitions for model choices
     class QualificationChoices(models.TextChoices):
+        JSSCE = 'JSSCE', _('JSSCE')
+        SSCE = 'SSCE', _('SSCE')
+        BACHELORS = 'Bachelors', _('Bachelors')
         OTHER = 'Other', _('Other')
 
     biodata = models.ForeignKey(

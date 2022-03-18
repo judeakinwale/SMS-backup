@@ -597,7 +597,10 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                         academic_history = nested_serializer.create(nested_data)
                 except Exception:
                     nested_data.update(biodata=biodata)
-                    academic_history = nested_serializer.create(nested_data)
+                    try:
+                        academic_history = nested_serializer.create(nested_data)
+                    except Exception:
+                        academic_history = models.AcademicHistory.objects.create(**nested_data)
         except  Exception as e:
             # print(e)
             pass
@@ -634,7 +637,10 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                     
             except Exception:
                 nested_data.update(biodata=biodata)
-                health_data = nested_serializer.create(nested_data)
+                try:
+                    health_data = nested_serializer.create(nested_data)
+                except Exception:
+                    health_data = models.HealthData.objects.create(**nested_data)
                 # health_data = models.HealthData.objects.create(**nested_data)
         except  Exception as e:
             # print(e)
@@ -692,7 +698,10 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
                     family_data = nested_serializer.create(nested_data)
             except Exception:
                 nested_data.update(biodata=biodata)
-                family_data = nested_serializer.create(nested_data)
+                try:
+                    family_data = nested_serializer.create(nested_data)
+                except Exception:
+                    family_data = models.FamilyData.objects.create(**nested_data)
         except  Exception as e:
             # print(e)
             pass
