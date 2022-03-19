@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from user import models
 from academics import models as amodels
 from academics import serializers as aserializers
+from assessment import serializers as qserializers
 
 # For JWT and drf-yasg integration
 from drf_yasg.utils import swagger_auto_schema
@@ -213,6 +216,65 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             # 'get_gpa': {'read_only': True},
             # 'get_cgpa': {'read_only': True},
         }
+        
+    def create(self, validated_data):
+        
+        try:
+            student = models.student.objects.get(id=validated_data['student'])
+            if student.user.specialization:
+                print("student.user.specialization:")
+                print(student.user.specialization)
+            validated_data['specialization'] = validated_data.get('specialization', student.user.specialization)
+            validated_data['department'] = validated_data.get('department', student.user.specialization.department)
+            
+            # print("student.user.specialization:")
+            # print(student.user.specialization)
+        except Exception:
+            # validated_data.update(specialization=student.user.specialization)
+            # print("student.user.specialization:")
+            # print(student.user.specialization)
+            pass
+        # print(datetime.today().year)
+        try:
+            validated_data['level'] = validated_data.get('level', amodels.Level.objects.create())
+            
+            print(validated_data['level'])
+        except Exception:
+            validated_data['level'] = validated_data.get('level', amodels.Level.objects.get(code=100))
+            
+        try:
+            validated_data['session'] = validated_data.get('session', amodels.Session.objects.create())
+            
+            print(validated_data['session'])
+        except Exception:
+            validated_data['session'] = validated_data.get('session', amodels.Session.objects.get(year=str(datetime.today().year)))
+            
+        try:
+            validated_data['start_date'] = validated_data.get('start_date', datetime.today().date())
+            if validated_data['start_date'].year != datetime.today().year:
+                diff = int(validated_data['session']) - int(validated_data['start_date'].year)
+            
+            print(validated_data['start_date'])
+        except Exception:
+            # validated_data['start_date'] = validated_data.get('start_date', amodels.Session.objects.get(year=str(datetime.today().year)))
+            pass
+        
+        try:
+            print(validated_data['specialization'].max_level.code)
+            years = validated_data['specialization'].max_level.code / 100
+            print(years)
+            validated_data['end_date'] = validated_data['start_date'] + relativedelta(years=years) -relativedelta(months=3)
+            
+            print(validated_data['end_date'])
+        except Exception:
+            pass
+        
+        try:
+            academic_data = super().create(validated_data)
+        except Exception:
+            academic_data = models.AcademicData.objects.create(**validated_data)
+            
+        return academic_data
 
 
 class AcademicDataResponseSerializer(AcademicDataSerializer):
@@ -888,7 +950,8 @@ class StaffSerializer(BaseStaffSerializer):
 
     # new_user = UserSerializer(allow_null=True, required=False)
     courses = aserializers.CourseSerializer(source='course_set', many=True, read_only=True)
-    user = UserSerializer()
+    # user = UserSerializer()
+    user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseStaffSerializer.Meta):
@@ -1011,7 +1074,8 @@ class StudentSerializer(BaseStudentSerializer):
     """serializer for the Student model"""
 
     # new_user = UserSerializer(allow_null=True, required=False)
-    user = UserSerializer()
+    # user = UserSerializer()
+    user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     academic_data = AcademicDataSerializer(required=False, allow_null=True)
     results = ResultSerializer(source='result_set', many=True, read_only=True)
@@ -1085,6 +1149,51 @@ class StudentSerializer(BaseStudentSerializer):
             nested_serializer = self.fields['academic_data']
             nested_data = validated_data.pop('academic_data')  # this may throw an exception, as `academic_data` is part of `validated_data`
             student = super().update(instance, validated_data)
+            
+
+            try:
+                if student.user.specialization:
+                    print("student.user.specialization:")
+                    print(student.user.specialization)
+                nested_data['specialization'] = nested_data.get('specialization', student.user.specialization)
+                nested_data['department'] = nested_data.get('department', student.user.specialization.department)
+                
+                # print("student.user.specialization:")
+                # print(student.user.specialization)
+            except Exception:
+                # nested_data.update(specialization=student.user.specialization)
+                # print("student.user.specialization:")
+                # print(student.user.specialization)
+                pass
+            # print(datetime.today().year)
+            try:
+                nested_data['level'] = nested_data.get('level', amodels.Level.objects.create())
+            except Exception:
+                nested_data['level'] = nested_data.get('level', amodels.Level.objects.get(code=100))
+            print(nested_data['level'])
+            try:
+                nested_data['session'] = nested_data.get('session', amodels.Session.objects.create())
+            except Exception:
+                nested_data['session'] = nested_data.get('session', amodels.Session.objects.get(year=str(datetime.today().year)))
+            print(nested_data['session'])
+            try:
+                nested_data['start_date'] = nested_data.get('start_date', datetime.today().date())
+                if nested_data['start_date'].year != datetime.today().year:
+                    diff = int(nested_data['session']) - int(nested_data['start_date'].year)
+            except Exception:
+                # nested_data['start_date'] = nested_data.get('start_date', amodels.Session.objects.get(year=str(datetime.today().year)))
+                pass
+            print(nested_data['start_date'])
+            print(nested_data['specialization'].max_level.code)
+            try:
+                years = nested_data['specialization'].max_level.code / 100
+                print(years)
+                nested_data['end_date'] = nested_data['start_date'] + relativedelta(years=years) -relativedelta(months=3)
+            except Exception:
+                pass
+            print(nested_data['end_date'])
+            
+            
             try:
                 nested_instance = instance.academic_data
                 academic_data = nested_serializer.update(nested_instance, nested_data)

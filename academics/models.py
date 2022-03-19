@@ -158,6 +158,7 @@ class Level(models.Model):
 
     code = models.IntegerField(
         choices=LevelChoices.choices,
+        unique=True,
         null=True,
         default=LevelChoices.ONE,
     )
@@ -183,6 +184,7 @@ class Semester(models.Model):
 
     semester = models.IntegerField(
         choices=SemesterChoices.choices,
+        unique=True,
         null=True,
         default=SemesterChoices.FIRST
     )
@@ -202,7 +204,7 @@ class Semester(models.Model):
 class Session(models.Model):
     """Model definition for Session."""
 
-    year = models.CharField(max_length=4, unique=True)
+    year = models.CharField(max_length=4, unique=True, default=str(datetime.today().year))
     is_current = models.BooleanField(default=False)
 
     class Meta:
