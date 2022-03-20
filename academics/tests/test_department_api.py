@@ -75,7 +75,7 @@ class PrivateDepartmentApiTest(TestCase):
         """test retrieving a list of departments"""
         sample_department(faculty=self.faculty)
         department = models.Department.objects.all()
-        serializer = serializers.DepartmentSerializer(department, many=True, context=serializer_context)
+        serializer = serializers.DepartmentResponseSerializer(department, many=True, context=serializer_context)
 
         res = self.client.get(DEPARTMENT_URL)
 
@@ -85,7 +85,7 @@ class PrivateDepartmentApiTest(TestCase):
     def test_retrieve_department_detail(self):
         """test retrieving a department's detail"""
         department = sample_department(faculty=self.faculty)
-        serializer = serializers.DepartmentSerializer(department, context=serializer_context)
+        serializer = serializers.DepartmentResponseSerializer(department, context=serializer_context)
 
         url = department_detail_url(department_id=department.id)
         res = self.client.get(url)

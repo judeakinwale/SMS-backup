@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from academics import models
-from assessment import serializers as aserializers
+from assessment.serializers import QuizSerializer
+# from user.serializers import UserSerializer
 
 
 class LevelSerializer(serializers.HyperlinkedModelSerializer):
@@ -47,6 +48,39 @@ class SessionSerializer(serializers.HyperlinkedModelSerializer):
         ]
         extra_kwargs = {
             'url': {'view_name': 'academics:session-detail'}
+        }
+
+
+class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Course model"""
+
+    specialization = serializers.PrimaryKeyRelatedField(
+        queryset=models.Specialization.objects.all(),
+        # view_name='academics:specialization-detail',
+    )
+    coordinator = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.filter(is_staff=True),
+        # view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
+    quizzes = QuizSerializer(source='course_set', many=True, read_only=True)
+
+    class Meta:
+        model = models.Course
+        fields = [
+            'id',
+            'url',
+            'specialization',
+            'name',
+            'code',
+            'description',
+            'coordinator',
+            'quizzes',
+            'is_active',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'academics:course-detail'}
         }
 
 
@@ -97,39 +131,6 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
-class CourseSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the Course model"""
-
-    specialization = serializers.PrimaryKeyRelatedField(
-        queryset=models.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
-    )
-    coordinator = serializers.PrimaryKeyRelatedField(
-        queryset=get_user_model().objects.filter(is_staff=True),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
-    )
-    quizzes = aserializers.QuizSerializer(source='course_set', many=True, read_only=True)
-
-    class Meta:
-        model = models.Course
-        fields = [
-            'id',
-            'url',
-            'specialization',
-            'name',
-            'code',
-            'description',
-            'coordinator',
-            'quizzes',
-            'is_active',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'academics:course-detail'}
-        }
-
-
 class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Specialization model"""
 
@@ -141,8 +142,9 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
         queryset=models.Level.objects.all(),
         # view_name='academics:level-detail',
     )
-    courses = CourseSerializer(source='course_set', many=True, read_only=True)
-    recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
+    # courses = CourseSerializer(source='course_set', many=True, read_only=True)
+    # recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
+    # direct_recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Specialization
@@ -154,8 +156,9 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
             'code',
             'max_level',
             'description',
-            'courses',
-            'recommended_courses',
+            # 'courses',
+            # 'recommended_courses',
+            # 'direct_recommended_courses',
             'is_active',
         ]
         extra_kwargs = {
@@ -222,3 +225,43 @@ class FacultySerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'academics:faculty-detail'}
         }
+
+
+class RecommendedCoursesResponseSerializer(RecommendedCoursesSerializer):
+    """serializer for the RecommendedCourses model"""
+
+    specialization = SpecializationSerializer(read_only=True)
+    course = CourseSerializer(read_only=True)
+    # courses = CourseSerializer(read_only=True, many=True)
+    semester = SemesterSerializer(read_only=True)
+    level = LevelSerializer(read_only=True)
+
+
+class SpecializationResponseSerializer(SpecializationSerializer):
+    """serializer for the Specialization model"""
+
+    department = DepartmentSerializer(read_only=True)
+    max_level = LevelSerializer(read_only=True)
+    courses = CourseSerializer(source='course_set', many=True, read_only=True)
+    recommended_courses = RecommendedCoursesResponseSerializer(many=True, read_only=True)
+    direct_recommended_courses = RecommendedCoursesResponseSerializer(many=True, read_only=True)
+
+    class Meta(SpecializationSerializer.Meta):
+        additional_fields = [
+            'courses',
+            'recommended_courses',
+            'direct_recommended_courses',
+        ]
+        fields = SpecializationSerializer.Meta.fields + additional_fields
+
+
+class CourseResponseSerializer(CourseSerializer):
+    """serializer for the Course model"""
+
+    specialization = SpecializationSerializer(read_only=True)
+
+
+class DepartmentResponseSerializer(DepartmentSerializer):
+    """serializer for the Department model"""
+
+    faculty = FacultySerializer(read_only=True)

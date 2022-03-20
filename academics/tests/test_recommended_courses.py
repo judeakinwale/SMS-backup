@@ -128,7 +128,7 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             level=self.max_level
         )
         recommended_courses = models.RecommendedCourses.objects.all()
-        serializer = serializers.RecommendedCoursesSerializer(
+        serializer = serializers.RecommendedCoursesResponseSerializer(
             recommended_courses,
             many=True,
             context=serializer_context
@@ -148,7 +148,7 @@ class PrivateRecommendedCoursesApiTest(TestCase):
             course=self.course
         )
         # recommended_courses.courses.add(self.course)
-        serializer = serializers.RecommendedCoursesSerializer(
+        serializer = serializers.RecommendedCoursesResponseSerializer(
             recommended_courses,
             context=serializer_context
         )

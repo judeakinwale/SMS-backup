@@ -237,6 +237,13 @@ class RecommendedCourses(models.Model):
         related_name=_("recommended_courses"),
         on_delete=models.CASCADE
     )
+    source_specialization = models.ForeignKey(
+        Specialization,
+        related_name=_("direct_recommended_courses"),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     # courses = models.ManyToManyField(Course)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
@@ -249,6 +256,11 @@ class RecommendedCourses(models.Model):
         ordering = ['id']
         verbose_name = _('RecommendedCourses')
         verbose_name_plural = _('RecommendedCourses')
+        
+    def save(self, *args, **kwargs):
+        if not self.source_specialization:
+            self.source_specialization = self.specialization
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """String representation of RecommendedCourses."""

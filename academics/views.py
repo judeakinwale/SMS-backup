@@ -56,11 +56,21 @@ class FacultyViewSet(viewsets.ModelViewSet):
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = models.Department.objects.all()
     serializer_class = serializers.DepartmentSerializer
+    serializer_action_classes = {
+        'list': serializers.DepartmentResponseSerializer,
+        'retrieve': serializers.DepartmentResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
         | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.DepartmentFilter
+        
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     @swagger_auto_schema(operation_description="create a department",
                          operation_summary='create department')
@@ -102,11 +112,21 @@ class DepartmentViewSet(viewsets.ModelViewSet):
 class SpecializationViewSet(viewsets.ModelViewSet):
     queryset = models.Specialization.objects.all()
     serializer_class = serializers.SpecializationSerializer
+    serializer_action_classes = {
+        'list': serializers.SpecializationResponseSerializer,
+        'retrieve': serializers.SpecializationResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
         | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.SpecializationFilter
+    
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     @swagger_auto_schema(operation_description="create a specialization",
                          operation_summary='create specialization')
@@ -148,11 +168,21 @@ class SpecializationViewSet(viewsets.ModelViewSet):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = models.Course.objects.all()
     serializer_class = serializers.CourseSerializer
+    serializer_action_classes = {
+        'list': serializers.CourseResponseSerializer,
+        'retrieve': serializers.CourseResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
         | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseFilter
+        
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     @swagger_auto_schema(operation_description="create a course",
                          operation_summary='create course')
@@ -330,11 +360,21 @@ class SessionViewSet(viewsets.ModelViewSet):
 class RecommendedCoursesViewSet(viewsets.ModelViewSet):
     queryset = models.RecommendedCourses.objects.all()
     serializer_class = serializers.RecommendedCoursesSerializer
+    serializer_action_classes = {
+        'list': serializers.RecommendedCoursesResponseSerializer,
+        'retrieve': serializers.RecommendedCoursesResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
         | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.RecommendedCoursesFilter
+        
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     @swagger_auto_schema(operation_description="create a recommended course",
                          operation_summary='create recommended course')

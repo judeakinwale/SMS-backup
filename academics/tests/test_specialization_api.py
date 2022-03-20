@@ -94,7 +94,7 @@ class PrivateSpecializationApiTest(TestCase):
         """test retrieving a list of specializations"""
         sample_specialization(department=self.department, max_level=self.level)
         specialization = models.Specialization.objects.all()
-        serializer = serializers.SpecializationSerializer(
+        serializer = serializers.SpecializationResponseSerializer(
             specialization,
             many=True,
             context=serializer_context
@@ -108,7 +108,7 @@ class PrivateSpecializationApiTest(TestCase):
     def test_retrieve_specialization_detail(self):
         """test retrieving a specialization's detail"""
         specialization = sample_specialization(department=self.department, max_level=self.level)
-        serializer = serializers.SpecializationSerializer(specialization, context=serializer_context)
+        serializer = serializers.SpecializationResponseSerializer(specialization, context=serializer_context)
 
         url = specialization_detail_url(specialization_id=specialization.id)
         res = self.client.get(url)

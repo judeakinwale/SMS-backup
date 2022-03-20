@@ -85,8 +85,7 @@ class PublicCourseApiTest(TestCase):
 
 
 class PrivateCourseApiTest(TestCase):
-    """test authenticated access to the course api"""
-
+ 
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_superuser(
@@ -103,7 +102,7 @@ class PrivateCourseApiTest(TestCase):
         """test retrieving a list of courses"""
         sample_course(specialization=self.specialization)
         course = models.Course.objects.all()
-        serializer = serializers.CourseSerializer(course, many=True, context=serializer_context)
+        serializer = serializers.CourseResponseSerializer(course, many=True, context=serializer_context)
 
         res = self.client.get(COURSE_URL)
 
@@ -113,7 +112,7 @@ class PrivateCourseApiTest(TestCase):
     def test_retrieve_course_detail(self):
         """test retrieving a course's detail"""
         course = sample_course(specialization=self.specialization)
-        serializer = serializers.CourseSerializer(course, context=serializer_context)
+        serializer = serializers.CourseResponseSerializer(course, context=serializer_context)
 
         url = course_detail_url(course_id=course.id)
         res = self.client.get(url)
