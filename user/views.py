@@ -527,6 +527,13 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
+        
+    def perform_create(self, serializer):
+        try:
+            user = self.request.data.get("student")
+            return super().perform_create(serializer)
+        except Exception:
+            serializer.save(student=self.request.user.student_set.all().first())
     
     @swagger_auto_schema(
         operation_description="create a academic_data",
@@ -800,11 +807,10 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         try:
-            student = models.Student.objects.get(user=self.request.user)
-            registration = serializer.save(student=student)
+            student = self.request.data.get("student")
+            return super().perform_create(serializer)
         except Exception:
-            registration = serializer.save()
-        return registration
+            serializer.save(student=self.request.user.student_set.all().first())
     
     @swagger_auto_schema(
         operation_description="create a course registration",
