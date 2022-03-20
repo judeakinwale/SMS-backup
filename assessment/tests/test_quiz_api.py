@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APIClient, APIRequestFactory
 from assessment import models, serializers
+from academics import models as amodels
 from user import serializers as userializers
 
 
@@ -27,6 +28,45 @@ def sample_quiz(supervisor, **kwargs):
     defaults = {'name': 'Sample Quiz'}
     defaults.update(kwargs)
     return models.Quiz.objects.create(supervisor=supervisor, **defaults)
+
+
+def sample_faculty(**kwargs):
+    """create and return a sample faculty"""
+    defaults = {'name': 'Faculty 1'}
+    defaults.update(kwargs)
+    return amodels.Faculty.objects.create(**defaults)
+
+
+def sample_department(faculty, **kwargs):
+    """create and return a sample department"""
+    defaults = {'name': 'Specialization 1'}
+    defaults.update(kwargs)
+    return amodels.Department.objects.create(faculty=faculty, **defaults)
+
+
+def sample_level(**kwargs):
+    """create and return a sample level"""
+    defaults = {'code': 100}
+    defaults.update(**kwargs)
+    return amodels.Level.objects.create(**defaults)
+
+
+def sample_specialization(department, max_level, **kwargs):
+    """create and return a sample specialization"""
+    defaults = {
+        'name': 'Specialization 1',
+    }
+    defaults.update(kwargs)
+    return amodels.Specialization.objects.create(department=department, max_level=max_level, **defaults)
+
+
+def sample_course(specialization, **kwargs):
+    """create and return a sample course"""
+    defaults = {
+        'name': 'Course 1',
+    }
+    defaults.update(kwargs)
+    return amodels.Course.objects.create(specialization=specialization, **defaults)
 
 
 def test_all_model_attributes(insance, payload, model, serializer):
@@ -64,6 +104,10 @@ class PrivateQuizApiTest(TestCase):
         self.client.force_authenticate(self.user)
         self.serializer = userializers.UserSerializer(self.user, context=serializer_context)
         # self.quiz = sample_quiz(supervisor=self.user)
+        self.department = sample_department(sample_faculty())
+        self.max_level = sample_level(code=500)
+        self.specialization = sample_specialization(self.department, self.max_level)
+        self.course = sample_course(self.specialization)
 
     def tearDown(self):
         pass
@@ -88,6 +132,7 @@ class PrivateQuizApiTest(TestCase):
         """test creating a quiz"""
         payload = {
             'supervisor': self.user.id,
+            'course': self.course.id,
             'name': 'Test name 2',
         }
 

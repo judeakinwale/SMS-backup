@@ -19,7 +19,11 @@ class QuizViewSet(viewsets.ModelViewSet):
     filterset_class = filters.QuizFilter
 
     def perform_create(self, serializer):
-        return serializer.save(supervisor=self.request.user)
+        try:
+            user = self.request.data['supervisor']
+            return super().perform_create(serializer)
+        except Exception:
+            return serializer.save(supervisor=self.request.user)
     
     @swagger_auto_schema(operation_description="create a quiz",
                          operation_summary='create quiz')
@@ -157,6 +161,10 @@ class AnswerViewSet(viewsets.ModelViewSet):
 class QuizTakerViewSet(viewsets.ModelViewSet):
     queryset = models.QuizTaker.objects.all()
     serializer_class = serializers.QuizTakerSerializer
+    serializer_action_classes = {
+        'list': serializers.QuizTakerResponseSerializer,
+        'retrieve': serializers.QuizTakerResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUser
         | cpermissions.IsITDept
@@ -165,6 +173,12 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStudent
     ]
     filterset_class = filters.QuizTakerFilter
+    
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
 
     def perform_create(self, serializer):
         # return serializer.save(student=self.request.user.student_set.all().first())

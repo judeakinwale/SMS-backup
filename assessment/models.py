@@ -33,6 +33,24 @@ class Quiz(models.Model):
         # ordering = ['id']
         verbose_name = _("Quiz")
         verbose_name_plural = _("Quizzes")
+        
+    def save(self, *args, **kwargs):
+        quiz = super(Quiz, self).save(*args, **kwargs)
+        try:
+            # related_students = self.course.specialization.student_set.all()
+            related_course_registrations = self.course.courseregistration_set.all()
+            # print(f"related students for created quiz: {related_students}")
+            print(f"related course registrations for created quiz:\n {related_course_registrations}")
+            # for student in related_students:
+            #     models.QuizTaker.objects.create(student=student, quiz=self)
+            #     print(f"quiz taker created, student {student} registered for quiz {self}")
+            for course_registration in related_course_registrations:
+                models.QuizTaker.objects.create(student=course_registration.student, quiz=self)
+                print(f"quiz taker created, student {course_registration.student} registered for quiz {self}")
+        except Exception:
+            pass
+        
+        return quiz
 
     def __str__(self):
         """String representation of Quiz."""
@@ -115,9 +133,9 @@ class QuizTaker(models.Model):
                 if response.answer and (response.answer.is_correct is True):
                     score += 1
 
-        if self.grade.score and self.grade.score == score:
+        if self.grade.score and (self.grade.score == score):
             return self.grade.score
-        elif self.grade.score and self.grade.score > 0:
+        elif self.grade.score and (self.grade.score > 0):
             return self.grade.score
         else:
             self.grade.score = score
@@ -149,7 +167,7 @@ class Response(models.Model):
 class Grade(models.Model):
     """Model definition for Grade."""
 
-    score = models.IntegerField(null=True, blank=True)
+    score = models.IntegerField(default=0, null=True, blank=True)
     max_score = models.IntegerField(default=10)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated = models.BooleanField(default=False)
@@ -168,7 +186,12 @@ class Grade(models.Model):
         return f"{self.score} of {self.max_score}"
 
     def get_value(self):
-        if self.score / self.max_score >= 0.5:
-            return 'Pass'
-        else:
-            return 'Fail'
+        try:
+            if self.score / self.max_score >= 0.5:
+                return 'Pass'
+            elif self.score == 0:
+                return "Not Available"
+            else:
+                return 'Fail'
+        except Exception:
+            return "Not Available"

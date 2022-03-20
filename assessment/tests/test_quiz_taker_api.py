@@ -85,7 +85,7 @@ class PrivateQuizTakerApiTest(TestCase):
         """test retrieving a list of quiz_takers"""
         sample_quiz_taker(student=self.student, quiz=self.quiz)
         quiz_taker = models.QuizTaker.objects.all()
-        serializer = serializers.QuizTakerSerializer(quiz_taker, many=True, context=serializer_context)
+        serializer = serializers.QuizTakerResponseSerializer(quiz_taker, many=True, context=serializer_context)
 
         res = self.client.get(QUIZTAKER_URL)
 
@@ -100,7 +100,7 @@ class PrivateQuizTakerApiTest(TestCase):
     def test_retrieve_quiz_taker_detail(self):
         """test retrieving a quiz_taker's detail"""
         quiz_taker = sample_quiz_taker(student=self.student, quiz=self.quiz)
-        serializer = serializers.QuizTakerSerializer(quiz_taker, context=serializer_context)
+        serializer = serializers.QuizTakerResponseSerializer(quiz_taker, context=serializer_context)
 
         url = quiz_taker_detail_url(quiz_taker_id=quiz_taker.id)
         res = self.client.get(url)

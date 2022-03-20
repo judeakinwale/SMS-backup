@@ -7,6 +7,8 @@ from user import models as umodels
 
 class GradeSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Grade model"""
+    
+    value = serializers.ReadOnlyField(source='get_value')
 
     class Meta:
         model = models.Grade
@@ -15,6 +17,7 @@ class GradeSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'score',
             'max_score',
+            'value',
             'timestamp',
         ]
         extra_kwargs = {
@@ -42,7 +45,8 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
             'is_correct',
         ]
         extra_kwargs = {
-            'url': {'view_name': 'assessment:answer-detail'}
+            'url': {'view_name': 'assessment:answer-detail'},
+            'is_correct': {'write_only': True}
         }
 
 
@@ -313,6 +317,13 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assessment:quiztaker-detail'}
         }
+        
+        
+class QuizTakerResponseSerializer(QuizTakerSerializer):
+    """serializer for the QuizTaker model"""
+
+    quiz = QuizSerializer(read_only=True)
+    grade = GradeSerializer(read_only=True)
 
 
 class ResponseSerializer(serializers.HyperlinkedModelSerializer):
