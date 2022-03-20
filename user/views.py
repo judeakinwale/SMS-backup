@@ -309,7 +309,7 @@ class StudentViewSet(viewsets.ModelViewSet):
             user = self.request.data.get("user")
             return super().perform_create(serializer)
         except Exception:
-            serializer.save(user=self.request.user)
+            return serializer.save(user=self.request.user)
     
     @swagger_auto_schema(
         operation_description="create a student and attached user",

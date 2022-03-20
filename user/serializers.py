@@ -950,8 +950,8 @@ class StaffSerializer(BaseStaffSerializer):
 
     # new_user = UserSerializer(allow_null=True, required=False)
     courses = aserializers.CourseSerializer(source='course_set', many=True, read_only=True)
-    # user = UserSerializer()
-    user = BaseUserSerializer()
+    user = UserSerializer()
+    # user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseStaffSerializer.Meta):
@@ -1074,12 +1074,13 @@ class StudentSerializer(BaseStudentSerializer):
     """serializer for the Student model"""
 
     # new_user = UserSerializer(allow_null=True, required=False)
-    # user = UserSerializer()
-    user = BaseUserSerializer()
+    user = UserSerializer()
+    # user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     academic_data = AcademicDataSerializer(required=False, allow_null=True)
     results = ResultSerializer(source='result_set', many=True, read_only=True)
-    course_registrations = CourseRegistrationSerializer(source='courseregistration_set', many=True, read_only=True) 
+    course_registrations = CourseRegistrationSerializer(source='courseregistration_set', many=True, read_only=True)
+    registered_quizes = qserializers.QuizTakerSerializer(source='quiztaker_set', many=True, read_only=True)
 
     class Meta(BaseStudentSerializer.Meta):
         additional_fields = [
@@ -1087,6 +1088,7 @@ class StudentSerializer(BaseStudentSerializer):
             'academic_data',
             'results',
             'course_registrations',
+            'registered_quizes',
         ]
         fields = BaseStudentSerializer.Meta.fields + additional_fields
 
