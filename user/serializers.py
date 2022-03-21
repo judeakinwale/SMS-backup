@@ -942,7 +942,7 @@ class UserSerializer(BaseUserSerializer):
 
 class UserResponseSerializer(UserSerializer):
 
-    specialization = aserializers.SpecializationSerializer(read_only=True)
+    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
 
 
 class StaffSerializer(BaseStaffSerializer):
@@ -951,6 +951,8 @@ class StaffSerializer(BaseStaffSerializer):
     # new_user = UserSerializer(allow_null=True, required=False)
     courses = aserializers.CourseSerializer(source='course_set', many=True, read_only=True)
     user = UserSerializer()
+    department = serializers.ReadOnlyField()
+    faculty = serializers.ReadOnlyField()
     # user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
@@ -958,6 +960,8 @@ class StaffSerializer(BaseStaffSerializer):
         additional_fields = [
             # 'new_user',
             'courses',
+            'department',
+            'faculty',
         ]
         fields = BaseStaffSerializer.Meta.fields + additional_fields
 

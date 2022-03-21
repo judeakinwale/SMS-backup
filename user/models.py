@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from user import managers
 from academics import models as acmodels
+# from academics import serializers as aserializers
 
 # Create your models here.
 
@@ -105,6 +106,7 @@ class Staff(models.Model):
     def department(self):
         try:
             dept = self.specialization.department
+            # serialiazer = aserializers.DepartmentSerializer(dept)
             return dept
         except Exception:
             return None
@@ -113,6 +115,7 @@ class Staff(models.Model):
         try:
             dept = self.specialization.department
             faculty = dept.faculty
+            # serializer = aserializers.FacultySerializer(faculty)
             return faculty
         except Exception:
             return None
