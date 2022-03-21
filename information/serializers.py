@@ -207,8 +207,8 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
-    information_set = InformationSerializer(many=True, allow_null=True, required=False)
-    notice_set = NoticeSerializer(many=True, allow_null=True, required=False)
+    information_set = InformationSerializer(many=True, read_only=True)
+    notice_set = NoticeSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Scope

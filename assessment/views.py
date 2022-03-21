@@ -12,6 +12,7 @@ class QuizViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuizSerializer
     permission_classes = [
         cpermissions.IsSuperUser
+        | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
         | cpermissions.IsHead
@@ -79,6 +80,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuestionSerializer
     permission_classes = [
         cpermissions.IsSuperUser
+        | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
         | cpermissions.IsHead
@@ -139,6 +141,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AnswerSerializer
     permission_classes = [
         cpermissions.IsSuperUser
+        | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
         | cpermissions.IsHead
@@ -203,6 +206,7 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
+        | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsHead
         | cpermissions.IsLecturer
@@ -336,6 +340,7 @@ class GradeViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsITDept
         | cpermissions.IsHead
+        | cpermissions.IsStaff
         | cpermissions.IsLecturerOrReadOnly
     ]
     
