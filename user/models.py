@@ -107,7 +107,7 @@ class Staff(models.Model):
         try:
             dept = self.specialization.department
             # serialiazer = aserializers.DepartmentSerializer(dept)
-            return dept
+            return dept.name
         except Exception:
             return None
 
@@ -116,7 +116,7 @@ class Staff(models.Model):
             dept = self.specialization.department
             faculty = dept.faculty
             # serializer = aserializers.FacultySerializer(faculty)
-            return faculty
+            return faculty.name
         except Exception:
             return None
 
@@ -164,7 +164,7 @@ class Student(models.Model):
     def department(self):
         try:
             dept = self.specialization.department
-            return dept
+            return dept.name
         except Exception:
             return None
 
@@ -172,14 +172,14 @@ class Student(models.Model):
         try:
             dept = self.specialization.department
             faculty = dept.faculty
-            return faculty
+            return faculty.name
         except Exception:
             return None
 
     def level(self):
         try:
             lvl = self.academic_data.first().level
-            return lvl
+            return lvl.code
         except Exception:
             return None
 
