@@ -373,6 +373,7 @@ class BiodataViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsBursar
         | cpermissions.IsITDept
+        | cpermissions.IsStaff
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.BiodataFilter
@@ -520,6 +521,7 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
     permission_classes = [
         cpermissions.IsSuperUser
         | cpermissions.IsBursar
+        | cpermissions.IsStaff
         | cpermissions.IsStudent
         | cpermissions.IsITDeptOrReadOnly
     ]
@@ -594,6 +596,7 @@ class AcademicHistoryViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsBursar
         | cpermissions.IsITDept
+        | cpermissions.IsStaff
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.AcademicHistoryFilter
@@ -661,6 +664,7 @@ class HealthDataViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsBursar
         | cpermissions.IsITDept
+        | cpermissions.IsStaff
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.HealthDataFilter
@@ -728,6 +732,7 @@ class FamilyDataViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsBursar
         | cpermissions.IsITDept
+        | cpermissions.IsStaff
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.FamilyDataFilter
