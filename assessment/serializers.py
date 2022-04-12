@@ -193,6 +193,13 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
         #             question =  models.Question.objects.create(**question_data)
         # except Exception:
         #     quiz =  super().create(validated_data)
+        
+        course_registrations = umodels.CourseRegistration.objects.filter(course=quiz.course)
+        for reg in course_registrations:
+            try:
+                models.QuizTaker.objects.get(student=reg.student, quiz=quiz)
+            except Exception:
+                models.QuizTaker.objects.create(student=reg.student, quiz=quiz)
 
         return quiz
 
@@ -274,6 +281,13 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                                 answer_data['question'] = question
                                 models.Answer.objects.create(**answer_data)
 
+        course_registrations = umodels.CourseRegistration.objects.filter(course=quiz.course)
+        for reg in course_registrations:
+            try:
+                models.QuizTaker.objects.get(student=reg.student, quiz=quiz)
+            except Exception:
+                models.QuizTaker.objects.create(student=reg.student, quiz=quiz)
+        
         return quiz
 
 

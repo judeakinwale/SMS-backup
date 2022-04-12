@@ -15,7 +15,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
-        | cpermissions.IsHead
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuizFilter
 
@@ -83,7 +83,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
-        | cpermissions.IsHead
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuestionFilter
     
@@ -280,7 +280,7 @@ class ResponseViewSet(viewsets.ModelViewSet):
         cpermissions.IsSuperUser
         | cpermissions.IsITDept
         | cpermissions.IsHead
-        | cpermissions.IsStudent
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.ResponseFilter
     
