@@ -153,7 +153,7 @@ class Student(models.Model):
     def __str__(self):
         """String representation of Student."""
         # return f"{self.matric_no if self.matric_no else self.student_id}"
-        return f"{self.matric_no or self.student_id or self.user.email} - {self.user.first_name} {self.user.last_name} - {self.user.emai}"
+        return f"{self.matric_no or self.student_id or self.user.email} - {self.user.first_name} {self.user.last_name} - {self.user.email}"
 
     def get_current_course_registrations(self, session, semester):
         return CourseRegistration.objects.filter(student=self, session__is_current=True, semester=semester)
