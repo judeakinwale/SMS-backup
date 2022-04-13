@@ -45,8 +45,11 @@ class Quiz(models.Model):
             #     models.QuizTaker.objects.create(student=student, quiz=self)
             #     print(f"quiz taker created, student {student} registered for quiz {self}")
             for course_registration in related_course_registrations:
-                models.QuizTaker.objects.create(student=course_registration.student, quiz=self)
-                print(f"quiz taker created, student {course_registration.student} registered for quiz {self}")
+                try:
+                    models.QuizTaker.objects.get(student=course_registration.student, quiz=self)
+                except Exception:
+                    models.QuizTaker.objects.create(student=course_registration.student, quiz=self)
+                    print(f"quiz taker created, student {course_registration.student} registered for quiz {self}")
         except Exception:
             pass
         
