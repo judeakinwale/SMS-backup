@@ -20,7 +20,7 @@ class Quiz(models.Model):
     description = models.TextField(null=True, blank=True)
     timer = models.IntegerField(default=15)
     max_score = models.IntegerField(default=10)
-    grade = models.ForeignKey('Grade', on_delete=models.CASCADE, null=True)
+    grade = models.ForeignKey('Grade', on_delete=models.CASCADE, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_completed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
