@@ -238,7 +238,7 @@ CORS_ALLOWED_ORIGINS = [
     # 'http://127.0.0.1:8000',
 ]
 
-
+APPEND_SLASH = True # Append slashes to prevent 404s
 
 # Enable Heroku
 django_heroku.settings(locals())
