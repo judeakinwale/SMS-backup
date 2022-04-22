@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.first_name is not None and self.last_name is not None:
             return f"{self.last_name} {self.first_name}"
         else:
-            return self.email
+            return f"{self.email}"
 
     # def get_staff(self):
     #     if self.is_staff is True:
@@ -283,7 +283,7 @@ class Biodata(models.Model):
         if self.user.first_name and self.user.last_name:
             return f"{self.user.last_name} {self.user.first_name}"
         else:
-            return self.user.email
+            return f"{self.user.email}"
 
 
 class AcademicData(models.Model):
@@ -446,7 +446,7 @@ class HealthData(models.Model):
 
     def __str__(self):
         """String representation of HealthData."""
-        return self.biodata
+        return f"{self.biodata}"
 
 
 class FamilyData(models.Model):
@@ -475,4 +475,4 @@ class FamilyData(models.Model):
 
     def __str__(self):
         """String representation of FamilyData."""
-        return self.biodata
+        return f"{self.biodata}"
