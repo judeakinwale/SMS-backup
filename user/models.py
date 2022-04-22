@@ -218,7 +218,7 @@ class CourseAdviser(models.Model):
 
     def __str__(self):
         """String representation of CourseAdviser."""
-        return self.staff
+        return f"{self.staff}"
 
 
 class Biodata(models.Model):
