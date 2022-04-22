@@ -432,7 +432,7 @@ class HealthData(models.Model):
     genotype = models.CharField(max_length=300, null=True, blank=True)
     allergies = models.TextField(null=True, blank=True)
     diabetes = models.BooleanField(default=False)
-    STIs = models.TextField(null=True, blank=False)
+    STIs = models.TextField(null=True, blank=True)
     heart_disease = models.TextField(null=True, blank=True)
     disabilities = models.TextField(null=True, blank=True)
     respiratory_problems = models.TextField(null=True, blank=True)
