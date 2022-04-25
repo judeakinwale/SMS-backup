@@ -281,8 +281,8 @@ class AcademicDataResponseSerializer(AcademicDataSerializer):
     """serializer for the AcademicData model"""
 
     student = BaseStudentSerializer(read_only=True)
-    specialization = aserializers.SpecializationSerializer(read_only=True)
-    department = aserializers.DepartmentSerializer(read_only=True)
+    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
+    department = aserializers.DepartmentResponseSerializer(read_only=True)
     level = aserializers.LevelSerializer(read_only=True)
     semester = aserializers.SemesterSerializer(read_only=True)
     session = aserializers.SessionSerializer(read_only=True)
@@ -1071,7 +1071,7 @@ class StaffSerializer(BaseStaffSerializer):
 
 class StaffResponseSerializer(StaffSerializer):
 
-    specialization = aserializers.SpecializationSerializer(read_only=True)
+    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
 
 
 class StudentSerializer(BaseStudentSerializer):
@@ -1082,9 +1082,9 @@ class StudentSerializer(BaseStudentSerializer):
     # user = BaseUserSerializer()
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     academic_data = AcademicDataSerializer(required=False, allow_null=True)
-    results = ResultSerializer(source='result_set', many=True, read_only=True)
-    course_registrations = CourseRegistrationSerializer(source='courseregistration_set', many=True, read_only=True)
-    registered_quizes = qserializers.QuizTakerSerializer(source='quiztaker_set', many=True, read_only=True)
+    results = ResultResponseSerializer(source='result_set', many=True, read_only=True)
+    course_registrations = CourseRegistrationResponseSerializer(source='courseregistration_set', many=True, read_only=True)
+    registered_quizes = qserializers.QuizTakerResponseSerializer(source='quiztaker_set', many=True, read_only=True)
 
     class Meta(BaseStudentSerializer.Meta):
         additional_fields = [
@@ -1222,7 +1222,8 @@ class StudentSerializer(BaseStudentSerializer):
 
 class StudentResponseSerializer(StudentSerializer):
 
-    specialization = aserializers.SpecializationSerializer(read_only=True)
+    academic_data = AcademicDataResponseSerializer(read_only=True)
+    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
 
 
 class AccountSerializer(BaseUserSerializer):
