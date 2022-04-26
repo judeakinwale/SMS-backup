@@ -196,7 +196,7 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
     )
     gpa = serializers.ReadOnlyField(source='get_gpa')
     cgpa = serializers.ReadOnlyField(source='get_cgpa')
-    course_adviser = serializers.ReadOnlyField()
+    # course_adviser = serializers.ReadOnlyField()
 
     class Meta:
         model = models.AcademicData
@@ -211,7 +211,7 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             'department',
             'gpa',
             'cgpa',
-            'course_adviser',
+            # 'course_adviser',
             'level',
             'semester',
             'session',
@@ -534,17 +534,6 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:courseadviser-detail'},
         }
-
-
-class CourseAdviserResponseSerializer(CourseAdviserSerializer):
-    """serializer for the CourseAdviser model"""
-
-    staff = BaseStaffSerializer(read_only=True)
-    specialization = aserializers.SpecializationSerializer(read_only=True)
-    department = aserializers.DepartmentSerializer(read_only=True)
-    level = aserializers.LevelSerializer(read_only=True)
-    semester = aserializers.SemesterSerializer(read_only=True)
-    session = aserializers.SessionSerializer(read_only=True)
 
 
 class BiodataSerializer(serializers.HyperlinkedModelSerializer):
@@ -1074,6 +1063,17 @@ class StaffResponseSerializer(StaffSerializer):
     specialization = aserializers.SpecializationResponseSerializer(read_only=True)
 
 
+class CourseAdviserResponseSerializer(CourseAdviserSerializer):
+    """serializer for the CourseAdviser model"""
+
+    staff = StaffSerializer(read_only=True)
+    specialization = aserializers.SpecializationSerializer(read_only=True)
+    department = aserializers.DepartmentSerializer(read_only=True)
+    level = aserializers.LevelSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
+
+
 class StudentSerializer(BaseStudentSerializer):
     """serializer for the Student model"""
 
@@ -1234,7 +1234,19 @@ class AcademicDataResponseSerializer(AcademicDataSerializer):
     level = aserializers.LevelSerializer(read_only=True)
     semester = aserializers.SemesterSerializer(read_only=True)
     session = aserializers.SessionSerializer(read_only=True)
-    course_adviser = CourseAdviserSerializer(read_only=True)
+    course_adviser = CourseAdviserResponseSerializer(read_only=True)
+    
+    class Meta(AcademicDataSerializer.Meta):
+        additional_fields = [
+            'course_adviser',
+        ]
+        fields = AcademicDataSerializer.Meta.fields + additional_fields
+
+
+class StudentBaseResponseSerializer(StudentSerializer):
+    """serializer for the Student model"""
+
+    academic_data = AcademicDataResponseSerializer(read_only=True)
 
 
 class StudentResponseSerializer(StudentSerializer):
@@ -1246,7 +1258,7 @@ class StudentResponseSerializer(StudentSerializer):
 class AccountSerializer(BaseUserSerializer):
     biodata = BiodataSerializer(required=False, allow_null=True)
     staff = StaffSerializer(source='staff_set', many=True, read_only=True)
-    student = StudentSerializer(source='student_set', many=True, read_only=True)
+    student = StudentBaseResponseSerializer(source='student_set', many=True, read_only=True)
     # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseUserSerializer.Meta):
