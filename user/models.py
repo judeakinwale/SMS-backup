@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from user import managers
 from academics import models as acmodels
+from . import utils
 # from academics import serializers as aserializers
 
 # Create your models here.
@@ -181,6 +182,20 @@ class Student(models.Model):
             lvl = self.academic_data.first().level
             return lvl.code
         except Exception:
+            return None
+        
+    def notices(self):
+        try:
+            notices = utils.get_all_user_notices(self.user)
+            return notices
+        except:
+            return None
+        
+    def information(self):
+        try:
+            information = utils.get_all_user_information(self.user)
+            return information
+        except:
             return None
 
 

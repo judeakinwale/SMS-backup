@@ -230,3 +230,27 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'information:scope-detail'}
         }
+
+
+class ScopeStringRelatedSerializer(ScopeSerializer):
+    """serializer for the Scope model"""
+
+    faculty = serializers.StringRelatedField()
+    departmment = serializers.StringRelatedField()
+    specialization = serializers.StringRelatedField()
+    course = serializers.StringRelatedField()
+    level = serializers.StringRelatedField()
+
+
+class InformationResponseSerializer(InformationSerializer):
+
+    # source = UserSerializer(read_only=True)
+    # scope = ScopeSerializer(read_only=True)
+    scope = ScopeStringRelatedSerializer(read_only=True)
+
+
+class NoticeResponseSerializer(NoticeSerializer):
+
+    # source = UserSerializer(read_only=True)
+    # scope = ScopeSerializer(read_only=True)
+    scope = ScopeStringRelatedSerializer(read_only=True)

@@ -55,7 +55,7 @@ class Scope(models.Model):
     """Model definition for Scope."""
 
     faculty = models.ForeignKey(amodels.Faculty, on_delete=models.CASCADE, null=True, blank=True)
-    departmment = models.ForeignKey(amodels.Department, on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey(amodels.Department, on_delete=models.CASCADE, null=True, blank=True)
     specialization = models.ForeignKey(
         amodels.Specialization,
         on_delete=models.CASCADE,
@@ -65,7 +65,7 @@ class Scope(models.Model):
     course = models.ForeignKey(amodels.Course, on_delete=models.CASCADE, null=True, blank=True)
     level = models.ForeignKey(amodels.Level, on_delete=models.CASCADE, null=True, blank=True)
 
-    description = models.CharField(max_length=250)
+    description = models.CharField(max_length=250, null=True, blank=True)
     is_general = models.BooleanField(default=True)
     is_first_year = models.BooleanField(default=False)
     is_final_year = models.BooleanField(default=False)

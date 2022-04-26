@@ -6,6 +6,7 @@ from user import models
 from academics import models as amodels
 from academics import serializers as aserializers
 from assessment import serializers as qserializers
+from information import serializers as iserializers
 
 # For JWT and drf-yasg integration
 from drf_yasg.utils import swagger_auto_schema
@@ -1085,6 +1086,9 @@ class StudentSerializer(BaseStudentSerializer):
     results = ResultResponseSerializer(source='result_set', many=True, read_only=True)
     course_registrations = CourseRegistrationResponseSerializer(source='courseregistration_set', many=True, read_only=True)
     registered_quizes = qserializers.QuizTakerResponseSerializer(source='quiztaker_set', many=True, read_only=True)
+    notices = iserializers.NoticeResponseSerializer(many=True, read_only=True)
+    information = iserializers.InformationResponseSerializer(many=True, read_only=True)
+    # notices = serializers.ReadOnlyField()
 
     class Meta(BaseStudentSerializer.Meta):
         additional_fields = [
@@ -1093,6 +1097,8 @@ class StudentSerializer(BaseStudentSerializer):
             'results',
             'course_registrations',
             'registered_quizes',
+            'notices',
+            'information',
         ]
         fields = BaseStudentSerializer.Meta.fields + additional_fields
 
