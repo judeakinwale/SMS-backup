@@ -401,6 +401,8 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
+    value = serializers.ReadOnlyField(source='get_value')
+    grade = serializers.ReadOnlyField(source='get_grade')
 
     class Meta:
         model = models.Result
@@ -410,6 +412,8 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
             'score',
             'course',
             'student',
+            'value',
+            'grade',
             'semester',
             'session',
             'timestamp',

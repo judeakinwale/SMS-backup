@@ -174,7 +174,7 @@ class Grade(models.Model):
     max_score = models.IntegerField(default=10)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
     updated = models.BooleanField(default=False)
-    update_reason = models.TextField()
+    update_reason = models.TextField(null=True, blank=True)
     update_timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     class Meta:
@@ -198,3 +198,24 @@ class Grade(models.Model):
                 return 'Fail'
         except Exception:
             return "Not Available"
+        
+    def get_grade(self):
+        try:
+            if self.score / 100.00 >= 0.9:
+                return 'A+'
+            elif self.score / 100.00 >= 0.8:
+                return 'A'
+            elif self.score / 100.00 >= 0.7:
+                return 'B'
+            elif self.score / 100.00 >= 0.6:
+                return 'C'
+            elif self.score / 100.00 >= 0.5:
+                return 'D'
+            elif self.score / 100.00 >= 0.4:
+                return 'E'
+            elif self.score == 0:
+                return "Not Available"
+            else:
+                return 'F'
+        except Exception:
+            return None

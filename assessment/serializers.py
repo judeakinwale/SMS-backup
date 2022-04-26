@@ -9,6 +9,7 @@ class GradeSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Grade model"""
     
     value = serializers.ReadOnlyField(source='get_value')
+    grade = serializers.ReadOnlyField(source='get_grade')
 
     class Meta:
         model = models.Grade
@@ -18,6 +19,7 @@ class GradeSerializer(serializers.HyperlinkedModelSerializer):
             'score',
             'max_score',
             'value',
+            'grade',
             'timestamp',
         ]
         extra_kwargs = {

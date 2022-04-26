@@ -385,6 +385,9 @@ class Result(models.Model):
     session = models.ForeignKey(acmodels.Session, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(acmodels.Semester, on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+    updated = models.BooleanField(default=False)
+    update_reason = models.TextField(null=True, blank=True)
+    update_timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     class Meta:
         """Meta definition for Result."""
@@ -395,7 +398,39 @@ class Result(models.Model):
 
     def __str__(self):
         """String representation of Result."""
-        return f"{self.score}"
+        return f"{self.score} of 100"
+    
+    def get_value(self):
+        try:
+            if self.score / 100.00 >= 0.5:
+                return 'Pass'
+            elif self.score == 0:
+                return "Not Available"
+            else:
+                return 'Fail'
+        except Exception:
+            return None
+        
+    def get_grade(self):
+        try:
+            if self.score / 100.00 >= 0.9:
+                return 'A+'
+            elif self.score / 100.00 >= 0.8:
+                return 'A'
+            elif self.score / 100.00 >= 0.7:
+                return 'B'
+            elif self.score / 100.00 >= 0.6:
+                return 'C'
+            elif self.score / 100.00 >= 0.5:
+                return 'D'
+            elif self.score / 100.00 >= 0.4:
+                return 'E'
+            elif self.score == 0:
+                return "Not Available"
+            else:
+                return 'F'
+        except Exception:
+            return None
 
 
 class AcademicHistory(models.Model):
