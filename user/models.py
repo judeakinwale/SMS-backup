@@ -346,10 +346,20 @@ class AcademicData(models.Model):
         return f"{self.student.matric_no if self.student.matric_no else self.student.student_id}"
 
     def get_gpa(self):
-        pass
+        return None
 
     def get_cgpa(self):
-        pass
+        return None
+    
+    def course_adviser(self):
+        try:
+            course_adviser = CourseAdviser.objects.get(
+                specialization=self.specialization,
+                level=self.level
+            )
+            return course_adviser
+        except:
+            return None
 
 
 class CourseRegistration(models.Model):

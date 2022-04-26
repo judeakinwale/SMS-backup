@@ -194,6 +194,9 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
+    gpa = serializers.ReadOnlyField(source='get_gpa')
+    cgpa = serializers.ReadOnlyField(source='get_cgpa')
+    course_adviser = serializers.ReadOnlyField()
 
     class Meta:
         model = models.AcademicData
@@ -206,6 +209,9 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             'end_date',
             'qualification',
             'department',
+            'gpa',
+            'cgpa',
+            'course_adviser',
             'level',
             'semester',
             'session',
@@ -276,17 +282,6 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             academic_data = models.AcademicData.objects.create(**validated_data)
             
         return academic_data
-
-
-class AcademicDataResponseSerializer(AcademicDataSerializer):
-    """serializer for the AcademicData model"""
-
-    student = BaseStudentSerializer(read_only=True)
-    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
-    department = aserializers.DepartmentResponseSerializer(read_only=True)
-    level = aserializers.LevelSerializer(read_only=True)
-    semester = aserializers.SemesterSerializer(read_only=True)
-    session = aserializers.SessionSerializer(read_only=True)
 
 
 class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
@@ -1228,6 +1223,18 @@ class StudentSerializer(BaseStudentSerializer):
         # return super().update(instance, validated_data)
 
         return student
+
+
+class AcademicDataResponseSerializer(AcademicDataSerializer):
+    """serializer for the AcademicData model"""
+
+    student = BaseStudentSerializer(read_only=True)
+    specialization = aserializers.SpecializationResponseSerializer(read_only=True)
+    department = aserializers.DepartmentResponseSerializer(read_only=True)
+    level = aserializers.LevelSerializer(read_only=True)
+    semester = aserializers.SemesterSerializer(read_only=True)
+    session = aserializers.SessionSerializer(read_only=True)
+    course_adviser = CourseAdviserSerializer(read_only=True)
 
 
 class StudentResponseSerializer(StudentSerializer):
