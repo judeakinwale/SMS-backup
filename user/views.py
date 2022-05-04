@@ -885,13 +885,23 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     try:
         # send an e-mail to the user
         print(reset_password_token.user)
-        title="School Management Portal"
+        title = "School Management Portal"
+        backend_base_url = instance.request.build_absolute_uri()
+        frontend_base_url = "127.0.0.1:3000" # Should be gotten from the frontend devs
+        rel_path = ""
+        if not reset_password_token.user.is_staff:
+            rel_path = f"{frontend_base_url}/student/newpassword"
+        else:
+            rel_path = f"{frontend_base_url}/staff/confirmpassword"
+            
         context = {
             'current_user': reset_password_token.user,
             'username': reset_password_token.user.first_name,
             'email': reset_password_token.user.email,
+            
             'reset_password_url': "{}?token={}".format(
-                instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+                # instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+                rel_path,
                 reset_password_token.key)
         }
 
