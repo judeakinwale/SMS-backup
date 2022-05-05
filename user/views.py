@@ -886,9 +886,8 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         # send an e-mail to the user
         print(reset_password_token.user)
         title = "School Management Portal"
-        # backend_base_url = instance.request.build_absolute_uri()
-        backend_base_url = instance.request.get_host()
-        frontend_base_url = "127.0.0.1:3000" # Should be gotten from the frontend devs
+        backend_base_url = instance.request.build_absolute_uri()
+        frontend_base_url = "http://127.0.0.1:3000" # Should be gotten from the frontend devs
         rel_path = ""
         if not reset_password_token.user.is_staff:
             rel_path = f"{frontend_base_url}/student/newpassword"
