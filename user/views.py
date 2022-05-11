@@ -8,12 +8,21 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import generics, viewsets, permissions
 from rest_framework import status, views, response
+from rest_framework_simplejwt.views import (
+  TokenObtainPairView, TokenRefreshView, TokenVerifyView
+)
 from user import serializers, models, filters
 from core import permissions as cpermissions
 from core import utils
 
 from django_rest_passwordreset.signals import reset_password_token_created
 from drf_yasg.utils import no_body, swagger_auto_schema
+
+from django_rest_passwordreset.views import (
+    ResetPasswordValidateTokenViewSet, 
+    ResetPasswordConfirmViewSet,
+    ResetPasswordRequestTokenViewSet
+)
 
 # Create your views here.
 
@@ -142,7 +151,12 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
     )
     def put(self, request, *args, **kwargs):
         """put method docstring"""
-        return super().put(request, *args, **kwargs)
+        try:
+            return super().put(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_description="partial update authenticated user details and update or create biodata",
@@ -150,7 +164,12 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
     )
     def patch(self, request, *args, **kwargs):
         """patch method docstring"""
-        return super().patch(request, *args, **kwargs)
+        try:
+            return super().patch(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StaffViewSet(viewsets.ModelViewSet):
@@ -1034,6 +1053,96 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
         """destroy method docstring"""
         return super().destroy(request, *args, **kwargs)
 
+
+# Simple JWT integration with drf-yasg (views)
+# Decorated drf-simplejwt views
+class DecoratedTokenObtainPairView(TokenObtainPairView):
+    @swagger_auto_schema(
+        operation_description='login',
+        operation_summary='login',
+        responses={
+            status.HTTP_200_OK: serializers.TokenObtainPairResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DecoratedTokenRefreshView(TokenRefreshView):
+    @swagger_auto_schema(
+        operation_description='generata access token using refresh token',
+        operation_summary='generata access token using refresh token',
+        responses={
+            status.HTTP_200_OK: serializers.TokenRefreshResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DecoratedTokenVerifyView(TokenVerifyView):
+    @swagger_auto_schema(
+        operation_description='verify access token is still valid',
+        operation_summary='verify access token is still valid',
+        responses={
+            status.HTTP_200_OK: serializers.TokenVerifyResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+
+# django-passwordreset integration with drf-yasg (views)
+# Decorated django-passwordreset views
+class DecoratedResetPasswordValidateTokenViewSet(ResetPasswordValidateTokenViewSet):
+    @swagger_auto_schema(
+        operation_description='validate password reset token',
+        operation_summary='validate password reset token',
+    )
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class DecoratedResetPasswordConfirmViewSet(ResetPasswordConfirmViewSet):
+    @swagger_auto_schema(
+        operation_description='confirm password reset token',
+        operation_summary='confirm password reset token',
+    )
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class DecoratedResetPasswordRequestTokenViewSet(ResetPasswordRequestTokenViewSet):
+    @swagger_auto_schema(
+        operation_description='request password reset token',
+        operation_summary='request password reset token',
+    )
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
 
 @receiver(reset_password_token_created)
