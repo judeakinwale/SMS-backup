@@ -73,7 +73,7 @@ class Staff(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to={'is_staff': True},
     )
-    employee_id = models.CharField(max_length=250, null=True)
+    employee_id = models.CharField(max_length=250, unique=True, null=True)
     specialization = models.ForeignKey(
         acmodels.Specialization,
         on_delete=models.DO_NOTHING,
@@ -129,8 +129,8 @@ class Student(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    matric_no = models.CharField(max_length=250, null=True, blank=True)
-    student_id = models.CharField(max_length=250, null=True)
+    matric_no = models.CharField(max_length=250, unique=True, null=True, blank=True)
+    student_id = models.CharField(max_length=250, unique=True, null=True)
     specialization = models.ForeignKey(
         acmodels.Specialization,
         on_delete=models.DO_NOTHING,

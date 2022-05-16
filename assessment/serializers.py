@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from assessment import models
+from assessment import models, utils
 from academics import models as amodels
 from user import models as umodels
 
@@ -289,6 +289,11 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                 models.QuizTaker.objects.get(student=reg.student, quiz=quiz)
             except Exception:
                 models.QuizTaker.objects.create(student=reg.student, quiz=quiz)
+                
+            try:
+                utils.send_assigned_assessment_email(reg.student)
+            except Exception as e:
+                print(f"send_assigned_assessment_email error: {e}")
         
         return quiz
 
