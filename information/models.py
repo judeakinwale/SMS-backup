@@ -38,6 +38,7 @@ class Notice(models.Model):
     scope = models.ForeignKey("Scope", on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
     message = models.TextField()
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Notice."""
@@ -69,6 +70,7 @@ class Scope(models.Model):
     is_general = models.BooleanField(default=True)
     is_first_year = models.BooleanField(default=False)
     is_final_year = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Scope."""

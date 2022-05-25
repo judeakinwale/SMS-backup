@@ -22,7 +22,7 @@ class InformationImageSerializer(serializers.HyperlinkedModelSerializer):
             'information',
             'image',
             'description',
-            'timestamp'
+            'timestamp',
         ]
         extra_kwargs = {
             'url': {'view_name': 'information:informationimage-detail'}
@@ -168,7 +168,7 @@ class NoticeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.Notice
-        fields = ['id', 'url', 'title', 'message', 'source', 'scope']
+        fields = ['id', 'url', 'title', 'message', 'source', 'scope', 'timestamp']
         extra_kwargs = {
             'url': {'view_name': 'information:notice-detail'}
         }
@@ -226,6 +226,7 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
             'is_final_year',
             'information_set',
             'notice_set',
+            'timestamp',
         ]
         extra_kwargs = {
             'url': {'view_name': 'information:scope-detail'}
