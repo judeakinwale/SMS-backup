@@ -142,8 +142,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/staticfiles/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media/'
+# If azure blob storage details not available
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media/'
 
 # Azure blob storage configuration
 
@@ -153,11 +154,11 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 # AZURE_LOCATION = '<blob container name>'
 # AZURE_CONTAINER = '<blob container name>'
 
-AZURE_ACCOUNT_NAME = 'djangoblobstorage'
-AZURE_ACCOUNT_KEY = 'kKjdW9ZSOD+9oijhoxACRuTb14vwkHNwCvJiWKjF7gKD6N6tCom/yfnPLIUzxVPDRodt8A4JF+LrtStTRT986g=='
+AZURE_ACCOUNT_NAME = os.environ.get('AZURE_ACCOUNT_NAME') # 'djangoblobstorage'
+AZURE_ACCOUNT_KEY = os.environ.get('AZURE_ACCOUNT_KEY') # 'kKjdW9ZSOD+9oijhoxACRuTb14vwkHNwCvJiWKjF7gKD6N6tCom/yfnPLIUzxVPDRodt8A4JF+LrtStTRT986g=='
 AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-AZURE_LOCATION = 'blobapistorage'
-AZURE_CONTAINER = 'blobapistorage'
+AZURE_LOCATION = os.environ.get('AZURE_LOCATION') # 'blobapistorage'
+AZURE_CONTAINER = os.environ.get('AZURE_CONTAINER') # 'blobapistorage'
 
 STATIC_LOCATION = 'static'
 STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
@@ -165,8 +166,8 @@ STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
 # # DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'  # Doesn't work
 
 # Throws error if the above azure config is not accurate
-# STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
-# DEFAULT_FILE_STORAGE = 'SMS.storage_backends.custom_azure.AzureMediaStorage'
+STATICFILES_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_STORAGE = 'SMS.storage_backends.custom_azure.AzureMediaStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
