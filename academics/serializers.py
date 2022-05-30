@@ -93,6 +93,12 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
         # allow_null=True,
         # required=False,
     )
+    source_specialization = serializers.PrimaryKeyRelatedField(
+        queryset=models.Specialization.objects.all(),
+        # view_name='academics:specialization-detail',
+        allow_null=True,
+        required=False,
+    )
     course = serializers.PrimaryKeyRelatedField(
         # many=True,
         queryset=models.Course.objects.all(),
@@ -120,6 +126,7 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'specialization',
+            'source_specialization',
             'course',
             'semester',
             'level',
