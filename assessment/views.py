@@ -175,7 +175,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
         | cpermissions.IsStaff
         | cpermissions.IsITDept
         | cpermissions.IsLecturer
-        | cpermissions.IsHead
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AnswerFilter
     
@@ -256,7 +256,7 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
         | cpermissions.IsITDept
         | cpermissions.IsHead
         | cpermissions.IsLecturer
-        | cpermissions.IsStudent
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.QuizTakerFilter
     
@@ -417,6 +417,7 @@ class GradeViewSet(viewsets.ModelViewSet):
         | cpermissions.IsITDept
         | cpermissions.IsHead
         | cpermissions.IsStaff
+        | cpermissions.IsStudent
         | cpermissions.IsLecturerOrReadOnly
     ]
     
