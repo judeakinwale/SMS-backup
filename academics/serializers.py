@@ -74,6 +74,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
             'specialization',
             'name',
             'code',
+            'unit',
             'description',
             'coordinator',
             'quizzes',

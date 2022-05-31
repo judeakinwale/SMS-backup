@@ -123,6 +123,7 @@ class Course(models.Model):
     specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
     name = models.CharField(max_length=250, unique=True)
     code = models.CharField(max_length=250, null=True, blank=True, unique=True)
+    unit = models.IntegerField(default=2)
     description = models.TextField(null=True, blank=True)
     coordinator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
