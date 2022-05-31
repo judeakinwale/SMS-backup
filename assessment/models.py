@@ -167,6 +167,33 @@ class Response(models.Model):
         return self.question.label
 
 
+class Assignment(models.Model):
+    """Model definition for Assignment."""
+
+    title = models.CharField(max_length=250)
+    question = models.TextField(null=True, blank=True)
+    answer = models.TextField(null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    file = models.FileField(
+        verbose_name='answer_file',
+        upload_to='files/assignment_answers/',
+        blank=True, null=True
+    )
+    max_score = models.IntegerField(default=10)
+    due_date = models.DateTimeField()
+
+    class Meta:
+        """Meta definition for Assignment."""
+
+        ordering = ['id']
+        verbose_name = _("Assignment")
+        verbose_name_plural = _("Assignments")
+
+    def __str__(self):
+        """String representation of Assignment."""
+        return self.label
+
+
 class Grade(models.Model):
     """Model definition for Grade."""
 

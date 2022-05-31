@@ -347,6 +347,34 @@ class QuizTakerResponseSerializer(QuizTakerSerializer):
     grade = GradeSerializer(read_only=True)
 
 
+class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Assignment model"""
+
+    course = serializers.PrimaryKeyRelatedField(
+        queryset=amodels.Course.objects.all(),
+        # view_name='academics:course-detail',
+        allow_null=True,
+        required=False
+    )
+
+    class Meta:
+        model = models.Assignment
+        fields = [
+            'id',
+            'url',
+            'title',
+            'question',
+            'answer',
+            'course',
+            'file',
+            'max_score',
+            'due_date',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'assessment:assignment-detail'}
+        }
+
+
 class ResponseSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Response model"""
 

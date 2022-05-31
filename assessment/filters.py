@@ -56,6 +56,18 @@ class QuizTakerFilter(filters.FilterSet):
         }
 
 
+class AssignmentFilter(filters.FilterSet):
+    # label = filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = models.Assignment
+        fields = {
+            'title': ['icontains'],
+            'question': ['icontains'],
+        }
+
+
+
 class ResponseFilter(filters.FilterSet):
 
     class Meta:
