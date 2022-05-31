@@ -73,9 +73,11 @@ class RecommendedCoursesFilter(filters.FilterSet):
         model = models.RecommendedCourses
         fields = {
             'specialization__name': ['icontains'],
-            'specialization__code': ['icontains'],
+            'specialization__code': ['exact', 'icontains'],
+            'specialization__id': ['exact'],
             'course__name': ['icontains'],
-            'course__code': ['icontains'],
+            'course__code': ['exact', 'icontains'],
+            'course__id': ['exact'],
             'semester__semester': ['icontains'],
-            'level__code': ['icontains'],
+            'level__code': ['exact', 'icontains', 'gte', 'lte'],
         }
