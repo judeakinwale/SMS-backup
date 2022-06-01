@@ -11,6 +11,8 @@ router.register('answer', views.AnswerViewSet)
 router.register('quiztaker', views.QuizTakerViewSet)
 router.register('response', views.ResponseViewSet)
 router.register('assignment', views.AssignmentViewSet)
+router.register('assignmenttaker', views.AssignmentTakerViewSet)
+router.register('assignment/response', views.AssignmentResponseViewSet)
 router.register('grade', views.GradeViewSet)
 
 

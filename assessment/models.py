@@ -172,14 +172,14 @@ class Assignment(models.Model):
 
     title = models.CharField(max_length=250)
     question = models.TextField(null=True, blank=True)
-    answer = models.TextField(null=True, blank=True)
+    # answer = models.TextField(null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     file = models.FileField(
         verbose_name='answer_file',
         upload_to='files/assignment_answers/',
         blank=True, null=True
     )
-    max_score = models.IntegerField(default=10)
+    max_score = models.FloatField(default=10.00)
     due_date = models.DateTimeField()
 
     class Meta:
@@ -191,7 +191,82 @@ class Assignment(models.Model):
 
     def __str__(self):
         """String representation of Assignment."""
-        return self.label
+        return self.title
+
+
+class AssignmentTaker(models.Model):
+    """Model definition for QuizTaker."""
+
+    student = models.ForeignKey(Student, related_name="assigned_asignments", on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, related_name="assigned_asignments", on_delete=models.CASCADE, null=True, blank=True)
+    grade = models.ForeignKey("Grade", on_delete=models.CASCADE, null=True, blank=True)
+    score = models.FloatField(default=0.00)
+    completed = models.BooleanField(default=False)
+    # is_passed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    class Meta:
+        """Meta definition for QuizTaker."""
+
+        ordering = ['id']
+        verbose_name = _("QuizTaker")
+        verbose_name_plural = _("QuizTakers")
+
+    def __str__(self):
+        """String representation of QuizTaker."""
+        return f"{self.student}"
+    
+    def is_passed(self):
+        if self.score == 0.00 or not self.assignment.max_score:
+            return False
+        
+        score_ratio = self.score/self.assignment.max_score
+        if score_ratio >= 0.5:
+            return True
+        return False
+
+    # def score(self):
+    #     if self.grade:
+    #         self.grade.max_score = self.quiz.max_score
+    #         self.grade.save()
+    #     else:
+    #         self.grade = Grade.objects.create(max_score=self.quiz.max_score)
+
+    #     score = 0
+    #     if self.response_set.all():
+    #         for response in self.response_set.all():
+    #             if response.answer and (response.answer.is_correct is True):
+    #                 score += 1
+
+    #     if self.grade.score and (self.grade.score == score):
+    #         return self.grade.score
+    #     elif self.grade.score and (self.grade.score > 0):
+    #         return self.grade.score
+    #     else:
+    #         self.grade.score = score
+    #         self.grade.save()
+    #         return self.grade.score
+
+    #     return score
+
+
+class AssignmentResponse(models.Model):
+    """Model definition for Response."""
+
+    assignment_taker = models.ForeignKey(AssignmentTaker, related_name="assignment_responses", on_delete=models.CASCADE)
+    assignment = models.ForeignKey(Assignment, related_name="assignment_responses", on_delete=models.CASCADE)
+    answer = models.TextField(null=True, blank=True)
+
+    class Meta:
+        """Meta definition for Response."""
+
+        ordering = ['id']
+        verbose_name = _("Response")
+        verbose_name_plural = _("Responses")
+
+    def __str__(self):
+        """String representation of Response."""
+        return f"{self.assignment.title} - response"
 
 
 class Grade(models.Model):

@@ -347,34 +347,6 @@ class QuizTakerResponseSerializer(QuizTakerSerializer):
     grade = GradeSerializer(read_only=True)
 
 
-class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
-    """serializer for the Assignment model"""
-
-    course = serializers.PrimaryKeyRelatedField(
-        queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail',
-        allow_null=True,
-        required=False
-    )
-
-    class Meta:
-        model = models.Assignment
-        fields = [
-            'id',
-            'url',
-            'title',
-            'question',
-            'answer',
-            'course',
-            'file',
-            'max_score',
-            'due_date',
-        ]
-        extra_kwargs = {
-            'url': {'view_name': 'assessment:assignment-detail'}
-        }
-
-
 class ResponseSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Response model"""
 
@@ -405,3 +377,115 @@ class ResponseSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assessment:response-detail'}
         }
+
+
+class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the Assignment model"""
+
+    course = serializers.PrimaryKeyRelatedField(
+        queryset=amodels.Course.objects.all(),
+        # view_name='academics:course-detail',
+        allow_null=True,
+        required=False
+    )
+
+    class Meta:
+        model = models.Assignment
+        fields = [
+            'id',
+            'url',
+            'title',
+            'question',
+            # 'answer',
+            'course',
+            'file',
+            'max_score',
+            'due_date',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'assessment:assignment-detail'}
+        }
+
+
+class AssignmentTakerSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the AssignmentTaker model"""
+
+    # student = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
+    student = serializers.PrimaryKeyRelatedField(
+        # queryset=get_user_model().objects.all(),
+        queryset=umodels.Student.objects.all(),
+        # view_name='user:user-detail',
+        allow_null=True,
+        required=False,
+    )
+    assignment = serializers.PrimaryKeyRelatedField(
+        queryset=models.Assignment.objects.all(),
+        # view_name='assessment:assignment-detail',
+        allow_null=True,
+        required=False,
+    )
+    grade = serializers.PrimaryKeyRelatedField(
+        queryset=models.Grade.objects.all(),
+        # view_name='assessment:grade-detail',
+        allow_null=True,
+        required=False,
+    )
+    is_passed = serializers.ReadOnlyField()
+
+    class Meta:
+        model = models.AssignmentTaker
+        fields = [
+            'id',
+            'url',
+            'student',
+            'assignment',
+            'grade',
+            'score',
+            'is_passed',
+            'completed',
+            'timestamp',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'assessment:assignmenttaker-detail'}
+        }
+        
+        
+class AssignmentTakerResponseSerializer(AssignmentTakerSerializer):
+    """serializer for the AssignmentTaker model"""
+
+    assignment = AssignmentSerializer(read_only=True)
+    grade = GradeSerializer(read_only=True)
+
+
+class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
+    """serializer for the AssignmentResponse model"""
+
+    assignment_taker = serializers.PrimaryKeyRelatedField(
+        queryset=models.AssignmentTaker.objects.all(),
+        # view_name='assessment:assignmenttaker-detail',
+    )
+    assignment = serializers.PrimaryKeyRelatedField(
+        queryset=models.Assignment.objects.all(),
+        # view_name='assessment:assignment-detail',
+    )
+    # answer = serializers.PrimaryKeyRelatedField(
+    #     queryset=models.Answer.objects.all(),
+    #     # view_name='assessment:answer-detail',
+    #     allow_null=True,
+    #     required=False,
+    # )
+
+    class Meta:
+        model = models.AssignmentResponse
+        fields = [
+            'id',
+            'url',
+            'assignment_taker',
+            'assignment',
+            'answer',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'assessment:assignmentresponse-detail'}
+        }
+
+

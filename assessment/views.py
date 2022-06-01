@@ -486,6 +486,172 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+class AssignmentTakerViewSet(viewsets.ModelViewSet):
+    queryset = models.AssignmentTaker.objects.all()
+    serializer_class = serializers.AssignmentTakerSerializer
+    serializer_action_classes = {
+        'list': serializers.AssignmentTakerResponseSerializer,
+        'retrieve': serializers.AssignmentTakerResponseSerializer,
+    }
+    permission_classes = [
+        cpermissions.IsSuperUser
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsLecturer
+        | cpermissions.IsStudentOrReadOnly
+    ]
+    # filterset_class = filters.AssignmentTakerFilter
+    
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
+
+    def perform_create(self, serializer):
+        # return serializer.save(student=self.request.user.student_set.all().first())
+        return super().perform_create(serializer)
+    
+    @swagger_auto_schema(
+        operation_description="create a assignment taker",
+        operation_summary='create assignment taker'
+    )
+    def create(self, request, *args, **kwargs):
+        """create method docstring"""
+        try:
+            return super().create(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_description="list all assignment takers",
+        operation_summary='list assignment takers'
+    )
+    def list(self, request, *args, **kwargs):
+        """list method docstring"""
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="retrieve a assignment taker",
+        operation_summary='retrieve assignment taker'
+    )
+    def retrieve(self, request, *args, **kwargs):
+        """retrieve method docstring"""
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="update a assignment taker",
+        operation_summary='update assignment taker'
+    )
+    def update(self, request, *args, **kwargs):
+        """update method docstring"""
+        try:
+            return super().update(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="partial_update a assignment taker",
+        operation_summary='partial_update assignment taker'
+    )
+    def partial_update(self, request, *args, **kwargs):
+        """partial_update method docstring"""
+        try:
+            return super().partial_update(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="delete a assignment taker",
+        operation_summary='delete assignment taker'
+    )
+    def destroy(self, request, *args, **kwargs):
+        """destroy method docstring"""
+        return super().destroy(request, *args, **kwargs)
+
+
+class AssignmentResponseViewSet(viewsets.ModelViewSet):
+    queryset = models.AssignmentResponse.objects.all()
+    serializer_class = serializers.AssignmentResponseSerializer
+    permission_classes = [
+        cpermissions.IsSuperUser
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsStudentOrReadOnly
+    ]
+    # filterset_class = filters.AssignmentResponseFilter
+    
+    @swagger_auto_schema(
+        operation_description="create a response (assignment response)",
+        operation_summary='create response (assignment response)'
+    )
+    def create(self, request, *args, **kwargs):
+        """create method docstring"""
+        try:
+            return super().create(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_description="list all responses (assignment responses)",
+        operation_summary='list responses (assignment responses)'
+    )
+    def list(self, request, *args, **kwargs):
+        """list method docstring"""
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="retrieve a response (assignment response)",
+        operation_summary='retrieve response (assignment response)'
+    )
+    def retrieve(self, request, *args, **kwargs):
+        """retrieve method docstring"""
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="update a response (assignment response)",
+        operation_summary='update response (assignment response)'
+    )
+    def update(self, request, *args, **kwargs):
+        """update method docstring"""
+        try:
+            return super().update(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="partial_update a response (assignment response)",
+        operation_summary='partial_update response (assignment response)'
+    )
+    def partial_update(self, request, *args, **kwargs):
+        """partial_update method docstring"""
+        try:
+            return super().partial_update(request, *args, **kwargs)
+            print(**kwargs)
+        except Exception as e:
+            error_resp = {'detail': f"{e}"}
+            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="delete a response (assignment response)",
+        operation_summary='delete response (assignment response)'
+    )
+    def destroy(self, request, *args, **kwargs):
+        """destroy method docstring"""
+        return super().destroy(request, *args, **kwargs)
+
+
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = models.Grade.objects.all()
     serializer_class = serializers.GradeSerializer
