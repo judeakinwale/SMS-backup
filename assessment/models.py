@@ -39,7 +39,6 @@ class Quiz(models.Model):
         try:
             # related_students = self.course.specialization.student_set.all()
             related_course_registrations = self.course.courseregistration_set.all()
-            # print(f"related students for created quiz: {related_students}")
             print(f"related course registrations for created quiz:\n {related_course_registrations}")
             # for student in related_students:
             #     models.QuizTaker.objects.create(student=student, quiz=self)
@@ -202,7 +201,6 @@ class AssignmentTaker(models.Model):
     grade = models.ForeignKey("Grade", on_delete=models.CASCADE, null=True, blank=True)
     score = models.FloatField(default=0.00)
     completed = models.BooleanField(default=False)
-    # is_passed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
@@ -224,30 +222,6 @@ class AssignmentTaker(models.Model):
         if score_ratio >= 0.5:
             return True
         return False
-
-    # def score(self):
-    #     if self.grade:
-    #         self.grade.max_score = self.quiz.max_score
-    #         self.grade.save()
-    #     else:
-    #         self.grade = Grade.objects.create(max_score=self.quiz.max_score)
-
-    #     score = 0
-    #     if self.response_set.all():
-    #         for response in self.response_set.all():
-    #             if response.answer and (response.answer.is_correct is True):
-    #                 score += 1
-
-    #     if self.grade.score and (self.grade.score == score):
-    #         return self.grade.score
-    #     elif self.grade.score and (self.grade.score > 0):
-    #         return self.grade.score
-    #     else:
-    #         self.grade.score = score
-    #         self.grade.save()
-    #         return self.grade.score
-
-    #     return score
 
 
 class AssignmentResponse(models.Model):
