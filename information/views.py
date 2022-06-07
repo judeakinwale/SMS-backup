@@ -114,6 +114,11 @@ class NoticeViewSet(viewsets.ModelViewSet):
         print(self.request.data)
         if 'source' not in self.request.data:
             self.request.data['source'] = self.request.user
+        print(self.request.data)
+        print("serializer data")
+        print(serializer.data)
+        print("serializer validated data")
+        print(serializer.validated_data)
         return super().perform_create(serializer)
             
         # related_students = utils.get_related_students(notice.scope)
