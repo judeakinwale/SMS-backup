@@ -14,10 +14,11 @@ def send_simple_email(template_path: str, reciepients: list, subject: str = "Ema
       message = get_template(template_path).render(context) # path to the email template - 'email/results.html'
 
     msg = EmailMessage(
-      subject,
-      message,
-      sender_email,
-      reciepients,
+      subject=subject,
+      body=message,
+      from_email=sender_email,
+      to=reciepients,
+      cc=cc
     )
     msg.content_subtype = "html"  # Main content is now text/html
     msg.send()
@@ -26,11 +27,12 @@ def send_simple_email(template_path: str, reciepients: list, subject: str = "Ema
     return True
   except Exception as e:
     print(f"There was an exception sending mail: {e}")
+    raise Exception(f"Error Sending Email: {e}")
     return False
 
 
 def get_related_students(scope):
-  # if not scope: raise Exception("scope not provided")
+  """Get all students related to a scope"""
   students = umodels.Student.objects.none()
   department_id_set = set()
   specialization_id_set = set()
@@ -39,51 +41,51 @@ def get_related_students(scope):
   try:
     
     if scope.is_general:
-      print("is_general")
+      # print("is_general")
       students = umodels.Student.objects.all()
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(student_id_set)}")
+      # print(f"student count: {len(student_id_set)}")
 
     if scope.is_first_year:
-      print("is_first_year")
+      # print("is_first_year")
       students = umodels.Student.objects.filter(academic_data__level__code=100)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(student_id_set)}")
+      # print(f"student count: {len(student_id_set)}")
 
     if scope.is_final_year:
-      print("is_final_year")
+      # print("is_final_year")
       students = umodels.Student.objects.all()
       for student in students: 
         student_id_set.add(student.id)
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(student_id_set)}")      
+      # print(f"student count: {len(student_id_set)}")      
       
     if scope.department:
-      print("department")
+      # print("department")
       specializations = scope.department.specialization_set.all()
       for specialization in specializations: specialization_id_set.add(specialization.id)
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(student_id_set)}")      
+      # print(f"student count: {len(student_id_set)}")      
       
     if scope.specialization:
-      print("specialization")
+      # print("specialization")
       # students = umodels.Student.objects.filter(specialization=scope.specialization)
       students = scope.specialization.student_set.all()
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(student_id_set)}")      
+      # print(f"student count: {len(student_id_set)}")      
       
     if scope.course:
-      print("course")
+      # print("course")
       course_registrations = scope.course.courseregistration_set.all()
       for registration in course_registrations: student_id_set.add(registration.student.id)
-      print(f"student count: {len(student_id_set)}")      
+      # print(f"student count: {len(student_id_set)}")      
       
     if scope.level:
-      print("level")
+      # print("level")
       students = umodels.Student.objects.filter(academic_data__level__code=scope.level.code)
       for student in students: student_id_set.add(student.id)
       
@@ -96,33 +98,23 @@ def get_related_students(scope):
 
 
 def send_student_notice_email(notice, context: dict = {}):
-  students = get_related_students(notice.scope)
-  reciepients = [student.user.email for student in students]
-  # email = reciepient.user.email
-  subject = notice.title
-  context["notice"] = notice
-  # context["reciepient"] = reciepient
-  
   try:
-    # mail = send_simple_email('email/notice.html', [email], subject, context)
-    mail = send_simple_email('email/notice.html', reciepients, subject, context, [notice.source.email, "judeakinwale@gmail.com"])
+    students = get_related_students(notice.scope)
+    reciepients = [student.user.email for student in students]
+    subject = notice.title
+    context["notice"] = notice
+
+    mail = send_simple_email(
+      template_path='email/notice.html', 
+      reciepients=reciepients,
+      subject=subject,
+      context=context, 
+      cc=[notice.source.email, "judeakinwale@gmail.com"]
+    )
     print(f'Notice mail sent successfully: {mail}')
+    if not mail:
+      raise Exception("Error Sending Notice Email")
     return True
   except Exception as e:
-    print(f'An exception occurred while sending Notice mail: {e}')
+    print(f'An exception occurred: {e}')
     return False
-    
-
-# def send_staff_notice_email(notice, context: dict = {}):
-#   reciepients = [notice.source]
-#   subject = notice.title
-#   context["notice"] = notice
-#   # context["reciepient"] = reciepient
-  
-#   try:
-#     mail = send_simple_email('email/notice.html', [reciepients], subject, context)
-#     print(f'Staff Notice mail sent successfully: {mail}')
-#     return True
-#   except Exception as e:
-#     print(f'An exception occurred while sending Staff Notice mail: {e}')
-#     return False
