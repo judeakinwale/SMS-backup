@@ -105,7 +105,7 @@ def send_student_notice_email(notice, context: dict = {}):
   
   try:
     # mail = send_simple_email('email/notice.html', [email], subject, context)
-    mail = send_simple_email('email/notice.html', [reciepients], subject, context, [notice.source.email, "judeakinwale@gmail.com"])
+    mail = send_simple_email('email/notice.html', reciepients, subject, context, [notice.source.email, "judeakinwale@gmail.com"])
     print(f'Notice mail sent successfully: {mail}')
     return True
   except Exception as e:
