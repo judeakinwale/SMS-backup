@@ -183,7 +183,7 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
         allow_null=True,
         required=False,
     )
-    departmment = serializers.PrimaryKeyRelatedField(
+    department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
         # view_name='academics:departmment-detail',
         allow_null=True,
@@ -216,7 +216,7 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'url',
             'faculty',
-            'departmment',
+            'department',
             'specialization',
             'course',
             'level',

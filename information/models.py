@@ -90,7 +90,7 @@ class Scope(models.Model):
 
     def __str__(self):
         """String representation of Scope."""
-        return self.description
+        return f"{self.description or self.id}"
 
 
 class InformationImage(models.Model):
