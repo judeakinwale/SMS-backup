@@ -96,7 +96,8 @@ def get_related_students(scope):
 
 
 def send_student_notice_email(notice, context: dict = {}):
-  reciepients = get_related_students(notice.scope)
+  students = get_related_students(notice.scope)
+  reciepients = [student.user.email for student in students]
   # email = reciepient.user.email
   subject = notice.title
   context["notice"] = notice
@@ -104,7 +105,7 @@ def send_student_notice_email(notice, context: dict = {}):
   
   try:
     # mail = send_simple_email('email/notice.html', [email], subject, context)
-    mail = send_simple_email('email/notice.html', [reciepients], subject, context, [notice.source])
+    mail = send_simple_email('email/notice.html', [reciepients], subject, context, [notice.source.email, "judeakinwale@gmail.com"])
     print(f'Notice mail sent successfully: {mail}')
     return True
   except Exception as e:
