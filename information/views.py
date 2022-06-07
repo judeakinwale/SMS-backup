@@ -112,11 +112,13 @@ class NoticeViewSet(viewsets.ModelViewSet):
             
         # user = self.request.data['source'] if 'source' in self.request.data else self.request.user
         print(self.request.data)
-        if 'source' not in self.request.data:
-            self.request.data['source'] = self.request.user.id
-        print(self.request.data)
-        print("serializer")
-        print(serializer)
+        # if 'source' not in self.request.data:
+        #     self.request.data['source'] = self.request.user.id
+        print(serializer.validated_data)
+        if 'source' not in serializer.validated_data:
+            serializer.validated_data['source'] = self.request.user
+        # print("serializer")
+        # print(serializer)
         print("serializer validated data")
         print(serializer.validated_data)
         return super().perform_create(serializer)
