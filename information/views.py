@@ -111,7 +111,7 @@ class NoticeViewSet(viewsets.ModelViewSet):
         #     notice = serializer.save(source=self.request.user)
             
         # user = self.request.data['source'] if 'source' in self.request.data else self.request.user
-        
+        print(self.request.data)
         if 'source' not in self.request.data:
             self.request.data['source'] = self.request.user
         return super().perform_create(serializer)
