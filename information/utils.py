@@ -85,7 +85,7 @@ def send_student_notice_email(notice, context: dict = {}):
   # email = reciepient.user.email
   subject = notice.title
   context["notice"] = notice
-  context["reciepient"] = reciepient
+  # context["reciepient"] = reciepient
   
   try:
     # mail = send_simple_email(request, 'email/notice.html', [email], subject, context)
@@ -101,7 +101,7 @@ def send_staff_notice_email(notice, context: dict = {}):
   reciepients = [notice.source]
   subject = notice.title
   context["notice"] = notice
-  context["reciepient"] = reciepient
+  # context["reciepient"] = reciepient
   
   try:
     mail = send_simple_email(request, 'email/notice.html', [reciepients], subject, context)
