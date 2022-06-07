@@ -46,6 +46,15 @@ class Notice(models.Model):
         ordering = ['id']
         verbose_name = _("Notice")
         verbose_name_plural = _("Notices")
+        
+    def save(self, *args, **kwargs):
+        notice = super(Notice, self).save(*args, **kwargs)
+        
+        related_students = utils.get_related_students(notice.scope)
+        staff_notice_email = utils.send_staff_notice_email(notice)
+        notice_email = utils.send_student_notice_email(notice)
+        
+        return notice
 
     def __str__(self):
         """String representation of Notice."""

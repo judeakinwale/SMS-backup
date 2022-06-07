@@ -1,7 +1,7 @@
 # from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
-from information import models, serializers, filters
+from information import models, serializers, filters, utils
 from core import permissions as cpermissions
 
 from drf_yasg.utils import no_body, swagger_auto_schema
@@ -105,9 +105,14 @@ class NoticeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         try:
             user = self.request.data['source']
-            return super().perform_create(serializer)
+            notice = super().perform_create(serializer)
         except Exception:
-            return serializer.save(source=self.request.user)
+            notice = serializer.save(source=self.request.user)
+            
+        # related_students = utils.get_related_students(notice.scope)
+        # notice_emails = utils.send_student_notice_email(notice)
+            
+        return notice
     
     @swagger_auto_schema(
         operation_description="create a notice",
