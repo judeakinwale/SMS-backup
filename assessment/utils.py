@@ -62,7 +62,7 @@ def create_scoped_student_assignment_notice(request, assignment):
       source=request.user,
       scope=scope,
       title=f"New Assignment for {assignment.course.code}",
-      message=f"Remember to submit your assignment before, {assignment.due_date}",
+      message=f"You have a new assignment for {assignment.course.code}. Remember to submit your assignment before, {assignment.due_date}.",
     )
     return True
   except Exception as e:
