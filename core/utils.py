@@ -187,6 +187,7 @@ def send_sample_email(request):
         return True
     except Exception as e:
         print(f"There was an exception: {e}")
+        raise Exception(f"There was an exception sending mail: {e}")
         return False
 
 

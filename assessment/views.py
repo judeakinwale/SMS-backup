@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
 from core import permissions as cpermissions
-from assessment import models, serializers, filters
+from assessment import models, serializers, filters, utils
 
 from drf_yasg.utils import no_body, swagger_auto_schema
 
@@ -421,6 +421,17 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AssignmentFilter
+    
+    def perform_create(self, serializer):
+        try:
+            user = self.request.data['supervisor']
+            assignment =  super().perform_create(serializer)
+        except Exception:
+            assignment =  serializer.save(supervisor=self.request.user)
+            
+        utils.create_scoped_student_assignment_notice(request, assignment)
+        return assignment
+        
     
     @swagger_auto_schema(
         operation_description="create a assignment",

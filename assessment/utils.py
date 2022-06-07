@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
+from information import models as imodels
+
 
 def send_simple_email(request, template_path: str, reciepients: list, subject: str = "Email", context: dict = {}) -> bool:
   try:
@@ -37,3 +39,32 @@ def send_assigned_assessment_email(student):
     print(f'An exception occurred while sending Assigned Assessment: {e}')
     return False
   
+
+def create_scoped_student_assignment_notice(request, assignment):
+  """Assessment can be either a test or assignment"""
+  scope = imodels.Scope.objects.none()
+  try:
+    scope = imodels.Scope.objects.filter(course=assignment.course) 
+    if not scope:
+      raise Exception("Relevant Scope doesn't exist")
+    
+    if len(scope) > 1: 
+      scope = imodels.Scope.objects.filter(course=assignment.course).first()
+    else:
+      scope = imodels.Scope.objects.get(course=assignment.course)
+  except Exception as e:
+    print("Relevant scope created")
+    print(f"because of error: {e}")
+    scope = imodels.Scope.objects.create(course=assignment.course, is_general=False)
+
+  try:
+    notice = imodels.Notice.objects.create(
+      source=request.user,
+      scope=scope,
+      title=f"New Assignment for {assignment.course.code}",
+      message=f"Remember to submit your assignment before, {assignment.due_date}",
+    )
+    return True
+  except Exception as e:
+    print(f"Error creating assignment notice: {e}")
+    return False

@@ -169,13 +169,18 @@ class Response(models.Model):
 class Assignment(models.Model):
     """Model definition for Assignment."""
 
+    supervisor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        limit_choices_to={'is_staff': True}
+    )
     title = models.CharField(max_length=250)
     question = models.TextField(null=True, blank=True)
     # answer = models.TextField(null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     file = models.FileField(
         verbose_name='answer_file',
-        upload_to='files/assignment_answers/',
+        upload_to='files/assignment_questions/',
         blank=True, null=True
     )
     max_score = models.FloatField(default=10.00)
@@ -230,6 +235,11 @@ class AssignmentResponse(models.Model):
     assignment_taker = models.ForeignKey(AssignmentTaker, related_name="assignment_responses", on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, related_name="assignment_responses", on_delete=models.CASCADE)
     answer = models.TextField(null=True, blank=True)
+    file = models.FileField(
+        verbose_name='answer_file',
+        upload_to='files/assignment_answers/',
+        blank=True, null=True
+    )
 
     class Meta:
         """Meta definition for Response."""

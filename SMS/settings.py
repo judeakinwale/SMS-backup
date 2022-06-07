@@ -225,16 +225,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # else:
 #     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST')
-# EMAIL_HOST_PASSWORD = '******'  # email password, use env variables
-# EMAIL_HOST_USER = 'myaccount@gmail.com'  # email address
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
 EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL')
-EMAIL_PORT = 587
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_PORT = os.environ.get('SMTP_PORT') # 587
+DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL')
+DEFAULT_FROM_NAME = os.environ.get('FROM_NAME')
 
 # django-cors-headers configuration
 # https://github.com/adamchainz/django-cors-headers#configuration
-CORS_ORIGIN_ALLOW_ALL = True # For development
+CORS_ORIGIN_ALLOW_ALL = True if DEBUG else False
 CORS_ALLOWED_ORIGINS = [
     # 'http://127.0.0.1:8000',
 ]

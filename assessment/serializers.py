@@ -405,6 +405,11 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'assessment:assignment-detail'}
         }
+        
+    # def create(self, validated_data):
+    #     assignment = super().create(validated_data)
+    #     # notice = imodels.Notice.create(source)
+    #     return assignment
 
 
 class AssignmentTakerSerializer(serializers.HyperlinkedModelSerializer):
