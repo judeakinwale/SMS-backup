@@ -78,7 +78,7 @@ class Scope(models.Model):
     level = models.ForeignKey(amodels.Level, on_delete=models.CASCADE, null=True, blank=True)
 
     description = models.CharField(max_length=250, null=True, blank=True)
-    is_general = models.BooleanField(default=True)
+    is_general = models.BooleanField(default=False)
     is_first_year = models.BooleanField(default=False)
     is_final_year = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
