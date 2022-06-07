@@ -42,13 +42,13 @@ def get_related_students(scope):
       print("is_general")
       students = umodels.Student.objects.all()
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(students)}")
+      print(f"student count: {len(student_id_set)}")
 
     if scope.is_first_year:
       print("is_first_year")
       students = umodels.Student.objects.filter(academic_data__level__code=100)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(students)}")
+      print(f"student count: {len(student_id_set)}")
 
     if scope.is_final_year:
       print("is_final_year")
@@ -58,7 +58,7 @@ def get_related_students(scope):
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(students)}")      
+      print(f"student count: {len(student_id_set)}")      
       
     if scope.department:
       print("department")
@@ -67,20 +67,20 @@ def get_related_students(scope):
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(students)}")      
+      print(f"student count: {len(student_id_set)}")      
       
     if scope.specialization:
       print("specialization")
       # students = umodels.Student.objects.filter(specialization=scope.specialization)
       students = scope.specialization.student_set.all()
       for student in students: student_id_set.add(student.id)
-      print(f"student count: {len(students)}")      
+      print(f"student count: {len(student_id_set)}")      
       
     if scope.course:
       print("course")
       course_registrations = scope.course.courseregistration_set.all()
       for registration in course_registrations: student_id_set.add(registration.student.id)
-      print(f"student count: {len(students)}")      
+      print(f"student count: {len(student_id_set)}")      
       
     if scope.level:
       print("level")
