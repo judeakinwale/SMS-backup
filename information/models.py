@@ -53,7 +53,7 @@ class Notice(models.Model):
         print('created notice')
         print(self)
         related_students = utils.get_related_students(self.scope)
-        staff_notice_email = utils.send_staff_notice_email(self)
+        # staff_notice_email = utils.send_staff_notice_email(self)
         notice_email = utils.send_student_notice_email(self)
         
         return notice
