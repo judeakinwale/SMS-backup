@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
 from core import permissions as cpermissions
 from assessment import models, serializers, filters, utils
+from academics import models as amodels
 
 from drf_yasg.utils import no_body, swagger_auto_schema
 
@@ -21,6 +22,11 @@ class QuizViewSet(viewsets.ModelViewSet):
     filterset_class = filters.QuizFilter
 
     def perform_create(self, serializer):
+        
+        course = amodels.Course.objects.get(id=int(self.request.data['course']))
+        if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
+            raise Exception(f"Not authorized to create an test for course with id {course.id}")
+        
         try:
             user = self.request.data['supervisor']
             return super().perform_create(serializer)
@@ -423,6 +429,11 @@ class AssignmentViewSet(viewsets.ModelViewSet):
     filterset_class = filters.AssignmentFilter
     
     def perform_create(self, serializer):
+        
+        course = amodels.Course.objects.get(id=int(self.request.data['course']))
+        if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
+            raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
+        
         try:
             user = self.request.data['supervisor']
             assignment =  super().perform_create(serializer)

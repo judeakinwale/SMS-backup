@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
 from information import models, serializers, filters, utils
 from core import permissions as cpermissions
+from academics import models as amodels
 
 from drf_yasg.utils import no_body, swagger_auto_schema
 
@@ -103,16 +104,22 @@ class NoticeViewSet(viewsets.ModelViewSet):
     filterset_class = filters.NoticeFilter
 
     def perform_create(self, serializer):
-        try:
-            user = self.request.data['source']
-            notice = super().perform_create(serializer)
-        except Exception:
-            notice = serializer.save(source=self.request.user)
+        # try:
+        #     user = self.request.data['source']
+        #     notice = super().perform_create(serializer)
+        # except Exception:
+        #     notice = serializer.save(source=self.request.user)
+            
+        # user = self.request.data['source'] if 'source' in self.request.data else self.request.user
+        
+        if 'source' not in self.request.data:
+            self.request.data['source'] = self.request.user
+        return super().perform_create(serializer)
             
         # related_students = utils.get_related_students(notice.scope)
         # notice_emails = utils.send_student_notice_email(notice)
             
-        return notice
+        # return notice
     
     @swagger_auto_schema(
         operation_description="create a notice",
