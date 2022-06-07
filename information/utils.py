@@ -92,7 +92,7 @@ def send_student_notice_email(notice, context: dict = {}):
     mail = send_simple_email(request, 'email/notice.html', [reciepients], subject, context)
     print(f'Notice mail sent successfully: {mail}')
     return True
-  except:
+  except Exception as e:
     print(f'An exception occurred while sending Notice mail: {e}')
     return False
     
@@ -107,6 +107,6 @@ def send_staff_notice_email(notice, context: dict = {}):
     mail = send_simple_email(request, 'email/notice.html', [reciepients], subject, context)
     print(f'Staff Notice mail sent successfully: {mail}')
     return True
-  except:
+  except Exception as e:
     print(f'An exception occurred while sending Staff Notice mail: {e}')
     return False
