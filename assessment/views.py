@@ -29,9 +29,13 @@ class QuizViewSet(viewsets.ModelViewSet):
         
         try:
             user = self.request.data['supervisor']
-            return super().perform_create(serializer)
+            quiz = super().perform_create(serializer)
         except Exception:
-            return serializer.save(supervisor=self.request.user)
+            quiz = serializer.save(supervisor=self.request.user)
+        
+        utils.create_scoped_student_assessment_notice(request=request, assessment=assignment, _type="test")
+        
+        return quiz
     
     @swagger_auto_schema(
         operation_description="create a quiz",
@@ -440,7 +444,8 @@ class AssignmentViewSet(viewsets.ModelViewSet):
         except Exception:
             assignment =  serializer.save(supervisor=self.request.user)
             
-        utils.create_scoped_student_assignment_notice(request, assignment)
+        utils.create_scoped_student_assessment_notice(request=request, assessment=assignment)
+        
         return assignment
         
     

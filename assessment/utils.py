@@ -40,31 +40,39 @@ def send_assigned_assessment_email(student):
     return False
   
 
-def create_scoped_student_assignment_notice(request, assignment):
-  """Assessment can be either a test or assignment"""
+def create_scoped_student_assessment_notice(request, assessment, _type="assignment"):
+  """
+  Assessment can be either a test or assessment.
+  _type can be either "assignmet" or "test"
+  """
+  message = f"You have a new {_type} for {assessment.course.code}."
+  
+  if _type == "assignment":
+    message = f"{message} Remember to submit your {_type} before, {assessment.due_date}."
+
   scope = imodels.Scope.objects.none()
   try:
-    scope = imodels.Scope.objects.filter(course=assignment.course) 
+    scope = imodels.Scope.objects.filter(course=assessment.course) 
     if not scope:
       raise Exception("Relevant Scope doesn't exist")
     
     if len(scope) > 1: 
-      scope = imodels.Scope.objects.filter(course=assignment.course).first()
+      scope = imodels.Scope.objects.filter(course=assessment.course).first()
     else:
-      scope = imodels.Scope.objects.get(course=assignment.course)
+      scope = imodels.Scope.objects.get(course=assessment.course)
   except Exception as e:
     print("Relevant scope created")
     print(f"because of error: {e}")
-    scope = imodels.Scope.objects.create(course=assignment.course, is_general=False)
+    scope = imodels.Scope.objects.create(course=assessment.course, is_general=False)
 
   try:
     notice = imodels.Notice.objects.create(
       source=request.user,
       scope=scope,
-      title=f"New Assignment for {assignment.course.code}",
-      message=f"You have a new assignment for {assignment.course.code}. Remember to submit your assignment before, {assignment.due_date}.",
+      title=f"New Assignment for {assessment.course.code}",
+      message=message,
     )
     return True
   except Exception as e:
-    print(f"Error creating assignment notice: {e}")
+    print(f"Error creating assessment notice: {e}")
     return False
