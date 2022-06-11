@@ -13,11 +13,12 @@ from rest_framework_simplejwt.views import (
 )
 from user import serializers, models, filters
 from core import permissions as cpermissions
-from core import utils
+from core import utils, mixins
 
 from django_rest_passwordreset.signals import reset_password_token_created
 from drf_yasg.utils import no_body, swagger_auto_schema
-
+# For django rest password reset
+# TODO: Add link to drf password reset documentation
 from django_rest_passwordreset.views import (
     ResetPasswordValidateTokenViewSet, 
     ResetPasswordConfirmViewSet,
@@ -27,7 +28,7 @@ from django_rest_passwordreset.views import (
 # Create your views here.
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.swagger_documentation_factory("user with biodata"), viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserSerializer
     serializer_action_classes = {
@@ -36,8 +37,8 @@ class UserViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
     ]
     filterset_class = filters.UserFilter
 
@@ -48,6 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
 
     def perform_create(self, serializer):
+        # TODO: Refactor account creation mail logic
         user = serializer.save()
         try:
             reciepients = [user.email, ]
@@ -61,69 +63,6 @@ class UserViewSet(viewsets.ModelViewSet):
             print(f"user creation email error: {e} \n")
 
         return user
-
-    @swagger_auto_schema(
-        operation_description="create a user and attached biodata",
-        operation_summary='create user and attached biodata'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all users and attached biodata",
-        operation_summary='list users and attached biodata'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a user and attached biodata",
-        operation_summary='retrieve user and attached biodata'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a user and attached biodata",
-        operation_summary='update user and update or create attached biodata'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a user and attached biodata",
-        operation_summary='partial_update user and update or create attached biodata'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="update a user and attached biodata",
-        operation_summary='delete user'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
 class ManageUserApiView(generics.RetrieveUpdateAPIView):
@@ -172,7 +111,7 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
             return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StaffViewSet(viewsets.ModelViewSet):
+class StaffViewSet(mixins.swagger_documentation_factory("staff with user"), viewsets.ModelViewSet):
     queryset = models.Staff.objects.all()
     serializer_class = serializers.StaffSerializer
     serializer_action_classes = {
@@ -181,9 +120,9 @@ class StaffViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsStaff
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsStaff
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.StaffFilter
 
@@ -194,77 +133,12 @@ class StaffViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
         
     def perform_create(self, serializer):
-        try:
-            user = self.request.data.get("user")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(user=self.request.user)
-    
-    @swagger_auto_schema(
-        operation_description="create a staff and attached user",
-        operation_summary='create staff and attached user'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all staff and attached user",
-        operation_summary='list staff and attached user'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a staff and attached user",
-        operation_summary='retrieve staff and attached user'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a staff and attached user",
-        operation_summary='update staff and attached user'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a staff and attached user",
-        operation_summary='partial_update staff and attached user'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="update a staff and attached user",
-        operation_summary='delete staff'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "user" not in serializer.validated_data:
+            serializer.validated_data["user"] = self.request.user
+        return super().perform_create(serializer)
 
 
-class CourseAdviserViewSet(viewsets.ModelViewSet):
+class CourseAdviserViewSet(mixins.swagger_documentation_factory("course adviser"), viewsets.ModelViewSet):
     queryset = models.CourseAdviser.objects.all()
     serializer_class = serializers.CourseAdviserSerializer
     serializer_action_classes = {
@@ -273,10 +147,10 @@ class CourseAdviserViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsHead
-        | cpermissions.IsDean
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsHead
+        or cpermissions.IsDean
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseAdviserFilter
 
@@ -285,72 +159,9 @@ class CourseAdviserViewSet(viewsets.ModelViewSet):
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
-    
-    @swagger_auto_schema(
-        operation_description="create a course adviser",
-        operation_summary='create course adviser'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all course advisers",
-        operation_summary='list all course advisers'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a course adviser",
-        operation_summary='retrieve course adviser'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a course adviser",
-        operation_summary='update course adviser'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a course adviser",
-        operation_summary='partial_update course adviser'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a course adviser",
-        operation_summary='delete course adviser'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(mixins.swagger_documentation_factory("student with user"), viewsets.ModelViewSet):
     queryset = models.Student.objects.all()
     serializer_class = serializers.StudentSerializer
     serializer_action_classes = {
@@ -359,9 +170,9 @@ class StudentViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsStudent
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsStudent
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.StudentFilter
 
@@ -372,77 +183,12 @@ class StudentViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
         
     def perform_create(self, serializer):
-        try:
-            user = self.request.data.get("user")
-            return super().perform_create(serializer)
-        except Exception:
-            return serializer.save(user=self.request.user)
-    
-    @swagger_auto_schema(
-        operation_description="create a student and attached user",
-        operation_summary='create student and attached user'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all students and attached user",
-        operation_summary='list all students and attached user'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a student and attached user",
-        operation_summary='retrieve student and attached user'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a student and attached user",
-        operation_summary='update student and attached user'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a student and attached user",
-        operation_summary='partial_update student and attached user'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a student and attached user",
-        operation_summary='delete student'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "user" not in serializer.validated_data:
+            serializer.validated_data["user"] = self.request.user
+        return super().perform_create(serializer)
 
 
-class BiodataViewSet(viewsets.ModelViewSet):
+class BiodataViewSet(mixins.swagger_documentation_factory("biodata", "a", "biodata"), viewsets.ModelViewSet):
     queryset = models.Biodata.objects.all()
     serializer_class = serializers.BiodataSerializer
     serializer_action_classes = {
@@ -451,10 +197,10 @@ class BiodataViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
-        | cpermissions.IsStaff
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
+        or cpermissions.IsStaff
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.BiodataFilter
 
@@ -465,78 +211,12 @@ class BiodataViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
     
     def perform_create(self, serializer):
-        try:
-            user = self.request.data.get("user")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(user=self.request.user)
-            
-        
-    @swagger_auto_schema(
-        operation_description="create a biodata and attached academic data, health data and family data",
-        operation_summary='create biodata and attached academic data, health data and family data'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all biodata and attached academic data, health data and family data",
-        operation_summary='list all biodata and attached academic data, health data and family data'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a biodata and attached academic data, health data and family data",
-        operation_summary='retrieve biodata and attached academic data, health data and family data'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a biodata and attached academic data, health data and family data",
-        operation_summary='update biodata and attached academic data, health data and family data'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a biodata and attached academic data, health data and family data",
-        operation_summary='partial_update biodata and attached academic data, health data and family data'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a biodata and attached academic data, health data and family data",
-        operation_summary='delete biodata'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "user" not in serializer.validated_data:
+            serializer.validated_data["user"] = self.request.user
+        return super().perform_create(serializer)
 
 
-class ResultViewSet(viewsets.ModelViewSet):
+class ResultViewSet(mixins.swagger_documentation_factory("result"), viewsets.ModelViewSet):
     queryset = models.Result.objects.all()
     serializer_class = serializers.ResultSerializer
     serializer_action_classes = {
@@ -545,9 +225,9 @@ class ResultViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.ResultFilter
 
@@ -556,72 +236,9 @@ class ResultViewSet(viewsets.ModelViewSet):
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
             return super().get_serializer_class()
-    
-    @swagger_auto_schema(
-        operation_description="create a result for a course and attached student",
-        operation_summary='create result for a course and attached student'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all results",
-        operation_summary='list results'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a result for a course and attached student",
-        operation_summary='retrieve result for a course and attached student'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a result for a course and attached student",
-        operation_summary='update result for a course and attached student'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a result for a course and attached student",
-        operation_summary='partial_update result for a course and attached student'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a result for a course and attached student",
-        operation_summary='delete result'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class AcademicDataViewSet(viewsets.ModelViewSet):
+class AcademicDataViewSet(mixins.swagger_documentation_factory("academic data", "an", "academic data"), viewsets.ModelViewSet):
     queryset = models.AcademicData.objects.all()
     serializer_class = serializers.AcademicDataSerializer
     serializer_action_classes = {
@@ -630,10 +247,10 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsStaff
-        | cpermissions.IsStudent
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsStaff
+        or cpermissions.IsStudent
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.AcademicDataFilter
 
@@ -644,326 +261,67 @@ class AcademicDataViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
         
     def perform_create(self, serializer):
-        try:
-            user = self.request.data.get("student")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(student=self.request.user.student_set.all().first())
-    
-    @swagger_auto_schema(
-        operation_description="create a academic_data",
-        operation_summary='create academic_data'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all academic_data",
-        operation_summary='list academic_data'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a academic_data",
-        operation_summary='retrieve academic_data'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a academic_data",
-        operation_summary='update academic_data'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a academic_data",
-        operation_summary='partial_update academic_data'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a academic_data",
-        operation_summary='delete academic_data'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "student" not in serializer.validated_data:
+            serializer.validated_data["student"] = self.request.user.student_set.all().first()
+        return super().perform_create(serializer)
 
 
-class AcademicHistoryViewSet(viewsets.ModelViewSet):
+class AcademicHistoryViewSet(mixins.swagger_documentation_factory("academic history", "an", "academic history"), viewsets.ModelViewSet):
     queryset = models.AcademicHistory.objects.all()
     serializer_class = serializers.AcademicHistorySerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
-        | cpermissions.IsStaff
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
+        or cpermissions.IsStaff
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.AcademicHistoryFilter
     
     def perform_create(self, serializer):
-        try:
-            biodata = self.request.data.get("biodata")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(biodata=self.request.user.biodata)
-    
-    @swagger_auto_schema(
-        operation_description="create a academic_history",
-        operation_summary='create academic_history'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all academic_history",
-        operation_summary='list academic_history'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a academic_history",
-        operation_summary='retrieve academic_history'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a academic_history",
-        operation_summary='update academic_history'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a academic_history",
-        operation_summary='partial_update academic_history'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a academic_history",
-        operation_summary='delete academic_history'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "biodata" not in serializer.validated_data:
+            serializer.validated_data["biodata"] = self.request.user.biodata
+        return super().perform_create(serializer)
 
 
-class HealthDataViewSet(viewsets.ModelViewSet):
+class HealthDataViewSet(mixins.swagger_documentation_factory("health data", "a", "health data"), viewsets.ModelViewSet):
     queryset = models.HealthData.objects.all()
     serializer_class = serializers.HealthDataSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
-        | cpermissions.IsStaff
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
+        or cpermissions.IsStaff
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.HealthDataFilter
     
     def perform_create(self, serializer):
-        try:
-            biodata = self.request.data.get("biodata")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(biodata=self.request.user.biodata)
-    
-    @swagger_auto_schema(
-        operation_description="create a health data",
-        operation_summary='create health data'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all health data",
-        operation_summary='list health data'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a health data",
-        operation_summary='retrieve health data'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a health data",
-        operation_summary='update health data'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a health data",
-        operation_summary='partial_update health data'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a health data",
-        operation_summary='delete health data'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "biodata" not in serializer.validated_data:
+            serializer.validated_data["biodata"] = self.request.user.biodata
+        return super().perform_create(serializer)
 
 
-class FamilyDataViewSet(viewsets.ModelViewSet):
+
+class FamilyDataViewSet(mixins.swagger_documentation_factory("family data", "a", "family data"), viewsets.ModelViewSet):
     queryset = models.FamilyData.objects.all()
     serializer_class = serializers.FamilyDataSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsBursar
-        | cpermissions.IsITDept
-        | cpermissions.IsStaff
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsBursar
+        or cpermissions.IsITDept
+        or cpermissions.IsStaff
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.FamilyDataFilter
     
     def perform_create(self, serializer):
-        try:
-            biodata = self.request.data.get("biodata")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(biodata=self.request.user.biodata)
-    
-    @swagger_auto_schema(
-        operation_description="create a family data",
-        operation_summary='create family data'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all family data",
-        operation_summary='list family data'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a family data",
-        operation_summary='retrieve family data'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a family data",
-        operation_summary='update family data'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a family data",
-        operation_summary='partial_update family data'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a family data",
-        operation_summary='delete family data'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "biodata" not in serializer.validated_data:
+            serializer.validated_data["biodata"] = self.request.user.biodata
+        return super().perform_create(serializer)
 
 
-class CourseRegistrationViewSet(viewsets.ModelViewSet):
+class CourseRegistrationViewSet(mixins.swagger_documentation_factory("course registration"), viewsets.ModelViewSet):
     queryset = models.CourseRegistration.objects.all()
     serializer_class = serializers.CourseRegistrationSerializer
     serializer_action_classes = {
@@ -972,8 +330,8 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStudent
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsStudent
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseRegistrationFilter
 
@@ -984,74 +342,9 @@ class CourseRegistrationViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
 
     def perform_create(self, serializer):
-        try:
-            student = self.request.data.get("student")
-            return super().perform_create(serializer)
-        except Exception:
-            serializer.save(student=self.request.user.student_set.all().first())
-    
-    @swagger_auto_schema(
-        operation_description="create a course registration",
-        operation_summary='create course registration'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all course registrations",
-        operation_summary='list course registration'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a course registration",
-        operation_summary='retrieve course registration'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a course registration",
-        operation_summary='update course registration'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a course registration",
-        operation_summary='partial_update course registration'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a course registration",
-        operation_summary='delete course registration'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if "student" not in serializer.validated_data:
+            serializer.validated_data["student"] = self.request.user.student_set.all().first()
+        return super().perform_create(serializer)
 
 
 # Simple JWT integration with drf-yasg (views)
@@ -1159,6 +452,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     """
     try:
         # send an e-mail to the user
+        # TODO: Refactor email logic
         print(reset_password_token.user)
         title = "School Management Portal"
         backend_base_url = instance.request.build_absolute_uri()

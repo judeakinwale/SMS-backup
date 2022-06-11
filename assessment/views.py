@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
 from core import permissions as cpermissions
+from core import mixins
 from assessment import models, serializers, filters, utils
 from academics import models as amodels
 
@@ -9,251 +10,59 @@ from drf_yasg.utils import no_body, swagger_auto_schema
 # Create your views here.
 
 
-class QuizViewSet(viewsets.ModelViewSet):
+class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), viewsets.ModelViewSet):
     queryset = models.Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsLecturer
-        | cpermissions.IsHeadOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsLecturer
+        or cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuizFilter
 
     def perform_create(self, serializer):
-        
+        # confirm the authenticated user has permission to create a test for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
         if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
-            raise Exception(f"Not authorized to create an test for course with id {course.id}")
+            raise Exception(f"Not authorized to create a test for course with id {course.id}")
         
-        try:
-            user = self.request.data['supervisor']
-            quiz = super().perform_create(serializer)
-        except Exception:
-            quiz = serializer.save(supervisor=self.request.user)
-        
+        if 'supervisor' not in serializer.validated_data:
+            serializer.validated_data['supervisor'] = self.request.user
+        # send emails to students registered for the course
         utils.create_scoped_student_assessment_notice(request=request, assessment=assignment, _type="test")
-        
-        return quiz
     
-    @swagger_auto_schema(
-        operation_description="create a quiz",
-        operation_summary='create quiz'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all quizzes",
-        operation_summary='list quizzes'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a quiz",
-        operation_summary='retrieve quiz'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a quiz",
-        operation_summary='update quiz'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a quiz",
-        operation_summary='partial_update quiz'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a quiz",
-        operation_summary='delete quiz'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        return super().perform_create(serializer)
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(mixins.swagger_documentation_factory("question"), viewsets.ModelViewSet):
     queryset = models.Question.objects.all()
     serializer_class = serializers.QuestionSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsLecturer
-        | cpermissions.IsHeadOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsLecturer
+        or cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuestionFilter
-    
-    @swagger_auto_schema(
-        operation_description="create a question",
-        operation_summary='create question'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all questions",
-        operation_summary='list questions'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a question",
-        operation_summary='retrieve question'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a question",
-        operation_summary='update question'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a question",
-        operation_summary='partial_update question'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a question",
-        operation_summary='delete question'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class AnswerViewSet(viewsets.ModelViewSet):
+class AnswerViewSet(mixins.swagger_documentation_factory("answer", "an"), viewsets.ModelViewSet):
     queryset = models.Answer.objects.all()
     serializer_class = serializers.AnswerSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsLecturer
-        | cpermissions.IsHeadOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsLecturer
+        or cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AnswerFilter
-    
-    @swagger_auto_schema(
-        operation_description="create an answer",
-        operation_summary='create answer'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all answers",
-        operation_summary='list answers'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve an answer",
-        operation_summary='retrieve answer'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update an answer",
-        operation_summary='update answer'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update an answer",
-        operation_summary='partial_update answer'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete an answer",
-        operation_summary='delete answer'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class QuizTakerViewSet(viewsets.ModelViewSet):
+class QuizTakerViewSet(mixins.swagger_documentation_factory("quiz taker"), viewsets.ModelViewSet):
     queryset = models.QuizTaker.objects.all()
     serializer_class = serializers.QuizTakerSerializer
     serializer_action_classes = {
@@ -262,11 +71,11 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsHead
-        | cpermissions.IsLecturer
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsHead
+        or cpermissions.IsLecturer
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.QuizTakerFilter
     
@@ -277,243 +86,55 @@ class QuizTakerViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
 
     def perform_create(self, serializer):
-        # return serializer.save(student=self.request.user.student_set.all().first())
+        if "student" not in serializer.validated_data:
+            try:
+                serializer.validated_data["student"] = self.request.user.student_set.all().first()
+            except Exception as e:
+                print(f'An exception occurred: {e}')
+                raise Exception(f"Student not specified for quiz taker")
         return super().perform_create(serializer)
-    
-    @swagger_auto_schema(
-        operation_description="create a quiz taker",
-        operation_summary='create quiz taker'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all quiz takers",
-        operation_summary='list quiz takers'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a quiz taker",
-        operation_summary='retrieve quiz taker'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a quiz taker",
-        operation_summary='update quiz taker'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a quiz taker",
-        operation_summary='partial_update quiz taker'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a quiz taker",
-        operation_summary='delete quiz taker'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class ResponseViewSet(viewsets.ModelViewSet):
+class ResponseViewSet(mixins.swagger_documentation_factory("response"), viewsets.ModelViewSet):
     queryset = models.Response.objects.all()
     serializer_class = serializers.ResponseSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsITDept
-        | cpermissions.IsHead
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsITDept
+        or cpermissions.IsHead
+        or cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.ResponseFilter
-    
-    @swagger_auto_schema(
-        operation_description="create a response (question response)",
-        operation_summary='create response (question response)'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all responses (question responses)",
-        operation_summary='list responses (question responses)'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a response (question response)",
-        operation_summary='retrieve response (question response)'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a response (question response)",
-        operation_summary='update response (question response)'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a response (question response)",
-        operation_summary='partial_update response (question response)'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a response (question response)",
-        operation_summary='delete response (question response)'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class AssignmentViewSet(viewsets.ModelViewSet):
+class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an"), viewsets.ModelViewSet):
     queryset = models.Assignment.objects.all()
     serializer_class = serializers.AssignmentSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsLecturer
-        | cpermissions.IsStudent
-        | cpermissions.IsHeadOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsLecturer
+        or cpermissions.IsStudent
+        or cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AssignmentFilter
     
     def perform_create(self, serializer):
-        
+        # confirm the authenticated user has permission to create an assignment for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
         if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
-        try:
-            user = self.request.data['supervisor']
-            assignment =  super().perform_create(serializer)
-        except Exception:
-            assignment =  serializer.save(supervisor=self.request.user)
-            
+        if 'supervisor' not in serializer.validated_data:
+            serializer.validated_data['supervisor'] = self.request.user
+        # send emails to students registered for the course 
         utils.create_scoped_student_assessment_notice(request=request, assessment=assignment)
-        
-        return assignment
-        
     
-    @swagger_auto_schema(
-        operation_description="create a assignment",
-        operation_summary='create assignment'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all assignments",
-        operation_summary='list assignments'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a assignment",
-        operation_summary='retrieve assignment'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a assignment",
-        operation_summary='update assignment'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a assignment",
-        operation_summary='partial_update assignment'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a assignment",
-        operation_summary='delete assignment'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        return super().perform_create(serializer)
 
 
-class AssignmentTakerViewSet(viewsets.ModelViewSet):
+class AssignmentTakerViewSet(mixins.swagger_documentation_factory("assignment taker", "an"), viewsets.ModelViewSet):
     queryset = models.AssignmentTaker.objects.all()
     serializer_class = serializers.AssignmentTakerSerializer
     serializer_action_classes = {
@@ -522,11 +143,11 @@ class AssignmentTakerViewSet(viewsets.ModelViewSet):
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsStaff
-        | cpermissions.IsITDept
-        | cpermissions.IsHead
-        | cpermissions.IsLecturer
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsStaff
+        or cpermissions.IsITDept
+        or cpermissions.IsHead
+        or cpermissions.IsLecturer
+        or cpermissions.IsStudentOrReadOnly
     ]
     # filterset_class = filters.AssignmentTakerFilter
     
@@ -537,219 +158,36 @@ class AssignmentTakerViewSet(viewsets.ModelViewSet):
             return super().get_serializer_class()
 
     def perform_create(self, serializer):
-        # return serializer.save(student=self.request.user.student_set.all().first())
+        if "student" not in serializer.validated_data:
+            try:
+                serializer.validated_data["student"] = self.request.user.student_set.all().first()
+            except Exception as e:
+                print(f'An exception occurred: {e}')
+                raise Exception(f"Student not specified for quiz taker")
         return super().perform_create(serializer)
-    
-    @swagger_auto_schema(
-        operation_description="create a assignment taker",
-        operation_summary='create assignment taker'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all assignment takers",
-        operation_summary='list assignment takers'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a assignment taker",
-        operation_summary='retrieve assignment taker'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a assignment taker",
-        operation_summary='update assignment taker'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a assignment taker",
-        operation_summary='partial_update assignment taker'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a assignment taker",
-        operation_summary='delete assignment taker'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class AssignmentResponseViewSet(viewsets.ModelViewSet):
+class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment response", "an"), viewsets.ModelViewSet):
     queryset = models.AssignmentResponse.objects.all()
     serializer_class = serializers.AssignmentResponseSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsITDept
-        | cpermissions.IsHead
-        | cpermissions.IsStudentOrReadOnly
+        or cpermissions.IsITDept
+        or cpermissions.IsHead
+        or cpermissions.IsStudentOrReadOnly
     ]
     # filterset_class = filters.AssignmentResponseFilter
-    
-    @swagger_auto_schema(
-        operation_description="create a response (assignment response)",
-        operation_summary='create response (assignment response)'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all responses (assignment responses)",
-        operation_summary='list responses (assignment responses)'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a response (assignment response)",
-        operation_summary='retrieve response (assignment response)'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a response (assignment response)",
-        operation_summary='update response (assignment response)'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a response (assignment response)",
-        operation_summary='partial_update response (assignment response)'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a response (assignment response)",
-        operation_summary='delete response (assignment response)'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class GradeViewSet(viewsets.ModelViewSet):
+class GradeViewSet(mixins.swagger_documentation_factory("grade"), viewsets.ModelViewSet):
     queryset = models.Grade.objects.all()
     serializer_class = serializers.GradeSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        | cpermissions.IsITDept
-        | cpermissions.IsHead
-        | cpermissions.IsStaff
-        | cpermissions.IsStudent
-        | cpermissions.IsLecturerOrReadOnly
+        or cpermissions.IsITDept
+        or cpermissions.IsHead
+        or cpermissions.IsStaff
+        or cpermissions.IsStudent
+        or cpermissions.IsLecturerOrReadOnly
     ]
     
-    @swagger_auto_schema(
-        operation_description="create a grade",
-        operation_summary='create grade'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all grades",
-        operation_summary='list grades'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a grade",
-        operation_summary='retrieve grade'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a grade",
-        operation_summary='update grade'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a grade",
-        operation_summary='partial_update grade'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a grade",
-        operation_summary='delete grade'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)

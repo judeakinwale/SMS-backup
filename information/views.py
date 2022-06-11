@@ -1,339 +1,66 @@
-# from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
 from information import models, serializers, filters, utils
 from core import permissions as cpermissions
+from core import mixins
 from academics import models as amodels
-
 from drf_yasg.utils import no_body, swagger_auto_schema
 
 # Create your views here.
 
 
-class InformationViewSet(viewsets.ModelViewSet):
+class InformationViewSet(
+    mixins.swagger_documentation_factory("information", "an", "information"),
+    viewsets.ModelViewSet
+    ):
+    """Viewset for the information endpoint with generated swagger documentation"""
     queryset = models.Information.objects.all()
     serializer_class = serializers.InformationSerializer
     permission_classes = [
-        # permissions.IsAuthenticated & (
         cpermissions.IsStaff
-        | cpermissions.IsSuperUserOrReadOnly
-        | cpermissions.IsITDeptOrReadOnly
-        # )
+        or cpermissions.IsSuperUserOrReadOnly
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.InformationFilter
 
     def perform_create(self, serializer):
-        try:
-            user = self.request.data['source']
-            return super().perform_create(serializer)
-        except Exception:
-            return serializer.save(source=self.request.user)
-    
-    @swagger_auto_schema(
-        operation_description="create a information",
-        operation_summary='create information'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all information",
-        operation_summary='list information'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a information",
-        operation_summary='retrieve information'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a information",
-        operation_summary='update information'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a information",
-        operation_summary='partial_update information'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a information",
-        operation_summary='delete information'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
+        if 'source' not in serializer.validated_data:
+            serializer.validated_data['source'] = self.request.user
+        return super().perform_create(serializer)
 
 
-class NoticeViewSet(viewsets.ModelViewSet):
+class NoticeViewSet(mixins.swagger_documentation_factory("notice"), viewsets.ModelViewSet):
     queryset = models.Notice.objects.all()
     serializer_class = serializers.NoticeSerializer
     permission_classes = [
         cpermissions.IsStaff
-        | cpermissions.IsSuperUserOrReadOnly
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsSuperUserOrReadOnly
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.NoticeFilter
 
     def perform_create(self, serializer):
-        # try:
-        #     user = self.request.data['source']
-        #     notice = super().perform_create(serializer)
-        # except Exception:
-        #     notice = serializer.save(source=self.request.user)
-            
-        # user = self.request.data['source'] if 'source' in self.request.data else self.request.user
-        print(self.request.data)
-        # if 'source' not in self.request.data:
-        #     self.request.data['source'] = self.request.user.id
-        print(serializer.validated_data)
         if 'source' not in serializer.validated_data:
             serializer.validated_data['source'] = self.request.user
-        # print("serializer")
-        # print(serializer)
-        print("serializer validated data")
-        print(serializer.validated_data)
         return super().perform_create(serializer)
-            
-        # related_students = utils.get_related_students(notice.scope)
-        # notice_emails = utils.send_student_notice_email(notice)
-            
-        # return notice
-    
-    @swagger_auto_schema(
-        operation_description="create a notice",
-        operation_summary='create notice'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all notices",
-        operation_summary='list notices'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a notice",
-        operation_summary='retrieve notice'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a notice",
-        operation_summary='update notice'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a notice",
-        operation_summary='partial_update notice'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a notice",
-        operation_summary='delete notice'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class InformationImageViewSet(viewsets.ModelViewSet):
+class InformationImageViewSet(mixins.swagger_documentation_factory("information image", "an"), viewsets.ModelViewSet):
     queryset = models.InformationImage.objects.all()
     serializer_class = serializers.InformationImageSerializer
     permission_classes = [
         cpermissions.IsStaff
-        | cpermissions.IsSuperUserOrReadOnly
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsSuperUserOrReadOnly
+        or cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.InformationImageFilter
-    
-    @swagger_auto_schema(
-        operation_description="create an information image",
-        operation_summary='create information image'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all information images",
-        operation_summary='list information images'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve an information image",
-        operation_summary='retrieve information image'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update an information image",
-        operation_summary='update information image'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update an information image",
-        operation_summary='partial_update information image'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete an information image",
-        operation_summary='delete information image'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)
 
 
-class ScopeViewSet(viewsets.ModelViewSet):
+class ScopeViewSet(mixins.swagger_documentation_factory("scope"), viewsets.ModelViewSet):
     queryset = models.Scope.objects.all()
     serializer_class = serializers.ScopeSerializer
     permission_classes = [
         cpermissions.IsStaff
-        | cpermissions.IsSuperUserOrReadOnly
-        | cpermissions.IsITDeptOrReadOnly
+        or cpermissions.IsSuperUserOrReadOnly
+        or cpermissions.IsITDeptOrReadOnly
     ]
-    
-    @swagger_auto_schema(
-        operation_description="create a scope",
-        operation_summary='create scope'
-    )
-    def create(self, request, *args, **kwargs):
-        """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        operation_description="list all scopes",
-        operation_summary='list scopes'
-    )
-    def list(self, request, *args, **kwargs):
-        """list method docstring"""
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="retrieve a scope",
-        operation_summary='retrieve scope'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        """retrieve method docstring"""
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_description="update a scope",
-        operation_summary='update scope'
-    )
-    def update(self, request, *args, **kwargs):
-        """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="partial_update a scope",
-        operation_summary='partial_update scope'
-    )
-    def partial_update(self, request, *args, **kwargs):
-        """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-            print(**kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="delete a scope",
-        operation_summary='delete scope'
-    )
-    def destroy(self, request, *args, **kwargs):
-        """destroy method docstring"""
-        return super().destroy(request, *args, **kwargs)

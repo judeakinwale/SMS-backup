@@ -39,7 +39,6 @@ def get_related_students(scope):
   student_id_set = set()
   
   try:
-    
     if scope.is_general:
       # print("is_general")
       students = umodels.Student.objects.all()
