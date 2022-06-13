@@ -15,21 +15,22 @@ class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), vi
     serializer_class = serializers.QuizSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsLecturer
-        or cpermissions.IsHeadOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsLecturer
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuizFilter
 
     def perform_create(self, serializer):
+        if 'supervisor' not in serializer.validated_data:
+            serializer.validated_data['supervisor'] = self.request.user
+
         # confirm the authenticated user has permission to create a test for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
         if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create a test for course with id {course.id}")
         
-        if 'supervisor' not in serializer.validated_data:
-            serializer.validated_data['supervisor'] = self.request.user
         # send emails to students registered for the course
         utils.create_scoped_student_assessment_notice(request=request, assessment=assignment, _type="test")
     
@@ -41,10 +42,10 @@ class QuestionViewSet(mixins.swagger_documentation_factory("question"), viewsets
     serializer_class = serializers.QuestionSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsLecturer
-        or cpermissions.IsHeadOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsLecturer
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuestionFilter
 
@@ -54,10 +55,10 @@ class AnswerViewSet(mixins.swagger_documentation_factory("answer", "an"), viewse
     serializer_class = serializers.AnswerSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsLecturer
-        or cpermissions.IsHeadOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsLecturer
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AnswerFilter
 
@@ -71,11 +72,11 @@ class QuizTakerViewSet(mixins.swagger_documentation_factory("quiz taker"), views
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsHead
-        or cpermissions.IsLecturer
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsLecturer
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.QuizTakerFilter
     
@@ -100,9 +101,9 @@ class ResponseViewSet(mixins.swagger_documentation_factory("response"), viewsets
     serializer_class = serializers.ResponseSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsITDept
-        or cpermissions.IsHead
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.ResponseFilter
 
@@ -112,22 +113,23 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
     serializer_class = serializers.AssignmentSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsLecturer
-        or cpermissions.IsStudent
-        or cpermissions.IsHeadOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsLecturer
+        | cpermissions.IsStudent
+        | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AssignmentFilter
     
     def perform_create(self, serializer):
+        if 'supervisor' not in serializer.validated_data:
+            serializer.validated_data['supervisor'] = self.request.user
+
         # confirm the authenticated user has permission to create an assignment for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
         if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
-        if 'supervisor' not in serializer.validated_data:
-            serializer.validated_data['supervisor'] = self.request.user
         # send emails to students registered for the course 
         utils.create_scoped_student_assessment_notice(request=request, assessment=assignment)
     
@@ -143,11 +145,11 @@ class AssignmentTakerViewSet(mixins.swagger_documentation_factory("assignment ta
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStaff
-        or cpermissions.IsITDept
-        or cpermissions.IsHead
-        or cpermissions.IsLecturer
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsStaff
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsLecturer
+        | cpermissions.IsStudentOrReadOnly
     ]
     # filterset_class = filters.AssignmentTakerFilter
     
@@ -172,9 +174,9 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
     serializer_class = serializers.AssignmentResponseSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsITDept
-        or cpermissions.IsHead
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsStudentOrReadOnly
     ]
     # filterset_class = filters.AssignmentResponseFilter
 
@@ -184,10 +186,10 @@ class GradeViewSet(mixins.swagger_documentation_factory("grade"), viewsets.Model
     serializer_class = serializers.GradeSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsITDept
-        or cpermissions.IsHead
-        or cpermissions.IsStaff
-        or cpermissions.IsStudent
-        or cpermissions.IsLecturerOrReadOnly
+        | cpermissions.IsITDept
+        | cpermissions.IsHead
+        | cpermissions.IsStaff
+        | cpermissions.IsStudent
+        | cpermissions.IsLecturerOrReadOnly
     ]
     
