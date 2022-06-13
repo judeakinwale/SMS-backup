@@ -129,7 +129,7 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         # course = amodels.Course.objects.get(id=serializer.validated_data['course'].id)
         course = serializer.validated_data['course']
         supervisor = serializer.validated_data['supervisor']
-        print(supervisor, course)
+        print(supervisor.id, course.coordinator.id)
         if (supervisor.id != course.coordinator.id) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
