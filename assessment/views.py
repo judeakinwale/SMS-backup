@@ -130,7 +130,7 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         course = serializer.validated_data['course']
         supervisor = serializer.validated_data['supervisor']
         print(supervisor.id == course.coordinator.id)
-        if ((supervisor.id != course.coordinator.id) or self.request.user.is_superuser == False):
+        if ((supervisor.id != course.coordinator.id) or (self.request.user.is_superuser == False)):
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
         # send emails to students registered for the course 
