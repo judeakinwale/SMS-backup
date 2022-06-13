@@ -28,7 +28,7 @@ class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), vi
 
         # confirm the authenticated user has permission to create a test for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
-        if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
+        if (serializer.validated_data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create a test for course with id {course.id}")
         
         # send emails to students registered for the course
@@ -127,7 +127,7 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
 
         # confirm the authenticated user has permission to create an assignment for the course
         course = amodels.Course.objects.get(id=int(self.request.data['course']))
-        if (self.request.data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
+        if (serializer.validated_data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
         # send emails to students registered for the course 
