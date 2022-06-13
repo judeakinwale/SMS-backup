@@ -127,7 +127,10 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
 
         # confirm the authenticated user has permission to create an assignment for the course
         # course = amodels.Course.objects.get(id=serializer.validated_data['course'].id)
-        if (serializer.validated_data['supervisor'] != serializer.validated_data['course'].coordinator) or not self.request.user.is_superuser:
+        course = serializer.validated_data['course']
+        supervisor = serializer.validated_data['supervisor']
+        print(supervisor, course)
+        if (supervisor.id != course.coordinator.id) or not self.request.user.is_superuser:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
         # send emails to students registered for the course 
