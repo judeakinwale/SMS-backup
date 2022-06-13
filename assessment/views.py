@@ -133,7 +133,7 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         if ((supervisor.id == course.coordinator.id) or (self.request.user.is_superuser)):
             # send emails to students registered for the course 
             assignment = super().perform_create(serializer)
-            utils.create_scoped_student_assessment_notice(request=self.request, assessment=assignment)
+            # utils.create_scoped_student_assessment_notice(request=self.request, assessment=assignment)
             return assignment
         else:
             raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
