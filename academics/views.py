@@ -13,7 +13,7 @@ class FacultyViewSet(mixins.swagger_documentation_factory("faculty", "a", "facul
     serializer_class = serializers.FacultySerializer
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.FacultyFilter
 
@@ -27,7 +27,7 @@ class DepartmentViewSet(mixins.swagger_documentation_factory("department"), view
     }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.DepartmentFilter
         
@@ -47,7 +47,7 @@ class SpecializationViewSet(mixins.swagger_documentation_factory("specialization
     }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.SpecializationFilter
     
@@ -67,7 +67,7 @@ class CourseViewSet(mixins.swagger_documentation_factory("course"), viewsets.Mod
     }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseFilter
         
@@ -83,7 +83,7 @@ class LevelViewSet(mixins.swagger_documentation_factory("level"), viewsets.Model
     serializer_class = serializers.LevelSerializer
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.LevelFilter
 
@@ -93,7 +93,7 @@ class SemesterViewSet(mixins.swagger_documentation_factory("semester"), viewsets
     serializer_class = serializers.SemesterSerializer
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
 
 
@@ -102,7 +102,7 @@ class SessionViewSet(mixins.swagger_documentation_factory("session"), viewsets.M
     serializer_class = serializers.SessionSerializer
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
 
 
@@ -115,7 +115,7 @@ class RecommendedCoursesViewSet(mixins.swagger_documentation_factory("recommende
     }
     permission_classes = [
         cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.RecommendedCoursesFilter
         

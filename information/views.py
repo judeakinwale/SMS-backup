@@ -18,8 +18,8 @@ class InformationViewSet(
     serializer_class = serializers.InformationSerializer
     permission_classes = [
         cpermissions.IsStaff
-        or cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.InformationFilter
 
@@ -35,8 +35,8 @@ class NoticeViewSet(mixins.swagger_documentation_factory("notice"), viewsets.Mod
     serializer_class = serializers.NoticeSerializer
     permission_classes = [
         cpermissions.IsStaff
-        or cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.NoticeFilter
 
@@ -52,8 +52,8 @@ class InformationImageViewSet(mixins.swagger_documentation_factory("information 
     serializer_class = serializers.InformationImageSerializer
     permission_classes = [
         cpermissions.IsStaff
-        or cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.InformationImageFilter
 
@@ -63,6 +63,6 @@ class ScopeViewSet(mixins.swagger_documentation_factory("scope"), viewsets.Model
     serializer_class = serializers.ScopeSerializer
     permission_classes = [
         cpermissions.IsStaff
-        or cpermissions.IsSuperUserOrReadOnly
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsSuperUserOrReadOnly
+        | cpermissions.IsITDeptOrReadOnly
     ]
