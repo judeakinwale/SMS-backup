@@ -325,8 +325,8 @@ class CourseRegistrationViewSet(mixins.swagger_documentation_factory("course reg
     queryset = models.CourseRegistration.objects.all()
     serializer_class = serializers.CourseRegistrationSerializer
     serializer_action_classes = {
-        'list': serializers.CourseRegistrationSerializer,
-        'retrieve': serializers.CourseRegistrationSerializer,
+        'list': serializers.CourseRegistrationResponseSerializer,
+        'retrieve': serializers.CourseRegistrationResponseSerializer,
     }
     permission_classes = [
         cpermissions.IsSuperUser
