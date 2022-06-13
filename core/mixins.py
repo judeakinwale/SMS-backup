@@ -36,7 +36,7 @@ def base_viewset_error_handler(fn):
 class BaseSwaggerDocumentationMixin(object):
     """Generic Swagger Documentation Mixin"""
     
-    def __init__(self, subject:str, article:str, plural:str=None):
+    def __init__(self, subject:str=None, article:str=None, plural:str=None):
         self.subject = subject or "instance"
         self.article = article or "a"
         self.plural = plural or f"{doc_subject}s"
@@ -60,11 +60,7 @@ class BaseSwaggerDocumentationMixin(object):
     )
     def create(self, request, *args, **kwargs):
         """create method docstring"""
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+        return base_viewset_error_handler(super().create(request, *args, **kwargs))
     
     @swagger_auto_schema(
         operation_description=f"list all {doc_plural}",
@@ -88,11 +84,7 @@ class BaseSwaggerDocumentationMixin(object):
     )
     def update(self, request, *args, **kwargs):
         """update method docstring"""
-        try:
-            return super().update(request, *args, **kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+        return base_viewset_error_handler(super().update(request, *args, **kwargs))
 
     @swagger_auto_schema(
         operation_description=f"partial_update {doc_article} {doc_subject}",
@@ -100,11 +92,7 @@ class BaseSwaggerDocumentationMixin(object):
     )
     def partial_update(self, request, *args, **kwargs):
         """partial_update method docstring"""
-        try:
-            return super().partial_update(request, *args, **kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+        return base_viewset_error_handler(super().partial_update(request, *args, **kwargs))
 
     @swagger_auto_schema(
         operation_description=f"delete {doc_article} {doc_subject}",
@@ -112,11 +100,7 @@ class BaseSwaggerDocumentationMixin(object):
     )
     def destroy(self, request, *args, **kwargs):
         """destroy method docstring"""
-        try:
-            return super().destroy(request, *args, **kwargs)
-        except Exception as e:
-            error_resp = {'detail': f"{e}"}
-            return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
+        return base_viewset_error_handler(super().destroy(request, *args, **kwargs))
 
     
 def swagger_documentation_factory(

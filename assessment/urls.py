@@ -12,7 +12,7 @@ router.register('quiztaker', views.QuizTakerViewSet)
 router.register('response', views.ResponseViewSet)
 router.register('assignment', views.AssignmentViewSet)
 router.register('assignmenttaker', views.AssignmentTakerViewSet)
-router.register('assignment/response', views.AssignmentResponseViewSet)
+router.register('assignmentresponse', views.AssignmentResponseViewSet)
 router.register('grade', views.GradeViewSet)
 
 

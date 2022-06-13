@@ -40,51 +40,36 @@ def get_related_students(scope):
   
   try:
     if scope.is_general:
-      # print("is_general")
       students = umodels.Student.objects.all()
       for student in students: student_id_set.add(student.id)
-      # print(f"student count: {len(student_id_set)}")
 
     if scope.is_first_year:
-      # print("is_first_year")
       students = umodels.Student.objects.filter(academic_data__level__code=100)
       for student in students: student_id_set.add(student.id)
-      # print(f"student count: {len(student_id_set)}")
 
     if scope.is_final_year:
-      # print("is_final_year")
       students = umodels.Student.objects.all()
-      for student in students: 
-        student_id_set.add(student.id)
+      for student in students: student_id_set.add(student.id)
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      # print(f"student count: {len(student_id_set)}")      
       
     if scope.department:
-      # print("department")
       specializations = scope.department.specialization_set.all()
       for specialization in specializations: specialization_id_set.add(specialization.id)
       
       students = umodels.Student.objects.filter(specialization__id__in=specialization_id_set)
       for student in students: student_id_set.add(student.id)
-      # print(f"student count: {len(student_id_set)}")      
       
     if scope.specialization:
-      # print("specialization")
-      # students = umodels.Student.objects.filter(specialization=scope.specialization)
       students = scope.specialization.student_set.all()
       for student in students: student_id_set.add(student.id)
-      # print(f"student count: {len(student_id_set)}")      
       
     if scope.course:
-      # print("course")
       course_registrations = scope.course.courseregistration_set.all()
       for registration in course_registrations: student_id_set.add(registration.student.id)
-      # print(f"student count: {len(student_id_set)}")      
       
     if scope.level:
-      # print("level")
       students = umodels.Student.objects.filter(academic_data__level__code=scope.level.code)
       for student in students: student_id_set.add(student.id)
       
@@ -96,7 +81,7 @@ def get_related_students(scope):
   return students
 
 
-def send_student_notice_email(notice, context: dict = {}):
+def send_student_notice_email(notice, context: dict = {}) -> bool:
   try:
     students = get_related_students(notice.scope)
     reciepients = [student.user.email for student in students]

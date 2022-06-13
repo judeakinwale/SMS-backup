@@ -37,8 +37,8 @@ class UserViewSet(mixins.swagger_documentation_factory("user with biodata"), vie
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
     ]
     filterset_class = filters.UserFilter
 
@@ -85,8 +85,8 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
-        operation_description="update authenticated user details and update or create biodata",
-        operation_summary='update authenticated user details (account) and update or create biodata'
+        operation_description="update authenticated user details and update | create biodata",
+        operation_summary='update authenticated user details (account) and update | create biodata'
     )
     def put(self, request, *args, **kwargs):
         """put method docstring"""
@@ -98,8 +98,8 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
             return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_description="partial update authenticated user details and update or create biodata",
-        operation_summary='partial update authenticated user details (account) and update or create biodata'
+        operation_description="partial update authenticated user details and update | create biodata",
+        operation_summary='partial update authenticated user details (account) and update | create biodata'
     )
     def patch(self, request, *args, **kwargs):
         """patch method docstring"""
@@ -120,9 +120,9 @@ class StaffViewSet(mixins.swagger_documentation_factory("staff with user"), view
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsStaff
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsStaff
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.StaffFilter
 
@@ -147,10 +147,10 @@ class CourseAdviserViewSet(mixins.swagger_documentation_factory("course adviser"
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsHead
-        or cpermissions.IsDean
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsHead
+        | cpermissions.IsDean
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseAdviserFilter
 
@@ -170,9 +170,9 @@ class StudentViewSet(mixins.swagger_documentation_factory("student with user"), 
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsStudent
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsStudent
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.StudentFilter
 
@@ -197,10 +197,10 @@ class BiodataViewSet(mixins.swagger_documentation_factory("biodata", "a", "bioda
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
-        or cpermissions.IsStaff
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
+        | cpermissions.IsStaff
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.BiodataFilter
 
@@ -225,9 +225,9 @@ class ResultViewSet(mixins.swagger_documentation_factory("result"), viewsets.Mod
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.ResultFilter
 
@@ -247,10 +247,10 @@ class AcademicDataViewSet(mixins.swagger_documentation_factory("academic data", 
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsStaff
-        or cpermissions.IsStudent
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsStaff
+        | cpermissions.IsStudent
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.AcademicDataFilter
 
@@ -271,10 +271,10 @@ class AcademicHistoryViewSet(mixins.swagger_documentation_factory("academic hist
     serializer_class = serializers.AcademicHistorySerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
-        or cpermissions.IsStaff
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
+        | cpermissions.IsStaff
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.AcademicHistoryFilter
     
@@ -289,10 +289,10 @@ class HealthDataViewSet(mixins.swagger_documentation_factory("health data", "a",
     serializer_class = serializers.HealthDataSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
-        or cpermissions.IsStaff
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
+        | cpermissions.IsStaff
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.HealthDataFilter
     
@@ -308,10 +308,10 @@ class FamilyDataViewSet(mixins.swagger_documentation_factory("family data", "a",
     serializer_class = serializers.FamilyDataSerializer
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsBursar
-        or cpermissions.IsITDept
-        or cpermissions.IsStaff
-        or cpermissions.IsStudentOrReadOnly
+        | cpermissions.IsBursar
+        | cpermissions.IsITDept
+        | cpermissions.IsStaff
+        | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.FamilyDataFilter
     
@@ -330,8 +330,8 @@ class CourseRegistrationViewSet(mixins.swagger_documentation_factory("course reg
     }
     permission_classes = [
         cpermissions.IsSuperUser
-        or cpermissions.IsStudent
-        or cpermissions.IsITDeptOrReadOnly
+        | cpermissions.IsStudent
+        | cpermissions.IsITDeptOrReadOnly
     ]
     filterset_class = filters.CourseRegistrationFilter
 

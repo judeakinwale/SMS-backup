@@ -9,9 +9,7 @@ class InformationImageSerializer(serializers.HyperlinkedModelSerializer):
 
     information = serializers.PrimaryKeyRelatedField(
         queryset=models.Information.objects.all(),
-        # view_name='information:information-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
 
     class Meta:
@@ -39,7 +37,6 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
     )
     scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
-        # view_name='information:scope-detail',
     )
     images = InformationImageSerializer(many=True, allow_null=True, required=False)
 
@@ -79,7 +76,8 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
                 data['information'] = information
                 models.InformationImage.objects.create(**data)
         except Exception:
-            information =  super().create(validated_data)
+            # check if information created in try block to avoid duplication
+            information =  super().create(validated_data) if not information else information 
 
         return information
 
@@ -110,45 +108,91 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
         #             except Exception:
         #                 data['information'] = information
         #                 models.InformationImage.objects.create(**data)
-                        
+                  
+        # NOTE: The information's images cannot be identified   
+        # try:
+        #     images_data_list = validated_data.pop('images')
+        #     print("started")
+        #     information = super().update(instance, validated_data)
+        #     # url = super()(information).data['url']
+        #     n = 0
+        #     for image_data in images_data_list:
+        #         nested_data = image_data
+        #         # nested_data.update(information=information)
+                    
+        #         nested_serializer = self.fields['images']
+        #         # print(instance.images.all()[n])
+                
+                
+        #         try:
+        #             print(f'continued, n is {n}')
+        #             nested_instance = instance.images.all()[n]
+        #             print("nested image exists")
+        #             images = InformationImageSerializer.update(self, nested_instance, nested_data)
+        #             print("Image created")
+        #         except Exception as e:
+        #             print(f"There was an exception: {e}")
+        #             nested_data.update(information=information)
+        #             # print(super().list())
+        #             # images = nested_serializer.create(nested_data)
+        #             # images = InformationImageSerializer.create(self, nested_data)
+        #             images = models.InformationImage.objects.create(**nested_data)
+        #             print("new image created instead")
+
+        #         # if nested_instance:
+        #         #     images = nested_serializer.update(nested_instance, nested_data)
+        #         # else:
+        #         #     images = nested_serializer.create(nested_data)
+                
+        #         n += 1
+        # except  Exception as e:
+        #     # print(f"There was an exception: {e}")
+        #     information = super().update(instance, validated_data) if not information else information
+            
         try:
-            images_data_list = validated_data.pop('images')
+            images_data = validated_data.pop('images')
             print("started")
             information = super().update(instance, validated_data)
             # url = super()(information).data['url']
             n = 0
-            for image_data in images_data_list:
+            for image_data in images_data:
                 nested_data = image_data
                 # nested_data.update(information=information)
-                    
+                print(nested_data)
+                try:
+                    image = models.InformationImage.objects.get(id=nested_data["id"])
+                except Exception as e:
+                    raise Exception(e)
                 nested_serializer = self.fields['images']
                 # print(instance.images.all()[n])
+                # print(image)
                 
                 
-                try:
-                    print(f'continued, n is {n}')
-                    nested_instance = instance.images.all()[n]
-                    print("nested image exists")
-                    images = InformationImageSerializer.update(self, nested_instance, nested_data)
-                    print("Image created")
-                except Exception as e:
-                    print(f"There was an exception: {e}")
-                    nested_data.update(information=information)
-                    # print(super().list())
-                    # images = nested_serializer.create(nested_data)
-                    # images = InformationImageSerializer.create(self, nested_data)
-                    images = models.InformationImage.objects.create(**nested_data)
-                    print("new image created instead")
+                # try:
+                #     print(f'continued, n is {n}')
+                #     nested_instance = instance.images.all()[n]
+                #     print("nested image exists")
+                #     images = InformationImageSerializer.update(self, nested_instance, nested_data)
+                #     print("Image created")
+                # except Exception as e:
+                #     print(f"There was an exception: {e}")
+                #     nested_data.update(information=information)
+                #     # print(super().list())
+                #     # images = nested_serializer.create(nested_data)
+                #     # images = InformationImageSerializer.create(self, nested_data)
+                #     images = models.InformationImage.objects.create(**nested_data)
+                #     print("new image created instead")
 
-                # if nested_instance:
-                #     images = nested_serializer.update(nested_instance, nested_data)
-                # else:
-                #     images = nested_serializer.create(nested_data)
+                # # if nested_instance:
+                # #     images = nested_serializer.update(nested_instance, nested_data)
+                # # else:
+                # #     images = nested_serializer.create(nested_data)
                 
                 n += 1
+                pass
         except  Exception as e:
-            # print(f"There was an exception: {e}")
-            information = super().update(instance, validated_data)
+            print(f"There was an exception updating images: {e}")
+            information = super().update(instance, validated_data) if not information else information
 
         return information
 
@@ -163,7 +207,6 @@ class NoticeSerializer(serializers.HyperlinkedModelSerializer):
     )
     scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
-        # view_name='information:scope-detail',
     )
 
     class Meta:
@@ -179,33 +222,23 @@ class ScopeSerializer(serializers.HyperlinkedModelSerializer):
 
     faculty = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Faculty.objects.all(),
-        # view_name='academics:faculty-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        # view_name='academics:department-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        # view_name='academics:level-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     information_set = InformationSerializer(many=True, read_only=True)
     notice_set = NoticeSerializer(many=True, read_only=True)

@@ -24,6 +24,7 @@ class InformationViewSet(
     filterset_class = filters.InformationFilter
 
     def perform_create(self, serializer):
+        # set the authenticated user as the source if none is provided
         if 'source' not in serializer.validated_data:
             serializer.validated_data['source'] = self.request.user
         return super().perform_create(serializer)
@@ -40,6 +41,7 @@ class NoticeViewSet(mixins.swagger_documentation_factory("notice"), viewsets.Mod
     filterset_class = filters.NoticeFilter
 
     def perform_create(self, serializer):
+        # set the authenticated user as the source if none is provided
         if 'source' not in serializer.validated_data:
             serializer.validated_data['source'] = self.request.user
         return super().perform_create(serializer)
