@@ -68,7 +68,7 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
         #     for data in images_data:
         #         data['information'] = information
         #         models.InformationImage.objects.create(**data)
-                
+        information = None
         try:
             images_data = validated_data.pop('images')
             information =  super().create(validated_data)
@@ -148,7 +148,7 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
         # except  Exception as e:
         #     # print(f"There was an exception: {e}")
         #     information = super().update(instance, validated_data) if not information else information
-            
+        information = None
         try:
             images_data = validated_data.pop('images')
             print("started")
@@ -157,10 +157,13 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
             n = 0
             for image_data in images_data:
                 nested_data = image_data
+                nested_data['information'] = information
                 # nested_data.update(information=information)
                 print(nested_data)
                 try:
-                    image = models.InformationImage.objects.get(id=nested_data["id"])
+                    images = models.InformationImage.objects.filter(**nested_data)
+                    print(images)
+                    image, created = models.InformationImage.objects.get_or_create(**nested_data)
                 except Exception as e:
                     raise Exception(e)
                 nested_serializer = self.fields['images']
