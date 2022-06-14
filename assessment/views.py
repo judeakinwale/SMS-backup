@@ -27,13 +27,15 @@ class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), vi
             serializer.validated_data['supervisor'] = self.request.user
 
         # confirm the authenticated user has permission to create a test for the course
-        course = amodels.Course.objects.get(id=int(self.request.data['course']))
-        if (serializer.validated_data['supervisor'] != course.coordinator) or not self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return super().perform_create(serializer)
+        
+        course = serializer.validated_data['course']
+        supervisor = serializer.validated_data['supervisor']
+        
+        if supervisor != course.coordinator:
             raise Exception(f"Not authorized to create a test for course with id {course.id}")
         
-        # send emails to students registered for the course
-        utils.create_scoped_student_assessment_notice(request=request, assessment=assignment, _type="test")
-    
         return super().perform_create(serializer)
 
 
@@ -125,20 +127,17 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         if 'supervisor' not in serializer.validated_data:
             serializer.validated_data['supervisor'] = self.request.user
 
-        # confirm the authenticated user has permission to create an assignment for the course
-        # course = amodels.Course.objects.get(id=serializer.validated_data['course'].id)
+        # confirm the authenticated user has permission to create a test for the course
+        if self.request.user.is_superuser:
+            return super().perform_create(serializer)
+        
         course = serializer.validated_data['course']
         supervisor = serializer.validated_data['supervisor']
-        print(supervisor.id == course.coordinator.id)
-        if ((supervisor.id == course.coordinator.id) or (self.request.user.is_superuser)):
-            # send emails to students registered for the course 
-            assignment = super().perform_create(serializer)
-            # utils.create_scoped_student_assessment_notice(request=self.request, assessment=assignment)
-            return assignment
-        else:
-            raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
-
+        if supervisor != course.coordinator:
+            raise Exception(f"Not authorized to create a test for course with id {course.id}")
+        
+        return super().perform_create(serializer)
 
 class AssignmentTakerViewSet(mixins.swagger_documentation_factory("assignment taker", "an"), viewsets.ModelViewSet):
     queryset = models.AssignmentTaker.objects.all()
