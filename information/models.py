@@ -50,11 +50,11 @@ class Notice(models.Model):
         
     def save(self, *args, **kwargs):
         notice = super(Notice, self).save(*args, **kwargs)
-        print('created notice')
-        print(self)
-        related_students = utils.get_related_students(self.scope)
-        # staff_notice_email = utils.send_staff_notice_email(self)
-        notice_email = utils.send_student_notice_email(self)
+        try:
+            related_students = utils.get_related_students(self.scope)
+            notice_email = utils.send_student_notice_email(self)
+        except Exception as e:
+            print(f"There was an exception sending notice emails: {e}")
         
         return notice
 

@@ -56,8 +56,8 @@ class PublicNoticeApiTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_authentication_required(self):
-        """test that authentication is required"""
+    def test_authentication_not_required(self):
+        """test that authentication is not required"""
         res = self.client.get(NOTICE_URL)
         # self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(res.status_code, status.HTTP_200_OK)

@@ -60,21 +60,13 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         """extend the default create serializer method"""
 
-        # if ('images' not in validated_data) or validated_data['images'] == []:
-        #     information = super().create(validated_data)
-        # else:
-        #     images_data = validated_data.pop('images')
-        #     information = super().create(validated_data)
-        #     for data in images_data:
-        #         data['information'] = information
-        #         models.InformationImage.objects.create(**data)
-        information = None
+        information = None  # avoid errors in the except block
         try:
             images_data = validated_data.pop('images')
             information =  super().create(validated_data)
             for data in images_data:
                 data['information'] = information
-                models.InformationImage.objects.create(**data)
+                models.InformationImage.objects.get_or_create(**data)
         except Exception:
             # check if information created in try block to avoid duplication
             information =  super().create(validated_data) if not information else information 
@@ -84,115 +76,23 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         """extend the default update serializer method"""
 
-        # if ('images' not in validated_data) or validated_data['images'] == []:
-        #     information = super().update(instance, validated_data)
-        # else:
-        #     images = (instance.images).all()
-        #     list_images = list(images)
-        #     images_data = validated_data.pop('images')
-        #     information = super().update(instance, validated_data)
-
-        #     if list_images == []:
-        #         for data in images_data:
-        #             data['information'] = information
-        #             models.InformationImage.objects.create(**data)
-        #     else:
-        #         n = 0
-        #         for data in images_data:
-        #             try:
-        #                 image = images[n]
-        #                 n += 1
-        #                 image.image = data.get('image', image.image)
-        #                 image.description = data.get('description', image.description)
-        #                 image.save()
-        #             except Exception:
-        #                 data['information'] = information
-        #                 models.InformationImage.objects.create(**data)
-                  
-        # NOTE: The information's images cannot be identified   
-        # try:
-        #     images_data_list = validated_data.pop('images')
-        #     print("started")
-        #     information = super().update(instance, validated_data)
-        #     # url = super()(information).data['url']
-        #     n = 0
-        #     for image_data in images_data_list:
-        #         nested_data = image_data
-        #         # nested_data.update(information=information)
-                    
-        #         nested_serializer = self.fields['images']
-        #         # print(instance.images.all()[n])
-                
-                
-        #         try:
-        #             print(f'continued, n is {n}')
-        #             nested_instance = instance.images.all()[n]
-        #             print("nested image exists")
-        #             images = InformationImageSerializer.update(self, nested_instance, nested_data)
-        #             print("Image created")
-        #         except Exception as e:
-        #             print(f"There was an exception: {e}")
-        #             nested_data.update(information=information)
-        #             # print(super().list())
-        #             # images = nested_serializer.create(nested_data)
-        #             # images = InformationImageSerializer.create(self, nested_data)
-        #             images = models.InformationImage.objects.create(**nested_data)
-        #             print("new image created instead")
-
-        #         # if nested_instance:
-        #         #     images = nested_serializer.update(nested_instance, nested_data)
-        #         # else:
-        #         #     images = nested_serializer.create(nested_data)
-                
-        #         n += 1
-        # except  Exception as e:
-        #     # print(f"There was an exception: {e}")
-        #     information = super().update(instance, validated_data) if not information else information
-        information = None
+        information = None  # avoid errors in the except block
         try:
+            if "images" not in validated_data:
+                raise Exception("No images provided")
             images_data = validated_data.pop('images')
-            print("started")
             information = super().update(instance, validated_data)
-            # url = super()(information).data['url']
-            n = 0
+
             for image_data in images_data:
                 nested_data = image_data
                 nested_data['information'] = information
-                # nested_data.update(information=information)
-                print(nested_data)
+                images = None
                 try:
                     images = models.InformationImage.objects.filter(**nested_data)
-                    print(images)
                     image, created = models.InformationImage.objects.get_or_create(**nested_data)
                 except Exception as e:
-                    raise Exception(e)
-                nested_serializer = self.fields['images']
-                # print(instance.images.all()[n])
-                # print(image)
-                
-                
-                # try:
-                #     print(f'continued, n is {n}')
-                #     nested_instance = instance.images.all()[n]
-                #     print("nested image exists")
-                #     images = InformationImageSerializer.update(self, nested_instance, nested_data)
-                #     print("Image created")
-                # except Exception as e:
-                #     print(f"There was an exception: {e}")
-                #     nested_data.update(information=information)
-                #     # print(super().list())
-                #     # images = nested_serializer.create(nested_data)
-                #     # images = InformationImageSerializer.create(self, nested_data)
-                #     images = models.InformationImage.objects.create(**nested_data)
-                #     print("new image created instead")
-
-                # # if nested_instance:
-                # #     images = nested_serializer.update(nested_instance, nested_data)
-                # # else:
-                # #     images = nested_serializer.create(nested_data)
-                
-                n += 1
-                pass
+                    if not images:
+                        raise Exception(e)
         except  Exception as e:
             print(f"There was an exception updating images: {e}")
             information = super().update(instance, validated_data) if not information else information
