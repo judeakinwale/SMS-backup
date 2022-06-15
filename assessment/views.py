@@ -32,7 +32,6 @@ class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), vi
         
         course = serializer.validated_data['course']
         supervisor = serializer.validated_data['supervisor']
-        
         if supervisor != course.coordinator:
             raise Exception(f"Not authorized to create a test for course with id {course.id}")
         
@@ -133,9 +132,8 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         
         course = serializer.validated_data['course']
         supervisor = serializer.validated_data['supervisor']
-        
         if supervisor != course.coordinator:
-            raise Exception(f"Not authorized to create a test for course with id {course.id}")
+            raise Exception(f"Not authorized to create an assignment for course with id {course.id}")
         
         return super().perform_create(serializer)
 
@@ -154,7 +152,7 @@ class AssignmentTakerViewSet(mixins.swagger_documentation_factory("assignment ta
         | cpermissions.IsLecturer
         | cpermissions.IsStudentOrReadOnly
     ]
-    # filterset_class = filters.AssignmentTakerFilter
+    filterset_class = filters.AssignmentTakerFilter
     
     def get_serializer_class(self):
         try:
@@ -168,7 +166,7 @@ class AssignmentTakerViewSet(mixins.swagger_documentation_factory("assignment ta
                 serializer.validated_data["student"] = self.request.user.student_set.all().first()
             except Exception as e:
                 print(f'An exception occurred: {e}')
-                raise Exception(f"Student not specified for quiz taker")
+                raise Exception(f"Student not specified for assignment taker")
         return super().perform_create(serializer)
 
 
@@ -181,7 +179,7 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
         | cpermissions.IsHead
         | cpermissions.IsStudentOrReadOnly
     ]
-    # filterset_class = filters.AssignmentResponseFilter
+    filterset_class = filters.AssignmentResponseFilter
 
 
 class GradeViewSet(mixins.swagger_documentation_factory("grade"), viewsets.ModelViewSet):

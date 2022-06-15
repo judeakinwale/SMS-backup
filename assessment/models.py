@@ -287,17 +287,17 @@ class Grade(models.Model):
         
     def get_grade(self):
         try:
-            if self.score / 100.00 >= 0.9:
+            if self.score / self.max_score >= 0.9:
                 return 'A+'
-            elif self.score / 100.00 >= 0.8:
+            elif self.score / self.max_score >= 0.8:
                 return 'A'
-            elif self.score / 100.00 >= 0.7:
+            elif self.score / self.max_score >= 0.7:
                 return 'B'
-            elif self.score / 100.00 >= 0.6:
+            elif self.score / self.max_score >= 0.6:
                 return 'C'
-            elif self.score / 100.00 >= 0.5:
+            elif self.score / self.max_score >= 0.5:
                 return 'D'
-            elif self.score / 100.00 >= 0.4:
+            elif self.score / self.max_score >= 0.4:
                 return 'E'
             elif self.score == 0:
                 return "Not Available"

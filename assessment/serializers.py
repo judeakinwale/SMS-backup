@@ -32,9 +32,7 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
 
     question = serializers.PrimaryKeyRelatedField(
         queryset=models.Question.objects.all(),
-        # view_name='assessment:question-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
 
     class Meta:
@@ -57,9 +55,7 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
 
     quiz = serializers.PrimaryKeyRelatedField(
         queryset=models.Quiz.objects.all(),
-        # view_name='assessment:quiz-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     answer_set = AnswerSerializer(many=True, allow_null=True, required=False)
 
@@ -92,29 +88,50 @@ class QuestionSerializer(serializers.HyperlinkedModelSerializer):
         return question
 
     def update(self, instance, validated_data):
-        if 'answer_set' not in validated_data:
+        # if 'answer_set' not in validated_data:
+        #     question = super().update(instance, validated_data)
+        # else:
+        #     answers = (instance.answer_set).all()
+        #     list_answers = list(answers)
+        #     answer_set_data = validated_data.pop('answer_set')
+        #     question = super().update(instance, validated_data)
+        #     if list_answers == []:
+        #         for data in answer_set_data:
+        #             data['question'] = question
+        #             models.Answer.objects.create(**data)
+        #     else:
+        #         n = 0
+        #         for data in answer_set_data:
+        #             try:
+        #                 answer = answers[n]
+        #                 answer.question = data.get('question', answer.question)
+        #                 answer.text = data.get('text', answer.text)
+        #                 answer.is_correct = data.get('is_correct', answer.is_correct)
+        #                 answer.save()
+        #             except Exception:
+        #                 data['question'] = question
+        #                 models.Answer.objects.create(**data)
+            
+        question = None            
+        try:
+            if "answer_set" not in validated_data:
+                raise Exception("No answers provided")
+            answers_data = validated_data.pop('answer_set')
             question = super().update(instance, validated_data)
-        else:
-            answers = (instance.answer_set).all()
-            list_answers = list(answers)
-            answer_set_data = validated_data.pop('answer_set')
-            question = super().update(instance, validated_data)
-            if list_answers == []:
-                for data in answer_set_data:
-                    data['question'] = question
-                    models.Answer.objects.create(**data)
-            else:
-                n = 0
-                for data in answer_set_data:
-                    try:
-                        answer = answers[n]
-                        answer.question = data.get('question', answer.question)
-                        answer.text = data.get('text', answer.text)
-                        answer.is_correct = data.get('is_correct', answer.is_correct)
-                        answer.save()
-                    except Exception:
-                        data['question'] = question
-                        models.Answer.objects.create(**data)
+            for answer_data in answers_data:
+                nested_data = answer_data
+                nested_data["question"] = question
+                answers = None
+                try:
+                    answers = models.Answer.objects.filter(**nested_data)
+                    answer, created = models.Answer.objects.get_or_create(**nested_data)
+                except Exception as e:
+                    if not answers:
+                        raise Exception(f"Error during answer creation: {e}")
+                    raise Exception(e)
+        except Exception as e:
+            print(f"There was an exception updating answers: {e}")
+            question = super().update(instance, validated_data) if not question else question
 
         return question
 
@@ -125,16 +142,12 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
     # supervisor = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all())
     supervisor = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     question_set = QuestionSerializer(many=True, allow_null=True, required=False)
     course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail',
-        allow_null=True,
-        required=False
+        allow_null=True, required=False,
     )
 
     class Meta:
@@ -161,6 +174,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
         """create a quiz and create attached quesions, if specified in question_set"""
 
         if 'question_set' not in validated_data:
+            print("No questions provided")
             quiz = super().create(validated_data)
         else:
             question_set_data = validated_data.pop('question_set')
@@ -169,6 +183,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                 question_data['quiz'] = quiz
 
                 if 'answer_set' not in question_data:
+                    print("No answers provided")
                     question = models.Question.objects.create(**question_data)
                 else:
                     answer_set_data = question_data.pop('answer_set')
@@ -176,124 +191,141 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                     for answer_data in answer_set_data:
                         answer_data['question'] = question
                         models.Answer.objects.create(**answer_data)
-                        
-        # try:
-        #     question_set_data = validated_data.pop('question_set')
-        #     quiz =  super().create(validated_data)
-        #     for question_data in question_set_data:
-        #         question_data['quiz'] = quiz
-                
-        #         try:
-        #             print("finding answerset")
-        #             answer_set_data = validated_data.pop('answer_set')
-        #             question =  models.Question.objects.create(**question_data)
-        #             for answer_data in answer_set_data:
-        #                 print("finding answers in answerset")
-        #                 answer_data['question'] = question
-        #                 models.Answer.objects.create(**answer_data)
-        #         except Exception:
-        #             question =  models.Question.objects.create(**question_data)
-        # except Exception:
-        #     quiz =  super().create(validated_data)
         
-        course_registrations = umodels.CourseRegistration.objects.filter(course=quiz.course)
-        for reg in course_registrations:
-            try:
-                models.QuizTaker.objects.get(student=reg.student, quiz=quiz)
-            except Exception:
-                models.QuizTaker.objects.create(student=reg.student, quiz=quiz)
+        try:
+            # # create a notice for the test, which sends a mail to all relevant students
+            # # requires request
+            # utils.create_scoped_student_assessment_notice(self.request, quiz, _type="test")
+            # create quiztaker instances for relevant students, registering them for the test
+            utils.register_assessment_takers(quiz)
+        except Exception as e:
+            print(f"An exception occurred while creating a notice or registering students: {e}")
 
         return quiz
 
     def update(self, instance, validated_data):
 
-        if ('question_set' not in validated_data) or validated_data['question_set'] == []:
-            quiz = super().update(instance, validated_data)
-        else:
-            questions = (instance.question_set).all()
-            list_questions = list(questions)
+        # if ('question_set' not in validated_data) or validated_data['question_set'] == []:
+        #     quiz = super().update(instance, validated_data)
+        # else:
+        #     questions = (instance.question_set).all()
+        #     list_questions = list(questions)
+        #     question_set_data = validated_data.pop('question_set')
+        #     quiz = super().update(instance, validated_data)
+
+        #     if list_questions == []:
+        #         for question_data in question_set_data:
+        #             question_data['quiz'] = quiz
+
+        #             if ('answer_set' not in question_data) or question_data['answer_set'] == []:
+        #                 question = models.Question.objects.create(**question_data)
+        #                 print(question)
+        #             else:
+        #                 answer_set_data = question_data.pop('answer_set')
+        #                 list_answer = list(answer_set_data)
+        #                 question = models.Question.objects.create(**question_data)
+
+        #                 for answer_data in answer_set_data:
+        #                     answer_data['question'] = question
+        #                     models.Answer.objects.create(**answer_data)
+        #     else:
+        #         n = 0
+
+        #         for question_data in question_set_data:
+        #             try:
+        #                 question = questions[n]
+        #                 n += 1
+
+        #                 answers = question.answer_set.all()
+
+        #                 if ('answer_set' not in question_data) or validated_data['answer_set'] == []:
+        #                     question.label = question_data.get('question', question.label)
+        #                     question.order = question_data.get('is_correct', question.order)
+        #                     question.save()
+        #                 else:
+        #                     answer_set_data = question_data.pop('answer_set')
+        #                     list_answer = list(answer_set_data)
+        #                     question.label = question_data.get('question', question.label)
+        #                     question.order = question_data.get('is_correct', question.order)
+        #                     question.save()
+
+        #                     if list_answer == []:
+        #                         for answer_data in answer_set_data:
+        #                             answer_data['question'] = question
+        #                             models.Answer.objects.create(**answer_data)
+        #                     else:
+        #                         n = 0
+
+        #                         for answer_data in answer_set_data:
+        #                             try:
+        #                                 answer = answers[n]
+        #                                 answer.question = answer_data.get('question', answer.question)
+        #                                 answer.text = answer_data.get('text', answer.text)
+        #                                 answer.is_correct = answer_data.get('is_correct', answer.is_correct)
+        #                                 answer.save()
+        #                             except Exception:
+        #                                 answer_data['question'] = question
+        #                                 models.Answer.objects.create(**answer_data)
+        #             except Exception:
+        #                 question_data['quiz'] = quiz
+
+        #                 if ('answer_set' not in question_data) or question_data['answer_set'] == []:
+        #                     question = models.Question.objects.create(**question_data)
+        #                     print(question)
+        #                 else:
+        #                     answer_set_data = question_data.pop('answer_set')
+        #                     list_answer = list(answer_set_data)
+        #                     question = models.Question.objects.create(**question_data)
+
+        #                     for answer_data in answer_set_data:
+        #                         answer_data['question'] = question
+        #                         models.Answer.objects.create(**answer_data)
+        
+        try:
+            if 'question_set' not in validated_data:
+                raise Exception("No questions provided")    
             question_set_data = validated_data.pop('question_set')
             quiz = super().update(instance, validated_data)
+            for question_data in question_set_data:
+                nested_data = question_data
+                nested_data["quiz"] = quiz
+                questions = None
+                try:
+                    if "answer_set" not in nested_data:
+                        raise Exception("No answers provided in nested question")
+                    answer_set_data = nested_data.pop("answer_set")
+                    
+                    questions = models.Question.objects.filter(**nested_data)
+                    question, created = models.Question.objects.get_or_create(**nested_data)
+                    
+                    for answer_data in answer_set_data:
+                        nested_data = answer_data
+                        nested_data["question"] = question
+                        answers = None
+                        try:
+                            print(nested_data)
+                            answers = models.Answer.objects.filter(**nested_data)
+                            answer, created = models.Answer.objects.get_or_create(**nested_data)
+                        except Exception as e:
+                            if not answers:
+                                raise Exception(f"Error during answer creation: {e}")
+                            raise Exception(e)
+                except Exception as e:
+                    if not questions:
+                        raise Exception(f"Error during question creation: {e}")
+                    raise Exception(e)
+        except  Exception as e:
+            print(f"There was an exception updating the quiz: {e}")
+            quiz = super().update(instance, validated_data) if not quiz else quiz
 
-            if list_questions == []:
-                for question_data in question_set_data:
-                    question_data['quiz'] = quiz
-
-                    if ('answer_set' not in question_data) or question_data['answer_set'] == []:
-                        question = models.Question.objects.create(**question_data)
-                        print(question)
-                    else:
-                        answer_set_data = question_data.pop('answer_set')
-                        list_answer = list(answer_set_data)
-                        question = models.Question.objects.create(**question_data)
-
-                        for answer_data in answer_set_data:
-                            answer_data['question'] = question
-                            models.Answer.objects.create(**answer_data)
-            else:
-                n = 0
-
-                for question_data in question_set_data:
-                    try:
-                        question = questions[n]
-                        n += 1
-
-                        answers = question.answer_set.all()
-
-                        if ('answer_set' not in question_data) or validated_data['answer_set'] == []:
-                            question.label = question_data.get('question', question.label)
-                            question.order = question_data.get('is_correct', question.order)
-                            question.save()
-                        else:
-                            answer_set_data = question_data.pop('answer_set')
-                            list_answer = list(answer_set_data)
-                            question.label = question_data.get('question', question.label)
-                            question.order = question_data.get('is_correct', question.order)
-                            question.save()
-
-                            if list_answer == []:
-                                for answer_data in answer_set_data:
-                                    answer_data['question'] = question
-                                    models.Answer.objects.create(**answer_data)
-                            else:
-                                n = 0
-
-                                for answer_data in answer_set_data:
-                                    try:
-                                        answer = answers[n]
-                                        answer.question = answer_data.get('question', answer.question)
-                                        answer.text = answer_data.get('text', answer.text)
-                                        answer.is_correct = answer_data.get('is_correct', answer.is_correct)
-                                        answer.save()
-                                    except Exception:
-                                        answer_data['question'] = question
-                                        models.Answer.objects.create(**answer_data)
-                    except Exception:
-                        question_data['quiz'] = quiz
-
-                        if ('answer_set' not in question_data) or question_data['answer_set'] == []:
-                            question = models.Question.objects.create(**question_data)
-                            print(question)
-                        else:
-                            answer_set_data = question_data.pop('answer_set')
-                            list_answer = list(answer_set_data)
-                            question = models.Question.objects.create(**question_data)
-
-                            for answer_data in answer_set_data:
-                                answer_data['question'] = question
-                                models.Answer.objects.create(**answer_data)
-
-        course_registrations = umodels.CourseRegistration.objects.filter(course=quiz.course)
-        for reg in course_registrations:
-            try:
-                models.QuizTaker.objects.get(student=reg.student, quiz=quiz)
-            except Exception:
-                models.QuizTaker.objects.create(student=reg.student, quiz=quiz)
-                
-            try:
-                utils.send_assigned_assessment_email(reg.student)
-            except Exception as e:
-                print(f"send_assigned_assessment_email error: {e}")
+        try:
+            # # create a notice for the test, which sends a mail to all relevant students
+            # # requires request
+            # utils.create_scoped_student_assessment_notice(self.request, quiz, _type="test")
+            # create quiztaker instances for relevant students, registering them for the test
+            utils.register_assessment_takers(quiz)
+        except Exception as e:
+            print(f"An exception occurred while creating a notice or registering students: {e}")
         
         return quiz
 
@@ -305,21 +337,15 @@ class QuizTakerSerializer(serializers.HyperlinkedModelSerializer):
     student = serializers.PrimaryKeyRelatedField(
         # queryset=get_user_model().objects.all(),
         queryset=umodels.Student.objects.all(),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     quiz = serializers.PrimaryKeyRelatedField(
         queryset=models.Quiz.objects.all(),
-        # view_name='assessment:quiz-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     grade = serializers.PrimaryKeyRelatedField(
         queryset=models.Grade.objects.all(),
-        # view_name='assessment:grade-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     score = serializers.ReadOnlyField()
 
@@ -352,17 +378,13 @@ class ResponseSerializer(serializers.HyperlinkedModelSerializer):
 
     quiz_taker = serializers.PrimaryKeyRelatedField(
         queryset=models.QuizTaker.objects.all(),
-        # view_name='assessment:quiztaker-detail',
     )
     question = serializers.PrimaryKeyRelatedField(
         queryset=models.Question.objects.all(),
-        # view_name='assessment:question-detail',
     )
     answer = serializers.PrimaryKeyRelatedField(
         queryset=models.Answer.objects.all(),
-        # view_name='assessment:answer-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
 
     class Meta:
@@ -384,9 +406,7 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
 
     course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail',
-        allow_null=True,
-        required=False
+        allow_null=True, required=False,
     )
 
     class Meta:
@@ -419,21 +439,15 @@ class AssignmentTakerSerializer(serializers.HyperlinkedModelSerializer):
     student = serializers.PrimaryKeyRelatedField(
         # queryset=get_user_model().objects.all(),
         queryset=umodels.Student.objects.all(),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     assignment = serializers.PrimaryKeyRelatedField(
         queryset=models.Assignment.objects.all(),
-        # view_name='assessment:assignment-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     grade = serializers.PrimaryKeyRelatedField(
         queryset=models.Grade.objects.all(),
-        # view_name='assessment:grade-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     is_passed = serializers.ReadOnlyField()
 
@@ -467,18 +481,10 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
 
     assignment_taker = serializers.PrimaryKeyRelatedField(
         queryset=models.AssignmentTaker.objects.all(),
-        # view_name='assessment:assignmenttaker-detail',
     )
     assignment = serializers.PrimaryKeyRelatedField(
         queryset=models.Assignment.objects.all(),
-        # view_name='assessment:assignment-detail',
     )
-    # answer = serializers.PrimaryKeyRelatedField(
-    #     queryset=models.Answer.objects.all(),
-    #     # view_name='assessment:answer-detail',
-    #     allow_null=True,
-    #     required=False,
-    # )
 
     class Meta:
         model = models.AssignmentResponse
