@@ -51,7 +51,7 @@ def send_simple_email(template_path: str, reciepients: list, subject: str = "Ema
 def create_scoped_student_assessment_notice(request, assessment, _type="assignment"):
   """
   Assessment can be either a test or assessment.
-  _type can be either "assignmet" or "test"
+  _type can be either "assignment" or "test"
   """
   message = f"You have a new {_type} for {assessment.course.code}."
   
@@ -91,14 +91,20 @@ def create_scoped_student_assessment_notice(request, assessment, _type="assignme
     return False
 
 
-def register_assessment_takers(assessment):
-  
+def register_assessment_takers(assessment, _type="assignment"):
+  """
+  _type can be either "assignment" or "test"
+  """
   course_registrations = umodels.CourseRegistration.objects.filter(course=assessment.course)
   for registration in course_registrations:
     takers = None
     try:
-      takers = models.QuizTaker.objects.filter(student=registration.student, quiz=quiz)
-      taker, created = models.QuizTaker.objects.get_or_create(student=registration.student, quiz=quiz)
+      if _type == "assignment":
+        takers = models.AssignmentTaker.objects.filter(student=registration.student, assignment=assessment)
+        taker, created = models.AssignmentTaker.objects.get_or_create(student=registration.student, assignment=assessment)
+      elif _type == "test":
+        takers = models.QuizTaker.objects.filter(student=registration.student, quiz=assessment)
+        taker, created = models.QuizTaker.objects.get_or_create(student=registration.student, quiz=assessment)
     except Exception as e:
       if not takers:
         raise Exception(e)

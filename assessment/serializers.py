@@ -323,7 +323,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             # # requires request
             # utils.create_scoped_student_assessment_notice(self.request, quiz, _type="test")
             # create quiztaker instances for relevant students, registering them for the test
-            utils.register_assessment_takers(quiz)
+            utils.register_assessment_takers(quiz, _type="test")
         except Exception as e:
             print(f"An exception occurred while creating a notice or registering students: {e}")
         
@@ -426,10 +426,29 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
             'url': {'view_name': 'assessment:assignment-detail'}
         }
         
-    # def create(self, validated_data):
-    #     assignment = super().create(validated_data)
-    #     # notice = imodels.Notice.create(source)
-    #     return assignment
+    def create(self, validated_data):
+        assignment = super().create(validated_data)
+        try:
+            # # create a notice for the test, which sends a mail to all relevant students
+            # # requires request
+            # utils.create_scoped_student_assessment_notice(self.request, assignment, _type="test")
+            # create assignmenttaker instances for relevant students, registering them for the test
+            utils.register_assessment_takers(assignment, _type="test")
+        except Exception as e:
+            print(f"An exception occurred while creating a notice or registering students: {e}")
+        return assignment
+    
+    def update(self, instance, validated_data):
+        assignment = super().update(instance, validated_data)
+        try:
+            # # create a notice for the test, which sends a mail to all relevant students
+            # # requires request
+            # utils.create_scoped_student_assessment_notice(self.request, assignment, _type="test")
+            # create assignmenttaker instances for relevant students, registering them for the test
+            utils.register_assessment_takers(assignment, _type="test")
+        except Exception as e:
+            print(f"An exception occurred while creating a notice or registering students: {e}")
+        return assignment
 
 
 class AssignmentTakerSerializer(serializers.HyperlinkedModelSerializer):

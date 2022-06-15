@@ -1,28 +1,40 @@
-def decorator(f):
-    print(f"inside decorator body with decorated function {f.__name__}")
-    print(f)
-    def wrapped(*args, **kwargs):
-        print(f"inside inner wrapper function with args: {args} and kwargs: {kwargs}")
-        result = f(*args)  # calling the function
-        print(result)
-        return result
+# def decorator(f):
+#     print(f"inside decorator body with decorated function {f.__name__}")
+#     print(f)
+#     def wrapped(*args, **kwargs):
+#         print(f"inside inner wrapper function with args: {args} and kwargs: {kwargs}")
+#         result = f(*args)  # calling the function
+#         print(result)
+#         return result
 
-    return wrapped
-
-
-@decorator
-def my_funcion(a, b, c):
-    # print("inside my_funcion()")
-    summation = sum([a,b,c])
-    # print (summation)
-    return summation
+#     return wrapped
 
 
-@decorator
-def my_funcion_no_call(a, b, c):
-    print("inside my_funcion_no_call()")
+# @decorator
+# def my_funcion(a, b, c):
+#     # print("inside my_funcion()")
+#     summation = sum([a,b,c])
+#     # print (summation)
+#     return summation
 
 
-print("finished decorating my_funcion()")
-my_funcion(1, 2, 3)
-print("immediately after my_function() line")
+# @decorator
+# def my_funcion_no_call(a, b, c):
+#     print("inside my_funcion_no_call()")
+
+
+# print("finished decorating my_funcion()")
+# my_funcion(1, 2, 3)
+# print("immediately after my_function() line")
+
+# x = 5
+# y = "5"
+# is_true = True
+
+# if x != int(y) or is_true:
+#     print("either one is false")
+
+# # if (x != int(y)) or not is_true:
+# #     print("either one is false")
+# else: 
+#     print("one is true")

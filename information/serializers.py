@@ -32,8 +32,7 @@ class InformationSerializer(serializers.HyperlinkedModelSerializer):
 
     source = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        allow_null=True,
-        required=False
+        allow_null=True, required=False,
     )
     scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
@@ -105,8 +104,7 @@ class NoticeSerializer(serializers.HyperlinkedModelSerializer):
 
     source = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        allow_null=True,
-        required=False
+        allow_null=True, required=False,
     )
     scope = serializers.PrimaryKeyRelatedField(
         queryset=models.Scope.objects.all(),
