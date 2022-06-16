@@ -474,7 +474,7 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         registration = None
         try:
-            registration, created = models.CourseRegistration.objects.get_or_create()(**validated_data)
+            registration, created = models.CourseRegistration.objects.get_or_create(**validated_data)
             if not created:
                 raise Exception("This course registration exists")
         except Exception as e:
