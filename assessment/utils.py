@@ -53,7 +53,7 @@ def create_scoped_student_assessment_notice(request, assessment, _type="assignme
   Assessment can be either a test or assessment.
   _type can be either "assignment" or "test"
   """
-  message = f"You have a new {_type} for {assessment.course.code}."
+  message = f"You have a new {_type} for course {assessment.course.code}."
   
   if _type == "assignment":
     message = f"{message} Remember to submit your {_type} before, {assessment.due_date}."
@@ -79,12 +79,15 @@ def create_scoped_student_assessment_notice(request, assessment, _type="assignme
     scope = imodels.Scope.objects.create(course=assessment.course, is_general=False)
 
   try:
-    notice = imodels.Notice.objects.create(
+    notice, created = imodels.Notice.objects.get_or_create(
       source=request.user,
       scope=scope,
       title=f"New {_type.title()} for {assessment.course.code}",
       message=message,
     )
+    # run the functionality in the .save method to send mail
+    if not created:
+      notice.save()
     return True
   except Exception as e:
     print(f"Error creating {_type.title()} notice: {e}")
@@ -96,6 +99,9 @@ def register_assessment_takers(assessment, _type="assignment"):
   _type can be either "assignment" or "test"
   """
   course_registrations = umodels.CourseRegistration.objects.filter(course=assessment.course)
+  if not course_registrations:
+    raise Exception(f"There are no students registered for the course {assessment.course.code}")
+  
   for registration in course_registrations:
     takers = None
     try:

@@ -6,6 +6,7 @@ from assessment import models, serializers, filters, utils
 from academics import models as amodels
 
 from drf_yasg.utils import no_body, swagger_auto_schema
+from datetime import datetime
 
 # Create your views here.
 
@@ -180,6 +181,13 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.AssignmentResponseFilter
+    
+    def perform_create(self, serializer):
+        assignment = serializer.validated_data["assignment"]
+        # raise exception if current day is past the due date
+        if datetime.today().date() > assignment.due_date:
+            raise Exception("You are unable to submit this assignment. the due date is past.")
+        return super().perform_create(serializer)
 
 
 class GradeViewSet(mixins.swagger_documentation_factory("grade"), viewsets.ModelViewSet):

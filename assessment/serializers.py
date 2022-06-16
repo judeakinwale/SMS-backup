@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework import serializers, fields
+# from rest_framework.fields import CurrentUserDefault
 from assessment import models, utils
 from academics import models as amodels
 from user import models as umodels
@@ -193,94 +194,19 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                         models.Answer.objects.create(**answer_data)
         
         try:
-            # # create a notice for the test, which sends a mail to all relevant students
-            # # requires request
-            # utils.create_scoped_student_assessment_notice(self.request, quiz, _type="test")
+            # create a notice for the test, which sends a mail to all relevant students
+            # NOTE: requires request
+            request = self.context['request']
+            utils.create_scoped_student_assessment_notice(request, quiz, _type="test")
             # create quiztaker instances for relevant students, registering them for the test
             utils.register_assessment_takers(quiz)
         except Exception as e:
-            print(f"An exception occurred while creating a notice or registering students: {e}")
+            print(f"There was an exception registering students for assessment: {e}")
 
         return quiz
 
     def update(self, instance, validated_data):
 
-        # if ('question_set' not in validated_data) or validated_data['question_set'] == []:
-        #     quiz = super().update(instance, validated_data)
-        # else:
-        #     questions = (instance.question_set).all()
-        #     list_questions = list(questions)
-        #     question_set_data = validated_data.pop('question_set')
-        #     quiz = super().update(instance, validated_data)
-
-        #     if list_questions == []:
-        #         for question_data in question_set_data:
-        #             question_data['quiz'] = quiz
-
-        #             if ('answer_set' not in question_data) or question_data['answer_set'] == []:
-        #                 question = models.Question.objects.create(**question_data)
-        #                 print(question)
-        #             else:
-        #                 answer_set_data = question_data.pop('answer_set')
-        #                 list_answer = list(answer_set_data)
-        #                 question = models.Question.objects.create(**question_data)
-
-        #                 for answer_data in answer_set_data:
-        #                     answer_data['question'] = question
-        #                     models.Answer.objects.create(**answer_data)
-        #     else:
-        #         n = 0
-
-        #         for question_data in question_set_data:
-        #             try:
-        #                 question = questions[n]
-        #                 n += 1
-
-        #                 answers = question.answer_set.all()
-
-        #                 if ('answer_set' not in question_data) or validated_data['answer_set'] == []:
-        #                     question.label = question_data.get('question', question.label)
-        #                     question.order = question_data.get('is_correct', question.order)
-        #                     question.save()
-        #                 else:
-        #                     answer_set_data = question_data.pop('answer_set')
-        #                     list_answer = list(answer_set_data)
-        #                     question.label = question_data.get('question', question.label)
-        #                     question.order = question_data.get('is_correct', question.order)
-        #                     question.save()
-
-        #                     if list_answer == []:
-        #                         for answer_data in answer_set_data:
-        #                             answer_data['question'] = question
-        #                             models.Answer.objects.create(**answer_data)
-        #                     else:
-        #                         n = 0
-
-        #                         for answer_data in answer_set_data:
-        #                             try:
-        #                                 answer = answers[n]
-        #                                 answer.question = answer_data.get('question', answer.question)
-        #                                 answer.text = answer_data.get('text', answer.text)
-        #                                 answer.is_correct = answer_data.get('is_correct', answer.is_correct)
-        #                                 answer.save()
-        #                             except Exception:
-        #                                 answer_data['question'] = question
-        #                                 models.Answer.objects.create(**answer_data)
-        #             except Exception:
-        #                 question_data['quiz'] = quiz
-
-        #                 if ('answer_set' not in question_data) or question_data['answer_set'] == []:
-        #                     question = models.Question.objects.create(**question_data)
-        #                     print(question)
-        #                 else:
-        #                     answer_set_data = question_data.pop('answer_set')
-        #                     list_answer = list(answer_set_data)
-        #                     question = models.Question.objects.create(**question_data)
-
-        #                     for answer_data in answer_set_data:
-        #                         answer_data['question'] = question
-        #                         models.Answer.objects.create(**answer_data)
-        
         try:
             if 'question_set' not in validated_data:
                 raise Exception("No questions provided")    
@@ -303,7 +229,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
                         nested_data["question"] = question
                         answers = None
                         try:
-                            print(nested_data)
+                            # print(nested_data)
                             answers = models.Answer.objects.filter(**nested_data)
                             answer, created = models.Answer.objects.get_or_create(**nested_data)
                         except Exception as e:
@@ -319,13 +245,14 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             quiz = super().update(instance, validated_data) if not quiz else quiz
 
         try:
-            # # create a notice for the test, which sends a mail to all relevant students
-            # # requires request
-            # utils.create_scoped_student_assessment_notice(self.request, quiz, _type="test")
+            # create a notice for the test, which sends a mail to all relevant students
+            # NOTE: requires request
+            request = self.context['request']
+            utils.create_scoped_student_assessment_notice(request, quiz, _type="test")
             # create quiztaker instances for relevant students, registering them for the test
             utils.register_assessment_takers(quiz, _type="test")
         except Exception as e:
-            print(f"An exception occurred while creating a notice or registering students: {e}")
+            print(f"There was an exception registering students for assessment: {e}")
         
         return quiz
 
@@ -429,25 +356,27 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         assignment = super().create(validated_data)
         try:
-            # # create a notice for the test, which sends a mail to all relevant students
-            # # requires request
-            # utils.create_scoped_student_assessment_notice(self.request, assignment, _type="test")
+            # create a notice for the test, which sends a mail to all relevant students
+            # NOTE: requires request
+            request = self.context['request']
+            utils.create_scoped_student_assessment_notice(request, assignment)
             # create assignmenttaker instances for relevant students, registering them for the test
-            utils.register_assessment_takers(assignment, _type="test")
+            utils.register_assessment_takers(assignment)
         except Exception as e:
-            print(f"An exception occurred while creating a notice or registering students: {e}")
+            print(f"There was an exception registering students for assessment: {e}")
         return assignment
     
     def update(self, instance, validated_data):
         assignment = super().update(instance, validated_data)
         try:
-            # # create a notice for the test, which sends a mail to all relevant students
-            # # requires request
-            # utils.create_scoped_student_assessment_notice(self.request, assignment, _type="test")
+            # create a notice for the test, which sends a mail to all relevant students
+            # NOTE: requires request
+            request = self.context['request']
+            utils.create_scoped_student_assessment_notice(request, assignment)
             # create assignmenttaker instances for relevant students, registering them for the test
-            utils.register_assessment_takers(assignment, _type="test")
+            utils.register_assessment_takers(assignment)
         except Exception as e:
-            print(f"An exception occurred while creating a notice or registering students: {e}")
+            print(f"There was an exception registering students for assessment: {e}")
         return assignment
 
 

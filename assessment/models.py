@@ -36,21 +36,21 @@ class Quiz(models.Model):
         
     def save(self, *args, **kwargs):
         quiz = super(Quiz, self).save(*args, **kwargs)
-        try:
-            # related_students = self.course.specialization.student_set.all()
-            related_course_registrations = self.course.courseregistration_set.all()
-            print(f"related course registrations for created quiz:\n {related_course_registrations}")
-            # for student in related_students:
-            #     models.QuizTaker.objects.create(student=student, quiz=self)
-            #     print(f"quiz taker created, student {student} registered for quiz {self}")
-            for course_registration in related_course_registrations:
-                try:
-                    models.QuizTaker.objects.get(student=course_registration.student, quiz=self)
-                except Exception:
-                    models.QuizTaker.objects.create(student=course_registration.student, quiz=self)
-                    print(f"quiz taker created, student {course_registration.student} registered for quiz {self}")
-        except Exception:
-            pass
+        # try:
+        #     # related_students = self.course.specialization.student_set.all()
+        #     related_course_registrations = self.course.courseregistration_set.all()
+        #     print(f"related course registrations for created quiz:\n {related_course_registrations}")
+        #     # for student in related_students:
+        #     #     models.QuizTaker.objects.create(student=student, quiz=self)
+        #     #     print(f"quiz taker created, student {student} registered for quiz {self}")
+        #     for course_registration in related_course_registrations:
+        #         try:
+        #             models.QuizTaker.objects.get(student=course_registration.student, quiz=self)
+        #         except Exception:
+        #             models.QuizTaker.objects.create(student=course_registration.student, quiz=self)
+        #             print(f"quiz taker created, student {course_registration.student} registered for quiz {self}")
+        # except Exception:
+        #     pass
         
         return quiz
 
@@ -184,7 +184,7 @@ class Assignment(models.Model):
         blank=True, null=True
     )
     max_score = models.FloatField(default=10.00)
-    due_date = models.DateTimeField()
+    due_date = models.DateField()
 
     class Meta:
         """Meta definition for Assignment."""
