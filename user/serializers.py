@@ -470,6 +470,17 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:courseregistration-detail'},
         }
+        
+    def create(self, validated_data):
+        registration = None
+        try:
+            registration, created = models.CourseRegistration.objects.get_or_create()(**validated_data)
+            if not created:
+                raise Exception("This course registration exists")
+        except Exception as e:
+            print(f"There was an exception creating course registration: {e}")
+            raise Exception("This course is already registered")
+        return registration
 
 
 class CourseRegistrationResponseSerializer(CourseRegistrationSerializer):
@@ -1315,6 +1326,8 @@ class AccountSerializer(BaseUserSerializer):
 
 class AccountResponseSerializer(AccountSerializer):
 
+    staff = StaffResponseSerializer(source='staff_set', many=True, read_only=True)
+    student = StudentResponseSerializer(source='student_set', many=True, read_only=True)
     specialization = aserializers.SpecializationSerializer(read_only=True)
 
 

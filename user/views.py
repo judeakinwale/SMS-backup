@@ -69,12 +69,23 @@ class ManageUserApiView(generics.RetrieveUpdateAPIView):
     """manage the authenticated user"""
     queryset = get_user_model().objects.all()
     serializer_class = serializers.AccountSerializer
+    serializer_action_classes = {
+        'get': serializers.AccountResponseSerializer,
+        'retrieve': serializers.AccountResponseSerializer,
+    }
     permission_classes = [permissions.IsAuthenticated]
     filterset_class = filters.UserFilter
 
     def get_object(self):
         """retrieve and return the authenticated user"""
         return self.request.user
+    
+    def get_serializer_class(self):
+        try:
+            # return self.serializer_action_classes[self.method]
+            return self.serializer_action_classes[self.request.method.lower()]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     @swagger_auto_schema(
         operation_description="retrieve authenticated user details",
