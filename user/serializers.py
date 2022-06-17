@@ -1096,6 +1096,7 @@ class StudentSerializer(BaseStudentSerializer):
     results = ResultResponseSerializer(source='result_set', many=True, read_only=True)
     course_registrations = CourseRegistrationResponseSerializer(source='courseregistration_set', many=True, read_only=True)
     registered_quizes = qserializers.QuizTakerResponseSerializer(source='quiztaker_set', many=True, read_only=True)
+    registered_assignments = qserializers.AssignmentTakerResponseSerializer(source='assignmenttaker_set', many=True, read_only=True)
     notices = iserializers.NoticeResponseSerializer(many=True, read_only=True)
     information = iserializers.InformationResponseSerializer(many=True, read_only=True)
     # notices = serializers.ReadOnlyField()
@@ -1107,6 +1108,7 @@ class StudentSerializer(BaseStudentSerializer):
             'results',
             'course_registrations',
             'registered_quizes',
+            'registered_assignments',
             'notices',
             'information',
         ]
