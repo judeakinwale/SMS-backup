@@ -70,6 +70,7 @@ class Question(models.Model):
         blank=True, null=True
     )
     order = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Question."""
@@ -89,6 +90,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.TextField()
     is_correct = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Answer."""
@@ -153,6 +155,7 @@ class Response(models.Model):
     quiz_taker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Response."""
@@ -185,6 +188,9 @@ class Assignment(models.Model):
     )
     max_score = models.FloatField(default=10.00)
     due_date = models.DateField()
+    is_active = models.BooleanField(default=True)
+    is_completed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Assignment."""
@@ -240,6 +246,7 @@ class AssignmentResponse(models.Model):
         upload_to='files/assignment_answers/',
         blank=True, null=True
     )
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     class Meta:
         """Meta definition for Response."""
