@@ -46,7 +46,6 @@ class CourseFilter(filters.FilterSet):
             'name': ['icontains'],
             'code': ['icontains'],
             'description': ['icontains'],
-            # 'coordinator': ['icontains'],
             'coordinator__id': ['exact'],
             'is_active': ['exact'],
         }
