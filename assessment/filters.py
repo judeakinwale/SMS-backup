@@ -3,8 +3,6 @@ from assessment import models
 
 
 class QuizFilter(filters.FilterSet):
-    # name = filters.CharFilter(lookup_expr='icontains')
-    # description = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = models.Quiz
@@ -25,7 +23,6 @@ class QuizFilter(filters.FilterSet):
 
 
 class QuestionFilter(filters.FilterSet):
-    # label = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = models.Question
@@ -68,8 +65,6 @@ class ResponseFilter(filters.FilterSet):
     class Meta:
         model = models.Response
         fields = {
-            # 'quiz_taker_student_matric_no': ['icontains'],
-            # 'answer': ['icontains'],
             'quiz_taker__id': ['exact'],
             'quiz_taker__quiz__id': ['exact'],
             'quiz_taker__student__id': ['exact'],
@@ -83,7 +78,6 @@ class ResponseFilter(filters.FilterSet):
 
 
 class AssignmentFilter(filters.FilterSet):
-    # label = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = models.Assignment
@@ -123,9 +117,6 @@ class AssignmentResponseFilter(filters.FilterSet):
     class Meta:
         model = models.AssignmentResponse
         fields = {
-            # 'quiz_taker_student_matric_no': ['icontains'],
-            # 'question__label': ['icontains'],
-            # 'answer': ['icontains'],
             'assignment__id': ['exact'],
             'assignment_taker__id': ['exact'],
             'assignment_taker__student__id': ['exact'],

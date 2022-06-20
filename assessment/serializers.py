@@ -199,7 +199,7 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
             request = self.context['request']
             utils.create_scoped_student_assessment_notice(request, quiz, _type="test")
             # create quiztaker instances for relevant students, registering them for the test
-            utils.register_assessment_takers(quiz)
+            utils.register_assessment_takers(quiz, _type="test")
         except Exception as e:
             print(f"There was an exception registering students for assessment: {e}")
 
@@ -356,11 +356,11 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         assignment = super().create(validated_data)
         try:
-            # create a notice for the test, which sends a mail to all relevant students
+            # create a notice for the assignment, which sends a mail to all relevant students
             # NOTE: requires request
             request = self.context['request']
             utils.create_scoped_student_assessment_notice(request, assignment)
-            # create assignmenttaker instances for relevant students, registering them for the test
+            # create assignmenttaker instances for relevant students, registering them for the assignment
             utils.register_assessment_takers(assignment)
         except Exception as e:
             print(f"There was an exception registering students for assessment: {e}")
@@ -369,11 +369,11 @@ class AssignmentSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         assignment = super().update(instance, validated_data)
         try:
-            # create a notice for the test, which sends a mail to all relevant students
+            # create a notice for the assignment, which sends a mail to all relevant students
             # NOTE: requires request
             request = self.context['request']
             utils.create_scoped_student_assessment_notice(request, assignment)
-            # create assignmenttaker instances for relevant students, registering them for the test
+            # create assignmenttaker instances for relevant students, registering them for the assignment
             utils.register_assessment_takers(assignment)
         except Exception as e:
             print(f"There was an exception registering students for assessment: {e}")
