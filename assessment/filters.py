@@ -69,8 +69,15 @@ class ResponseFilter(filters.FilterSet):
         model = models.Response
         fields = {
             # 'quiz_taker_student_matric_no': ['icontains'],
-            'question__label': ['icontains'],
             # 'answer': ['icontains'],
+            'quiz_taker__id': ['exact'],
+            'quiz_taker__quiz__id': ['exact'],
+            'quiz_taker__student__id': ['exact'],
+            'question__id': ['exact'],
+            'answer__id': ['exact'],
+            'quiz_taker__student__matric_no': ['icontains', 'exact'],
+            'quiz_taker__quiz__name': ['icontains', 'exact'],
+            'question__label': ['icontains'],
             'timestamp': ['exact', 'lt', 'gt'],
         }
 
@@ -119,6 +126,11 @@ class AssignmentResponseFilter(filters.FilterSet):
             # 'quiz_taker_student_matric_no': ['icontains'],
             # 'question__label': ['icontains'],
             # 'answer': ['icontains'],
+            'assignment__id': ['exact'],
+            'assignment_taker__id': ['exact'],
+            'assignment_taker__student__id': ['exact'],
+            'assignment_taker__student__matric_no': ['icontains', 'exact'],
+            'assignment__title': ['icontains', 'exact'],
             'timestamp': ['exact', 'lt', 'gt'],
         }
 

@@ -189,6 +189,7 @@ class Semester(models.Model):
         null=True,
         default=SemesterChoices.FIRST
     )
+    is_current = models.BooleanField(default=False)
 
     class Meta:
         """Meta definition for Semester."""

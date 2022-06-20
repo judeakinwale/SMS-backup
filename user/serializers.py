@@ -645,18 +645,20 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
         #     pass
         
         try:
+            nested_serializer = self.fields['academic_history']
+            
             for academic_history_data in academic_history_data_list:
                 nested_data = academic_history_data
-                    
-                nested_serializer = self.fields['academic_history']
+                nested_data.update(biodata=biodata)
                 try:
-                    nested_instance = instance.academic_history
+                    # nested_instance = instance.academic_history
 
-                    if nested_instance:
-                        academic_history = nested_serializer.update(nested_instance, nested_data)
-                    else:
-                        nested_data.update(biodata=biodata)
-                        academic_history = nested_serializer.create(nested_data)
+                    # if nested_instance:
+                    #     academic_history = nested_serializer.update(nested_instance, nested_data)
+                    # else:
+                    #     nested_data.update(biodata=biodata)
+                    #     academic_history = nested_serializer.create(nested_data)
+                    academic_history, created = models.AcademicHistory.objects.get_or_create(**nested_data)
                 except Exception:
                     nested_data.update(biodata=biodata)
                     try:
@@ -814,9 +816,14 @@ class UserSerializer(BaseUserSerializer):
             user = get_user_model().objects.create_user(**validated_data)
             # print(f"\n\n{user.check_password(validated_data['password'])}\n\n")
             nested_data.update(user=user)
+            nested_serializer = self.fields['biodata']
             # biodata = models.Biodata.objects.create(**nested_data, user=user)
-            biodata = models.Biodata.objects.create(**nested_data)
-            print(f"biodata: {biodata}")
+            try:
+                biodata = nested_serializer.create(nested_data)
+                print("Biodata created using biodata serializer", f"biodata: {biodata}")
+            except Exception as e:
+                biodata = models.Biodata.objects.create(**nested_data)
+                print(f"biodata: {biodata}")
             # validated_data['biodata'] = biodata
             # return user
         except  Exception as e:
