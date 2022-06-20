@@ -56,13 +56,10 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
 
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=models.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
     )
     coordinator = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     quizzes = aserializers.QuizSerializer(source='quiz_set', many=True, read_only=True)
     assignments = aserializers.AssignmentSerializer(source='assignment_set', many=True, read_only=True)
@@ -92,35 +89,20 @@ class RecommendedCoursesSerializer(serializers.HyperlinkedModelSerializer):
 
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=models.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
-        # allow_null=True,
-        # required=False,
     )
     source_specialization = serializers.PrimaryKeyRelatedField(
         queryset=models.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     course = serializers.PrimaryKeyRelatedField(
-        # many=True,
         queryset=models.Course.objects.all(),
-        # view_name='academics:course-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
-    # courses = CourseSerializer(read_only=True, many=True)
     semester = serializers.PrimaryKeyRelatedField(
         queryset=models.Semester.objects.all(),
-        # view_name='academics:semester-detail',
-        # allow_null=True,
-        # required=False,
     )
     level = serializers.PrimaryKeyRelatedField(
         queryset=models.Level.objects.all(),
-        # view_name='academics:level-detail',
-        # allow_null=True,
-        # required=False,
     )
 
     class Meta:
@@ -146,15 +128,10 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
 
     department = serializers.PrimaryKeyRelatedField(
         queryset=models.Department.objects.all(),
-        # view_name='academics:department-detail',
     )
     max_level = serializers.PrimaryKeyRelatedField(
         queryset=models.Level.objects.all(),
-        # view_name='academics:level-detail',
     )
-    # courses = CourseSerializer(source='course_set', many=True, read_only=True)
-    # recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
-    # direct_recommended_courses = RecommendedCoursesSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Specialization
@@ -166,9 +143,6 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
             'code',
             'max_level',
             'description',
-            # 'courses',
-            # 'recommended_courses',
-            # 'direct_recommended_courses',
             'is_active',
         ]
         extra_kwargs = {
@@ -181,13 +155,10 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
 
     faculty = serializers.PrimaryKeyRelatedField(
         queryset=models.Faculty.objects.all(),
-        # view_name='academics:faculty-detail',
     )
     head = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False
+        allow_null=True, required=False,
     )
     specializations = SpecializationSerializer(source='specialization_set', many=True, read_only=True)
 
@@ -214,9 +185,7 @@ class FacultySerializer(serializers.HyperlinkedModelSerializer):
 
     dean = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
-        # view_name='user:user-detail',
-        allow_null=True,
-        required=False,
+        allow_null=True, required=False,
     )
     departments = DepartmentSerializer(source='department_set', many=True, read_only=True)
 
@@ -242,7 +211,6 @@ class RecommendedCoursesResponseSerializer(RecommendedCoursesSerializer):
 
     specialization = SpecializationSerializer(read_only=True)
     course = CourseSerializer(read_only=True)
-    # courses = CourseSerializer(read_only=True, many=True)
     semester = SemesterSerializer(read_only=True)
     level = LevelSerializer(read_only=True)
 

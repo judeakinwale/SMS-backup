@@ -31,6 +31,9 @@ class Faculty(models.Model):
         verbose_name_plural = _('Faculty')
 
     def save(self, *args, **kwargs):
+        # # TODO: Replace with faculty_dean_helper in academics.util
+        # from academics.utils import faculty_dean_helper
+        # faculty_dean_helper(faculty=self, _pre=True)
         if self.dean:
             try:
                 dean = self.dean.staff_set.all().first()
@@ -75,6 +78,9 @@ class Department(models.Model):
         verbose_name_plural = _('Departments')
 
     def save(self, *args, **kwargs):
+        # # TODO: Replace with department_head_helper in academics.util
+        # from academics.utils import department_head_helper
+        # department_head_helper(department=self, _pre=True)
         if self.head:
             try:
                 head = self.head.staff_set.all().first()
@@ -246,7 +252,6 @@ class RecommendedCourses(models.Model):
         null=True,
         blank=True,
     )
-    # courses = models.ManyToManyField(Course)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True)
     level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True)
