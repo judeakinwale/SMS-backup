@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from user import managers
 from academics import models as acmodels
-from . import utils
+from user import utils
 # from academics import serializers as aserializers
 
 # Create your models here.
