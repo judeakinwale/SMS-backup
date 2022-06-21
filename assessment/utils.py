@@ -5,6 +5,8 @@ from django.template.loader import get_template
 from assessment import models
 from information import models as imodels
 from user import models as umodels
+# from academics import serializers as aserializers
+# from user import serializers as userializers
 
 
 def send_simple_email(template_path: str, reciepients: list, subject: str = "Email", context: dict = {}, cc: list = [], message: str = '') -> bool:

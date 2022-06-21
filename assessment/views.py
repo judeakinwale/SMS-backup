@@ -14,6 +14,10 @@ from datetime import datetime
 class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), viewsets.ModelViewSet):
     queryset = models.Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
+    serializer_action_classes = {
+        'list': serializers.QuizResponseSerializer,
+        'retrieve': serializers.QuizResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUser
         | cpermissions.IsStaff
@@ -22,6 +26,12 @@ class QuizViewSet(mixins.swagger_documentation_factory("Quiz","a","Quizzes"), vi
         | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.QuizFilter
+    
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
 
     def perform_create(self, serializer):
         if 'supervisor' not in serializer.validated_data:
@@ -143,6 +153,10 @@ class ResponseViewSet(mixins.swagger_documentation_factory("response"), viewsets
 class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an"), viewsets.ModelViewSet):
     queryset = models.Assignment.objects.all()
     serializer_class = serializers.AssignmentSerializer
+    serializer_action_classes = {
+        'list': serializers.AssignmentDetailedResponseSerializer,
+        'retrieve': serializers.AssignmentDetailedResponseSerializer,
+    }
     permission_classes = [
         cpermissions.IsSuperUser
         | cpermissions.IsStaff
@@ -152,6 +166,12 @@ class AssignmentViewSet(mixins.swagger_documentation_factory("assignment", "an")
         | cpermissions.IsHeadOrReadOnly
     ]
     filterset_class = filters.AssignmentFilter
+    
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
     
     def perform_create(self, serializer):
         if 'supervisor' not in serializer.validated_data:

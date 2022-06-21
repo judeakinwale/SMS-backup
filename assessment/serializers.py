@@ -206,12 +206,14 @@ class QuizSerializer(serializers.HyperlinkedModelSerializer):
         return quiz
 
     def update(self, instance, validated_data):
-
+        
+        question_set_data = validated_data.pop('question_set') if 'question_set' in validated_data else None
+        quiz = super().update(instance, validated_data)
         try:
-            if 'question_set' not in validated_data:
-                raise Exception("No questions provided")    
-            question_set_data = validated_data.pop('question_set')
-            quiz = super().update(instance, validated_data)
+            # if 'question_set' not in validated_data:
+            #     raise Exception("No questions provided")    
+            # question_set_data = validated_data.pop('question_set')
+            # quiz = super().update(instance, validated_data)
             for question_data in question_set_data:
                 nested_data = question_data
                 nested_data["quiz"] = quiz
@@ -461,3 +463,17 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
         assignment_taker.completed = True
         assignment_taker.save()
         return response
+
+
+class QuizResponseSerializer(QuizSerializer):
+    
+    # supervisor = utils.userializers.BaseUserSerializer(read_only=True)
+    # course = utils.aserializers.CourseResponseSerializer(read_only=True)
+    pass
+    
+
+class AssignmentDetailedResponseSerializer(AssignmentSerializer):
+    
+    # supervisor = utils.userializers.BaseUserSerializer(read_only=True)
+    # course = utils.aserializers.CourseResponseSerializer(read_only=True)
+    pass
