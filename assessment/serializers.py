@@ -447,4 +447,17 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
             'url': {'view_name': 'assessment:assignmentresponse-detail'}
         }
 
-
+    def create(self, validated_data):
+        response = super().create(validated_data)
+        assignment_taker = validated_data["assignment_taker"]
+        assignment_taker.completed = True
+        assignment_taker.save()
+        return response
+    
+    def update(self, instance, validated_data):
+        response = super().update(instance, validated_data)
+        print("Moved to serializer update method")
+        assignment_taker = validated_data["assignment_taker"]
+        assignment_taker.completed = True
+        assignment_taker.save()
+        return response

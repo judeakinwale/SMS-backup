@@ -31,6 +31,8 @@ def send_simple_email(template_path: str, reciepients: list, subject: str = "Ema
     return False
 
 
+# def post_assignment_submission():
+#   pass
 
 
 # # Not used

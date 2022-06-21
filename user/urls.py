@@ -22,10 +22,12 @@ router.register('course_registration', views.CourseRegistrationViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path('account/', views.ManageUserApiView.as_view(), name="account"),
-    # path("token/", JWTViews.TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/", views.DecoratedTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    # path("token/verify", JWTViews.TokenVerifyView.as_view(), name="token_verify"),
     path("token/verify", views.DecoratedTokenVerifyView.as_view(), name="token_verify"),
-    # path("token/refresh", JWTViews.TokenRefreshView.as_view(), name="token_refresh"),
     path("token/refresh", views.DecoratedTokenRefreshView.as_view(), name="token_refresh"),
+    # # urls for jwt token default views
+    # path("token/", JWTViews.TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    # path("token/verify", JWTViews.TokenVerifyView.as_view(), name="token_verify"),
+    # path("token/refresh", JWTViews.TokenRefreshView.as_view(), name="token_refresh"),
+
 ]

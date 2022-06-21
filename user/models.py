@@ -46,15 +46,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return f"{self.email}"
 
-    # def get_staff(self):
-    #     if self.is_staff is True:
-    #         try:
-    #             staff = Staff.objects.get(user=self)
-    #         except Exception:
-    #             staff = Staff.objects.create(user=self)
-    #         return staff
-    #     else:
-    #         return None
+    def get_staff(self):
+        if self.is_staff:
+            try:
+                staff, created = Staff.objects.get_or_create(user=self, specialization=self.specialization)
+                return staff
+            except Exception as e:
+                print(f"Exception auto creating staff: {e}")
+        return None
     
     def get_full_name(self):
         if self.first_name and self.last_name and self.middle_name:
@@ -239,8 +238,8 @@ class CourseAdviser(models.Model):
 class Biodata(models.Model):
     """Model definition for Biodata."""
 
-    # Definitions for model choices
     class MarriageChoices(models.TextChoices):
+        """Definitions for model choices"""
         SINGLE = 'Single', _('Single')
         MARRIED = 'Married', _('Married')
         DIVORCED = 'Divorced', _('Divorced')
@@ -304,8 +303,8 @@ class Biodata(models.Model):
 class AcademicData(models.Model):
     """Model definition for AcademicData."""
 
-    # Definitions for model choices
     class QualificationChoices(models.TextChoices):
+        """Definitions for model choices"""
         BSC = 'B.Sc', _('B.Sc')
         MSC = 'M.Sc', _('M.Sc')
         OTHER = 'Other', _('Other')
@@ -446,8 +445,8 @@ class Result(models.Model):
 class AcademicHistory(models.Model):
     """Model definition for AcademicHistory."""
 
-    # Definitions for model choices
     class QualificationChoices(models.TextChoices):
+        """Definitions for model choices"""
         JSSCE = 'JSSCE', _('JSSCE')
         SSCE = 'SSCE', _('SSCE')
         BACHELORS = 'Bachelors', _('Bachelors')

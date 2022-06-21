@@ -18,25 +18,13 @@ from rest_framework_simplejwt.views import (
 
 class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
     """base serializer for the User model"""
-    # test = serializers.HyperlinkedRelatedField(
-    #     queryset=models.Test.objects.all(),
-    #     # view_name='testapp:test-detail',
-    #     allow_null=True,
-    #     required=False,
-    # )
-    # specialization = serializers.PrimaryKeyRelatedField(
-    #     queryset=amodels.Specialization.objects.all(),
-    #     # view_name='academics:specialization-detail',
-    #     allow_null=True,
-    #     required=False,
-    # )
+
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
         allow_null=True,
         required=False,
     )
     full_name = serializers.CharField(source='get_full_name', read_only=True)
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     
     class Meta:
         model = get_user_model()
@@ -66,29 +54,16 @@ class BaseUserSerializer(serializers.HyperlinkedModelSerializer):
 class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
     """serializer for the Staff model"""
 
-    # user = serializers.PrimaryKeyRelatedField(
-    #     queryset=get_user_model().objects.filter(is_staff=True),
-    #     # view_name='user:user-detail',
-    #     allow_null=True,
-    #     required=False,
-    # )
     user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.filter(is_staff=True),
         allow_null=True,
         required=False,
     )
-    # specialization = serializers.PrimaryKeyRelatedField(
-    #     queryset=amodels.Specialization.objects.all(),
-    #     # view_name='academics:specialization-detail',
-    #     allow_null=True,
-    #     required=False,
-    # )
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
         allow_null=True,
         required=False,
     )
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta:
         model = models.Staff
@@ -104,10 +79,7 @@ class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
             'is_IT',
             'is_head_of_department',
             'is_dean_of_faculty',
-            # 'department',
-            # 'faculty',
         ]
-        # read_only_fields = [ 'department', 'faculty']
         extra_kwargs = {
             'url': {'view_name': 'user:staff-detail'},
         }
@@ -118,13 +90,11 @@ class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
 
     user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        # view_name='user:user-detail',
         allow_null=True,
         required=False,
     )
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
@@ -139,19 +109,7 @@ class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
             'student_id',
             'specialization',
             'is_active',
-            # 'get_current_course_registrations',
-            # 'get_all_course_registrations',
-            # 'department',
-            # 'faculty',
-            # 'level',
         ]
-        # read_only_fields = [
-        #     'get_current_course_registrations',
-        #     'get_all_course_registrations',
-        #     'department',
-        #     'faculty',
-        #     'level',
-        # ]
         extra_kwargs = {
             'url': {'view_name': 'user:student-detail'},
         }
@@ -162,41 +120,34 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
 
     student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        # view_name='user:student-detail'
     )
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
     department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        # view_name='academics:department-detail',
         allow_null=True,
         required=False,
     )
     level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        # view_name='academics:level-detail',
         allow_null=True,
         required=False,
     )
     semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
     session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
     gpa = serializers.ReadOnlyField(source='get_gpa')
     cgpa = serializers.ReadOnlyField(source='get_cgpa')
-    # course_adviser = serializers.ReadOnlyField()
 
     class Meta:
         model = models.AcademicData
@@ -211,17 +162,12 @@ class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):
             'department',
             'gpa',
             'cgpa',
-            # 'course_adviser',
             'level',
             'semester',
             'session',
-            # 'get_gpa',
-            # 'get_cgpa',
         ]
         extra_kwargs = {
             'url': {'view_name': 'user:academicdata-detail'},
-            # 'get_gpa': {'read_only': True},
-            # 'get_cgpa': {'read_only': True},
         }
         
     def create(self, validated_data):
@@ -289,7 +235,6 @@ class AcademicHistorySerializer(serializers.HyperlinkedModelSerializer):
 
     biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        # view_name='user:biodata-detail',
         required=False
     )
 
@@ -314,7 +259,6 @@ class HealthDataSerializer(serializers.HyperlinkedModelSerializer):
 
     biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        # view_name='user:biodata-detail',
         allow_null=True,
         required=False,
     )
@@ -344,7 +288,6 @@ class FamilyDataSerializer(serializers.HyperlinkedModelSerializer):
 
     biodata = serializers.PrimaryKeyRelatedField(
         queryset=models.Biodata.objects.all(),
-        # view_name='user:biodata-detail',
         allow_null=True,
         required=False,
     )
@@ -374,25 +317,17 @@ class ResultSerializer(serializers.HyperlinkedModelSerializer):
 
     course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail',
-        # allow_null=True,
-        # required=False,
     )
     student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        # view_name='user:student-detail',
-        # allow_null=True,
-        # required=False,
     )
     semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
     session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
@@ -432,23 +367,19 @@ class CourseRegistrationSerializer(serializers.HyperlinkedModelSerializer):
 
     course = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Course.objects.all(),
-        # view_name='academics:course-detail'
     )
     student = serializers.PrimaryKeyRelatedField(
         queryset=models.Student.objects.all(),
-        # view_name='user:student-detail',
         allow_null=True,
         required=False,
     )
     session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
     semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
@@ -497,35 +428,27 @@ class CourseAdviserSerializer(serializers.HyperlinkedModelSerializer):
 
     staff = serializers.PrimaryKeyRelatedField(
         queryset=models.Staff.objects.filter(is_active=True),
-        # view_name='user:staff-detail'
     )
     specialization = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Specialization.objects.all(),
-        # view_name='academics:specialization-detail',
         allow_null=True,
         required=False,
     )
     department = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Department.objects.all(),
-        # view_name='academics:department-detail',
         allow_null=True,
         required=False,
     )
     level = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Level.objects.all(),
-        # view_name='academics:level-detail'
-        # allow_null=True,
-        # required=False,
     )
     semester = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Semester.objects.all(),
-        # view_name='academics:semester-detail',
         allow_null=True,
         required=False,
     )
     session = serializers.PrimaryKeyRelatedField(
         queryset=amodels.Session.objects.all(),
-        # view_name='academics:session-detail',
         allow_null=True,
         required=False,
     )
@@ -552,7 +475,6 @@ class BiodataSerializer(serializers.HyperlinkedModelSerializer):
 
     user = serializers.PrimaryKeyRelatedField(
         queryset=get_user_model().objects.all(),
-        # view_name='user:user-detail',
         allow_null=True,
         required=False
     )
@@ -785,7 +707,6 @@ class UserSerializer(BaseUserSerializer):
     biodata = BiodataSerializer(allow_null=True, required=False)
     staff = BaseStaffSerializer(source='staff_set', many=True, read_only=True)
     student = BaseStudentSerializer(source='student_set', many=True, read_only=True)
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseUserSerializer.Meta):
         additional_fields = [
@@ -955,17 +876,13 @@ class UserResponseSerializer(UserSerializer):
 class StaffSerializer(BaseStaffSerializer):
     """serializer for the Staff model"""
 
-    # new_user = UserSerializer(allow_null=True, required=False)
     courses = aserializers.CourseSerializer(source='course_set', many=True, read_only=True)
     user = UserSerializer()
     department = serializers.ReadOnlyField()
     faculty = serializers.ReadOnlyField()
-    # user = BaseUserSerializer()
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseStaffSerializer.Meta):
         additional_fields = [
-            # 'new_user',
             'courses',
             'department',
             'faculty',
@@ -1095,10 +1012,7 @@ class CourseAdviserResponseSerializer(CourseAdviserSerializer):
 class StudentSerializer(BaseStudentSerializer):
     """serializer for the Student model"""
 
-    # new_user = UserSerializer(allow_null=True, required=False)
     user = UserSerializer()
-    # user = BaseUserSerializer()
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
     academic_data = AcademicDataSerializer(required=False, allow_null=True)
     results = ResultResponseSerializer(source='result_set', many=True, read_only=True)
     course_registrations = CourseRegistrationResponseSerializer(source='courseregistration_set', many=True, read_only=True)
@@ -1106,11 +1020,9 @@ class StudentSerializer(BaseStudentSerializer):
     registered_assignments = qserializers.AssignmentTakerResponseSerializer(source='assignmenttaker_set', many=True, read_only=True)
     notices = iserializers.NoticeResponseSerializer(many=True, read_only=True)
     information = iserializers.InformationResponseSerializer(many=True, read_only=True)
-    # notices = serializers.ReadOnlyField()
 
     class Meta(BaseStudentSerializer.Meta):
         additional_fields = [
-            # 'new_user',
             'academic_data',
             'results',
             'course_registrations',
@@ -1279,7 +1191,6 @@ class AccountSerializer(BaseUserSerializer):
     biodata = BiodataSerializer(required=False, allow_null=True)
     staff = StaffSerializer(source='staff_set', many=True, read_only=True)
     student = StudentBaseResponseSerializer(source='student_set', many=True, read_only=True)
-    # specialization = aserializers.SpecializationSerializer(required=False, allow_null=True)
 
     class Meta(BaseUserSerializer.Meta):
         additional_fields = [

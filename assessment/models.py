@@ -148,6 +148,15 @@ class QuizTaker(models.Model):
 
         return score
 
+    def is_passed(self):
+        if self.score == 0.00 or not self.quiz.max_score:
+            return False
+        
+        score_ratio = self.score/self.quiz.max_score
+        if score_ratio >= 0.5:
+            return True
+        return False
+
 
 class Response(models.Model):
     """Model definition for Response."""

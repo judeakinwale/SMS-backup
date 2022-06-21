@@ -28,7 +28,8 @@ def base_viewset_error_handler(fn):
     try:
         return fn
     except Exception as e:
-        error_resp = {'detail': f"{e}"}
+        # error_resp = {'detail': f"{e}"}
+        error_resp = f"{e}"
         # raise Exception(f"{error_resp}")
         return response.Response(error_resp, status=status.HTTP_400_BAD_REQUEST)
 
