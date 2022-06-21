@@ -8,7 +8,7 @@ from user import models as umodels
 T = TypeVar('T', bound=Model)
 
 
-def faculty_dean_helper(faculty: models.Faculty = None, dean :umodels.User = None, 
+def faculty_dean_helper(faculty: models.Faculty = None, dean: umodels.User = None, 
                         _pre: bool = False) -> Optional[umodels.User]:
   """Update faculty dean and update or create the staff instance for dean
 
