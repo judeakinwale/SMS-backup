@@ -242,7 +242,7 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
         if assignment_taker.completed:
             raise Exception("You have submitted this assignment")
         # raise exception if authenticated user is not authorized
-        if assignment_taker.student.user != request.user and  not request.user.is_superuser:
+        if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
             raise Exception("You are not authorized to submit an answer to this assignment")
         return super().perform_create(serializer)
     
@@ -258,7 +258,7 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
         if assignment_taker.completed:
             raise Exception("You have submitted this assignment")
         # raise exception if authenticated user is not authorized
-        if assignment_taker.student.user != request.user and  not request.user.is_superuser:
+        if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
             raise Exception("You are not authorized to submit an answer to this assignment")
         return super().perform_update(serializer)
 
