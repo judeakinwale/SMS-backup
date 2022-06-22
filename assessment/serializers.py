@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers, fields
+from rest_framework import serializers, fields, exceptions, status
+from rest_framework.exceptions import APIException
 # from rest_framework.fields import CurrentUserDefault
 from assessment import models, utils
 from academics import models as amodels
@@ -459,7 +460,8 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
             return response
         except Exception as e:
             # raise Exception(e)
-            raise api_exception_handler(api_exception_handler)
+            raise APIException(detail=e, status=status.HTTP_400_BAD_REQUEST)
+            # raise api_exception_handler()
     
     def update(self, instance, validated_data):
         try:
