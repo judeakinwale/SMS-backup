@@ -453,26 +453,40 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         try:
-            response = super().create(validated_data)
+            request = self.context['request']
             assignment_taker = validated_data["assignment_taker"]
-            assignment_taker.completed = True
-            assignment_taker.save()
+            utils.can_modify_or_create_response(request, assignment_taker)
+            
+            response = super().create(validated_data)
+            
+            utils.complete_assessment(assignment_taker)
+            
             return response
         except Exception as e:
+            raise exceptions.ValidationError(e)
             # raise Exception(e)
-            raise APIException(detail=e, status=status.HTTP_400_BAD_REQUEST)
+            # raise APIException(detail=e, status=status.HTTP_400_BAD_REQUEST)
             # raise api_exception_handler()
     
     def update(self, instance, validated_data):
         try:
-            response = super().update(instance, validated_data)
             print("Moved to serializer update method")
-            assignment_taker = validated_data["assignment_taker"]
-            assignment_taker.completed = True
-            assignment_taker.save()
+            
+            request = self.context['request']
+            assignment_taker = validated_data.get("assignment_taker", instance.assignment_taker)
+            utils.can_modify_or_create_response(request, assignment_taker)
+            
+            response = super().update(instance, validated_data)
+            
+            utils.complete_assessment(assignment_taker)
+            
+            # assignment_taker = validated_data["assignment_taker"]
+            # assignment_taker.completed = True
+            # assignment_taker.save()
             return response
         except Exception as e:
-            raise Exception(e)
+            raise exceptions.ValidationError(e)
+            # raise Exception(e)
 
 
 class QuizResponseSerializer(QuizSerializer):

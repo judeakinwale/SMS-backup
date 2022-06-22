@@ -11,21 +11,47 @@ from datetime import datetime
 # from user import serializers as userializers
 
 
-def can_modify_or_create_assessment_response(request ,taker, _type: str = "assignment") -> bool:
+def can_modify_or_create_response(request ,taker, _type: str = "assignment") -> bool:
+  """Check if authenticated user is allowed to create or modify responses for quizzes and assignments
+
+  Args:
+      request (_type_): request object, for getting the authenticated user and attached permissions
+      taker (_type_): the assessment taker object: can be quiz_taker or assignment_taker
+      _type (str, optional): the type of assessment: can be "assignment" or "quiz". Defaults to "assignment".
+
+  Raises:
+      Exception: raise exception if current day is past the due date for an assessment (assignment)
+      Exception: raise exception if assessment has been submitted / completed
+      Exception: raise exception if authenticated user is not authorized
+
+  Returns:
+      bool: returns true if all checks do not raise exceptions
+  """
   instance = taker.assignment if _type == "assignment" else taker.quiz
 
-  # raise exception if current day is past the due date for an assessment
   if _type == "assignment" and datetime.today().date() > instance.due_date:
     raise Exception(f"You are unable to submit this {_type}. the due date is past.")
 
-  # raise exception if assessment has been submitted / completed
   if taker.completed:
     raise Exception(f"You have submitted this {_type}")
 
-  # raise exception if authenticated user is not authorized
   if taker.student.user != request.user and  not request.user.is_superuser:
     raise Exception(f"You are not authorized to submit an answer to this {_type}")
   
+  return True
+
+
+def complete_assessment(taker) -> bool:
+  """Complete an assessment by setting the assessment taker's .completed property to true
+
+  Args:
+      taker (_type_): the assessment taker object: can be quiz_taker or assignment_taker
+
+  Returns:
+      bool: returns true
+  """
+  taker.completed = True
+  taker.save()
   return True
 
 
@@ -53,29 +79,19 @@ def send_simple_email(template_path: str, reciepients: list, subject: str = "Ema
     return False
 
 
-# def post_assignment_submission():
-#   pass
+def create_scoped_student_assessment_notice(request, assessment, _type="assignment") -> bool:
+  """_summary_
 
+  Args:
+      request (_type_): request object, for getting the authenticated user and attached permissions
+      assessment (_type_): an assessment object: can be either Assignment or Quiz
+      _type (str, optional): the type of assessment: can be "assignment" or "quiz". Defaults to "assignment".
 
-# # Not used
-# def send_assigned_assessment_email(student):
-#   email = student.user.email
-#   subject = "New Assessment Assigned"
-#   context = {"student": student}
-  
-#   try:
-#     mail = send_simple_email(request, 'email/assigned_assessment.html', [email], subject, context)
-#     print(f'Assigned Assessment mail sent successfully')
-#     return True
-#   except:
-#     print(f'An exception occurred while sending Assigned Assessment: {e}')
-#     return False  
+  Raises:
+      Exception: _description_
 
-
-def create_scoped_student_assessment_notice(request, assessment, _type="assignment"):
-  """
-  Assessment can be either a test or assessment.
-  _type can be either "assignment" or "test"
+  Returns:
+      bool: returns true or false
   """
   message = f"You have a new {_type} for course {assessment.course.code}."
   
