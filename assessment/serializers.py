@@ -4,6 +4,7 @@ from rest_framework import serializers, fields
 from assessment import models, utils
 from academics import models as amodels
 from user import models as umodels
+from SMS.utils import api_exception_handler
 
 
 class GradeSerializer(serializers.HyperlinkedModelSerializer):
@@ -457,7 +458,8 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
             assignment_taker.save()
             return response
         except Exception as e:
-            raise Exception(e)
+            # raise Exception(e)
+            raise api_exception_handler(api_exception_handler)
     
     def update(self, instance, validated_data):
         try:
