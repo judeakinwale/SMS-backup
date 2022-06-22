@@ -11,7 +11,7 @@ from rest_framework import status, views, response
 from rest_framework_simplejwt.views import (
   TokenObtainPairView, TokenRefreshView, TokenVerifyView
 )
-from user import serializers, models, filters
+from user import serializers, models, filters, setup
 from core import permissions as cpermissions
 from core import utils, mixins
 
@@ -197,6 +197,9 @@ class StudentViewSet(mixins.swagger_documentation_factory("student with user"), 
         if "user" not in serializer.validated_data:
             serializer.validated_data["user"] = self.request.user
         return super().perform_create(serializer)
+    
+    # def perform_create(self, serializer):
+    #     setup
 
 
 class BiodataViewSet(mixins.swagger_documentation_factory("biodata", "a", "biodata"), viewsets.ModelViewSet):

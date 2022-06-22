@@ -1,3 +1,4 @@
+from typing import Type, TypeVar, Optional
 from user import models
 from datetime import datetime
 
@@ -17,7 +18,7 @@ def get_largest_student_id(**kwargs) -> int:
   return max_id
 
 
-def generate_student_id(prefix: str = "ST", length: int = 5, seperator: str = " ") -> str:
+def generate_student_id(prefix: str = "STU", length: int = 5, seperator: str = " ") -> Optional[str]:
   try:
     id = get_largest_student_id() + 1
     str_id = str(id).zfill(length)
@@ -35,7 +36,7 @@ def get_largest_student_matric(template: str, **kwargs) -> int:
   pass
 
 
-def generate_student_matric(student: models.Student, length: int = 3, seperator: str = "") -> str:
+def generate_student_matric(student: models.Student, length: int = 3, seperator: str = "") -> Optional[str]:
   try:
     year = str(datetime.today().year)[-2:]
     specialization_code = str(student.specialization.code)[-2:]
@@ -55,4 +56,33 @@ def generate_student_matric(student: models.Student, length: int = 3, seperator:
       return new_id
   except Exception as e:
     print(f"Exception while generating student id: {e}")
+    return None
+
+
+def get_largest_staff_id(**kwargs) -> int:
+  sep: str = kwargs.get("seperator", " ")
+  id: int = kwargs.get("max_id", None)
+  if id:
+    return id + 1
+  
+  staffs = models.Staff.objects.all()
+  if not staffs:
+    return 0
+  
+  staff_id_list = [int(x.staff_id.split(sep)[1]) for x in staffs]
+  max_id  = max(staff_id_list)
+  return max_id
+
+
+def generate_staff_id(prefix: str = "STF", length: int = 5, seperator: str = " ") -> Optional[str]:
+  try:
+    id = get_largest_staff_id() + 1
+    str_id = str(id).zfill(length)
+    new_id = f"{prefix}{seperator}{str_id}"
+    
+    exising_staff_with_new_id = models.Staff.objects.filter(staff_id=new_id)
+    if not existing_staff_with_new_id:
+      return new_id
+  except Exception as e:
+    print(f"Exception while generating staff id: {e}")
     return None

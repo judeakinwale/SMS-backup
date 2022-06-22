@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from user import models
+from user import models, setup
 from academics import models as amodels
 from academics import serializers as aserializers
 from assessment import serializers as qserializers
@@ -915,6 +915,14 @@ class StaffSerializer(BaseStaffSerializer):
         # user = models.User(**validated_data['user'])
         # user.save()
         try:
+            staff_id = setup.generate_staff_id()
+            if not staff_id:
+                raise Exception("Staff id generation failed")
+            validated_data["staff_id"] = staff_id
+        except Exception as e:
+            print(e)
+
+        try:
             user = get_user_model().objects.create_user(**validated_data['user'])
             validated_data['user'] = user
         except  Exception as e:
@@ -1049,8 +1057,25 @@ class StudentSerializer(BaseStudentSerializer):
         except Exception:
             pass
         
+        try:
+            student_id = setup.generate_student_id()
+            if not student_id:
+                raise Exception("Student id generation failed")
+            validated_data["student_id"] = student_id
+        except Exception as e:
+            print(e)
+        
         student = super().create(validated_data)
         
+        try:
+            matric_no = setup.generate_student_matric(student)
+            if not matric_no:
+                raise Exception("Matric no generation failed")
+            student.matric_no = matric_no
+            student.save()
+        except Exception as e:
+            print(e)
+            
         try:
             # validated_user.pop('academic_data')
             academic_data_data['student'] = student
