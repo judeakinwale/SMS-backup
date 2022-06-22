@@ -9,6 +9,24 @@ from user import models as umodels
 # from user import serializers as userializers
 
 
+def can_modify_or_create_assessment_response(request ,taker, _type: str = "assignment") -> bool:
+  instance = taker.assignment if _type == "assignment" else taker.quiz
+
+  # raise exception if current day is past the due date for an assignment
+  if _type == "assignment" and datetime.today().date() > assignment.due_date:
+    raise Exception("You are unable to submit this assignment. the due date is past.")
+
+  # raise exception if assignment has been submitted
+  if taker.completed:
+    raise Exception("You have submitted this assignment")
+
+  # raise exception if authenticated user is not authorized
+  if taker.student.user != request.user and  not request.user.is_superuser:
+    raise Exception("You are not authorized to submit an answer to this assignment")
+  
+  return True
+
+
 def send_simple_email(template_path: str, reciepients: list, subject: str = "Email", context: dict = {}, cc: list = [], message: str = '') -> bool:
   try:
     sender_email = f"{settings.DEFAULT_FROM_NAME} <{settings.EMAIL_HOST_USER}>"
