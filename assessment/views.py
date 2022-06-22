@@ -1,6 +1,5 @@
 from rest_framework import viewsets, permissions
-from rest_framework import status, views, response
-from rest_framework.exceptions import APIException
+from rest_framework import status, views, response, exceptions
 from core import permissions as cpermissions
 from core import mixins
 from assessment import models, serializers, filters, utils
@@ -248,7 +247,7 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
             if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
                 raise Exception("You are not authorized to submit an answer to this assignment")
         except Exception as e:
-            raise APIException(detail=e, status=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.ValidationError()
         return super().perform_create(serializer)
     
     def perform_update(self, serializer):
