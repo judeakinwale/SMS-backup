@@ -11,7 +11,7 @@ class Faculty(models.Model):
     """Model definition for Faculty."""
 
     name = models.CharField(max_length=250, unique=True)
-    code = models.IntegerField(null=True, blank=True, unique=True)
+    code = models.CharField(max_length=250, null=True, blank=True, unique=True)
     description = models.TextField(null=True, blank=True)
     dean = models.ForeignKey(
         settings.AUTH_USER_MODEL,
