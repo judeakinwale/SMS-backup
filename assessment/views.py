@@ -120,33 +120,20 @@ class ResponseViewSet(mixins.swagger_documentation_factory("response"), viewsets
     filterset_class = filters.ResponseFilter
     
     def perform_create(self, serializer):
-        quiz = serializer.validated_data["quiz"]
-        quiz_taker = serializer.validated_data["quiz_taker"]
-        # # raise exception if current day is past the due date
-        # if datetime.today().date() > quiz.due_date:
-        #     raise Exception("You are unable to submit this quiz. the due date is past.")
-        # raise exception if quiz has been submitted
-        if quiz_taker.completed:
-            raise Exception("You have submitted this quiz")
-        # raise exception if authenticated user is not authorized
-        if quiz_taker.student.user != request.user and  not request.user.is_superuser:
-            raise Exception("You are not authorized to submit a response to this quiz")
+        try:
+            quiz_taker = serializer.validated_data["quiz_taker"]
+            utils.can_modify_or_create_response(self.request, quiz_taker, _type="quiz")
+        except Exception as e:
+            raise exceptions.ValidationError(e)
         return super().perform_create(serializer)
     
     def perform_update(self, serializer):
-        instance = self.get_object()
-        print("starting perform create function")
-        quiz = serializer.validated_data.get("quiz", instance.quiz)
-        quiz_taker = serializer.validated_data.get("quiz_taker", instance.quiz_taker)
-        # # raise exception if current day is past the due date
-        # if datetime.today().date() > quiz.due_date:
-        #     raise Exception("You are unable to submit this quiz. the due date is past.")
-        # raise exception if quiz has been submitted
-        if quiz_taker.completed:
-            raise Exception("You have submitted this quiz")
-        # raise exception if authenticated user is not authorized
-        if quiz_taker.student.user != request.user and  not request.user.is_superuser:
-            raise Exception("You are not authorized to submit a response to this quiz")
+        try:
+            instance = self.get_object()
+            quiz_taker = serializer.validated_data.get("quiz_taker", instance.quiz_taker)
+            utils.can_modify_or_create_response(self.request, quiz_taker, _type="quiz")
+        except Exception as e:
+            raise exceptions.ValidationError(e)
         return super().perform_update(serializer)
 
 
@@ -231,44 +218,6 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
         | cpermissions.IsStudentOrReadOnly
     ]
     filterset_class = filters.AssignmentResponseFilter
-    
-    # def perform_create(self, serializer):
-    #     try:
-    #         # assignment_taker = serializer.validated_data["assignment_taker"]
-    #         utils.can_modify_or_create_response(self.request, serializer.validated_data["assignment_taker"])
-    #         # assignment = serializer.validated_data["assignment"]
-    #         # assignment_taker = serializer.validated_data["assignment_taker"]
-    #         # # raise exception if current day is past the due date
-    #         # if datetime.today().date() > assignment.due_date:
-    #         #     raise Exception("You are unable to submit this assignment. the due date is past.")
-    #         # # raise exception if assignment has been submitted
-    #         # if assignment_taker.completed:
-    #         #     raise Exception("You have submitted this assignment")
-    #         #     # return response.Response("You have submitted this assignment", status=status.HTTP_400_BAD_REQUEST)
-    #         # # raise exception if authenticated user is not authorized
-    #         # if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
-    #         #     raise Exception("You are not authorized to submit an answer to this assignment")
-    #     except Exception as e:
-    #         raise exceptions.ValidationError(e)
-    #     return super().perform_create(serializer)
-    
-    # def perform_update(self, serializer):
-    #     instance = self.get_object()
-    #     print("starting perform update function")
-    #     assignment_taker = serializer.validated_data.get("assignment_taker", instance.assignment_taker)
-    #     utils.can_modify_or_create_response(self.request, serializer.validated_data["assignment_taker"])
-    #     # assignment = serializer.validated_data.get("assignment", instance.assignment)
-    #     # assignment_taker = serializer.validated_data.get("assignment_taker", instance.assignment_taker)
-    #     # # raise exception if current day is past the due date
-    #     # if datetime.today().date() > assignment.due_date:
-    #     #     raise Exception("You are unable to submit this assignment. the due date is past.")
-    #     # # raise exception if assignment has been submitted
-    #     # if assignment_taker.completed:
-    #     #     raise Exception("You have submitted this assignment")
-    #     # # raise exception if authenticated user is not authorized
-    #     # if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
-    #     #     raise Exception("You are not authorized to submit an answer to this assignment")
-    #     return super().perform_update(serializer)
 
 
 class GradeViewSet(mixins.swagger_documentation_factory("grade"), viewsets.ModelViewSet):

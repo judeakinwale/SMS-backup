@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 
+from rest_framework import exceptions
+
 from assessment import models
 from information import models as imodels
 from user import models as umodels
@@ -27,17 +29,21 @@ def can_modify_or_create_response(request ,taker, _type: str = "assignment") -> 
   Returns:
       bool: returns true if all checks do not raise exceptions
   """
-  instance = taker.assignment if _type == "assignment" else taker.quiz
+  try:
+    instance = taker.assignment if _type == "assignment" else taker.quiz
 
-  if _type == "assignment" and datetime.today().date() > instance.due_date:
-    raise Exception(f"You are unable to submit this {_type}. the due date is past.")
+    if _type == "assignment" and datetime.today().date() > instance.due_date:
+      raise Exception(f"You are unable to submit this {_type}. the due date is past.")
 
-  if taker.completed:
-    raise Exception(f"You have submitted this {_type}")
+    if taker.completed:
+      raise Exception(f"You have submitted this {_type}")
 
-  if taker.student.user != request.user and  not request.user.is_superuser:
-    raise Exception(f"You are not authorized to submit an answer to this {_type}")
-  
+    if taker.student.user != request.user and  not request.user.is_superuser:
+      raise Exception(f"You are not authorized to submit an answer to this {_type}")
+
+  except Exception as e:
+    raise exceptions.ValidationError(e)
+
   return True
 
 
@@ -48,10 +54,14 @@ def complete_assessment(taker) -> bool:
       taker (_type_): the assessment taker object: can be quiz_taker or assignment_taker
 
   Returns:
-      bool: returns true
+      bool: returns true or false
   """
-  taker.completed = True
-  taker.save()
+  try:
+    taker.completed = True
+    taker.save()
+  except Exception as e:
+    print(f"Assessment completion failed:", e)
+    return False
   return True
 
 
