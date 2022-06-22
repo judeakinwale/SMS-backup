@@ -5,6 +5,8 @@ from django.template.loader import get_template
 from assessment import models
 from information import models as imodels
 from user import models as umodels
+
+from datetime import datetime
 # from academics import serializers as aserializers
 # from user import serializers as userializers
 
@@ -12,17 +14,17 @@ from user import models as umodels
 def can_modify_or_create_assessment_response(request ,taker, _type: str = "assignment") -> bool:
   instance = taker.assignment if _type == "assignment" else taker.quiz
 
-  # raise exception if current day is past the due date for an assignment
-  if _type == "assignment" and datetime.today().date() > assignment.due_date:
-    raise Exception("You are unable to submit this assignment. the due date is past.")
+  # raise exception if current day is past the due date for an assessment
+  if _type == "assignment" and datetime.today().date() > instance.due_date:
+    raise Exception(f"You are unable to submit this {_type}. the due date is past.")
 
-  # raise exception if assignment has been submitted
+  # raise exception if assessment has been submitted / completed
   if taker.completed:
-    raise Exception("You have submitted this assignment")
+    raise Exception(f"You have submitted this {_type}")
 
   # raise exception if authenticated user is not authorized
   if taker.student.user != request.user and  not request.user.is_superuser:
-    raise Exception("You are not authorized to submit an answer to this assignment")
+    raise Exception(f"You are not authorized to submit an answer to this {_type}")
   
   return True
 
