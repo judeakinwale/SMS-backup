@@ -1,5 +1,6 @@
 from rest_framework import viewsets, permissions
 from rest_framework import status, views, response
+from rest_framework.exceptions import APIException
 from core import permissions as cpermissions
 from core import mixins
 from assessment import models, serializers, filters, utils
@@ -233,18 +234,21 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
     filterset_class = filters.AssignmentResponseFilter
     
     def perform_create(self, serializer):
-        assignment = serializer.validated_data["assignment"]
-        assignment_taker = serializer.validated_data["assignment_taker"]
-        # raise exception if current day is past the due date
-        if datetime.today().date() > assignment.due_date:
-            raise Exception("You are unable to submit this assignment. the due date is past.")
-        # raise exception if assignment has been submitted
-        if assignment_taker.completed:
-            raise Exception("You have submitted this assignment")
-            # return response.Response("You have submitted this assignment", status=status.HTTP_400_BAD_REQUEST)
-        # raise exception if authenticated user is not authorized
-        if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
-            raise Exception("You are not authorized to submit an answer to this assignment")
+        try:
+            assignment = serializer.validated_data["assignment"]
+            assignment_taker = serializer.validated_data["assignment_taker"]
+            # raise exception if current day is past the due date
+            if datetime.today().date() > assignment.due_date:
+                raise Exception("You are unable to submit this assignment. the due date is past.")
+            # raise exception if assignment has been submitted
+            if assignment_taker.completed:
+                raise Exception("You have submitted this assignment")
+                # return response.Response("You have submitted this assignment", status=status.HTTP_400_BAD_REQUEST)
+            # raise exception if authenticated user is not authorized
+            if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
+                raise Exception("You are not authorized to submit an answer to this assignment")
+        except Exception as e:
+            raise APIException(detail=e, status=status.HTTP_400_BAD_REQUEST)
         return super().perform_create(serializer)
     
     def perform_update(self, serializer):
