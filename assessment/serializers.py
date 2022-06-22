@@ -450,19 +450,25 @@ class AssignmentResponseSerializer(serializers.HyperlinkedModelSerializer):
         }
 
     def create(self, validated_data):
-        response = super().create(validated_data)
-        assignment_taker = validated_data["assignment_taker"]
-        assignment_taker.completed = True
-        assignment_taker.save()
-        return response
+        try:
+            response = super().create(validated_data)
+            assignment_taker = validated_data["assignment_taker"]
+            assignment_taker.completed = True
+            assignment_taker.save()
+            return response
+        except Exception as e:
+            raise Exception(e)
     
     def update(self, instance, validated_data):
-        response = super().update(instance, validated_data)
-        print("Moved to serializer update method")
-        assignment_taker = validated_data["assignment_taker"]
-        assignment_taker.completed = True
-        assignment_taker.save()
-        return response
+        try:
+            response = super().update(instance, validated_data)
+            print("Moved to serializer update method")
+            assignment_taker = validated_data["assignment_taker"]
+            assignment_taker.completed = True
+            assignment_taker.save()
+            return response
+        except Exception as e:
+            raise Exception(e)
 
 
 class QuizResponseSerializer(QuizSerializer):
