@@ -240,7 +240,8 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
             raise Exception("You are unable to submit this assignment. the due date is past.")
         # raise exception if assignment has been submitted
         if assignment_taker.completed:
-            raise Exception("You have submitted this assignment")
+            # raise Exception("You have submitted this assignment")
+            return response.Response("You have submitted this assignment", status=status.HTTP_400_BAD_REQUEST)
         # raise exception if authenticated user is not authorized
         if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
             raise Exception("You are not authorized to submit an answer to this assignment")
