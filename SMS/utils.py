@@ -26,6 +26,3 @@ def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
         error_payload["details"] = response.data
         response.data = error_payload
     return response
-
-
-...
