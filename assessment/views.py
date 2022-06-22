@@ -247,7 +247,7 @@ class AssignmentResponseViewSet(mixins.swagger_documentation_factory("assignment
             if assignment_taker.student.user != self.request.user and  not self.request.user.is_superuser:
                 raise Exception("You are not authorized to submit an answer to this assignment")
         except Exception as e:
-            raise exceptions.ValidationError()
+            raise exceptions.ValidationError(e)
         return super().perform_create(serializer)
     
     def perform_update(self, serializer):
