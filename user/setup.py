@@ -132,7 +132,7 @@ def generate_staff_id(prefix: str = "EMP", length: int = 5, seperator: str = " "
     str_id = str(id).zfill(length)
     new_id = f"{prefix}{seperator}{str_id}"
     
-    existing_staff_with_new_id = models.Staff.objects.filter(staff_id=new_id)
+    existing_staff_with_new_id = models.Staff.objects.filter(employee_id=new_id)
     if not existing_staff_with_new_id:
       return new_id
   except Exception as e:
