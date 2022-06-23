@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from academics import models
 from assessment import serializers as aserializers
+from core import setup
 # from user.serializers import UserSerializer
 
 
@@ -148,6 +149,12 @@ class SpecializationSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'academics:specialization-detail'}
         }
+        
+    def create(self, validated_data):
+        specialization = super().create(validated_data)
+        specialization.code = setup.custom_id(self.Meta.model.objects.all(), specialization, specialization.code, "SPC", 3)
+        specialization.save()
+        return specialization
 
 
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
@@ -178,6 +185,12 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'academics:department-detail'}
         }
+        
+    def create(self, validated_data):
+        department = super().create(validated_data)
+        department.code = setup.custom_id(self.Meta.model.objects.all(), department, department.code, "DEP", 3)
+        department.save()
+        return department
 
 
 class FacultySerializer(serializers.HyperlinkedModelSerializer):
@@ -204,6 +217,18 @@ class FacultySerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'academics:faculty-detail'}
         }
+        
+    def create(self, validated_data):
+        faculty = super().create(validated_data)
+        faculty.code = setup.custom_id(self.Meta.model.objects.all(), faculty, faculty.code, "FAC", 3)
+        faculty.save()
+        return faculty
+    
+    # def update(self, instance, validated_data): 
+    #     faculty = super().update(instance, validated_data)
+    #     faculty.code = setup.custom_id(self.Meta.model.objects.all(), faculty, faculty.code, "FAC", 3)
+    #     faculty.save()
+    #     return faculty
 
 
 class RecommendedCoursesResponseSerializer(RecommendedCoursesSerializer):
