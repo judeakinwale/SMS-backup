@@ -126,7 +126,7 @@ def get_largest_staff_id(**kwargs) -> int:
   return max_id
 
 
-def generate_staff_id(prefix: str = "STF", length: int = 5, seperator: str = " ") -> Optional[str]:
+def generate_staff_id(prefix: str = "EMP", length: int = 5, seperator: str = " ") -> Optional[str]:
   try:
     id = get_largest_staff_id() + 1
     str_id = str(id).zfill(length)

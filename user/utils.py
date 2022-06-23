@@ -121,4 +121,3 @@ def get_all_user_information(user):
     # print(f"user_information: ${user_information}")
     
   return user_information
-  

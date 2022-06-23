@@ -83,6 +83,9 @@ class BaseStaffSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:staff-detail'},
         }
+        optional_fields = [
+            'employee_id',
+        ]
 
 
 class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
@@ -113,6 +116,10 @@ class BaseStudentSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'view_name': 'user:student-detail'},
         }
+        optional_fields = [
+            'matric_no',
+            'student_id',
+        ]
 
 
 class AcademicDataSerializer(serializers.HyperlinkedModelSerializer):

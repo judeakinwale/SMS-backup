@@ -475,7 +475,13 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         if not reset_password_token.user.is_staff:
             rel_path = f"{frontend_base_url}/student/newpassword"
         else:
-            rel_path = f"{frontend_base_url}/staff/confirmpassword"
+            try:
+                is_lecturer = reset_password_token.user.staff_set.all().first().is_lecturer
+                if not is_lecturer:
+                    raise Exception("Not a Lecturer")
+                rel_path = f"{frontend_base_url}/lecturer/resetpassword"
+            except Exception:
+                rel_path = f"{frontend_base_url}/staff/confirmpassword"
             
         context = {
             'current_user': reset_password_token.user,

@@ -490,7 +490,7 @@ class HealthData(models.Model):
     blood_group = models.CharField(max_length=300, null=True, blank=True)
     genotype = models.CharField(max_length=300, null=True, blank=True)
     allergies = models.TextField(null=True, blank=True)
-    diabetes = models.BooleanField(default=False)
+    diabetes = models.CharField(max_length=300, null=True, blank=True)
     STIs = models.TextField(null=True, blank=True)
     heart_disease = models.TextField(null=True, blank=True)
     disabilities = models.TextField(null=True, blank=True)
