@@ -129,7 +129,7 @@ class Student(models.Model):
         on_delete=models.CASCADE,
     )
     matric_no = models.CharField(max_length=250, unique=True, null=True, blank=True)
-    student_id = models.CharField(max_length=250, unique=True, null=True)
+    student_id = models.CharField(max_length=250, unique=True, null=True, blank=True)
     specialization = models.ForeignKey(
         acmodels.Specialization,
         on_delete=models.DO_NOTHING,
